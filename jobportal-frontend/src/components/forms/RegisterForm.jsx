@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
@@ -10,12 +10,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { registerSchema } from "@/lib/validation/authSchemas";
 import { USER_ROLES } from "@/utils/constants";
 
-export function RegisterForm() {
+export function RegisterForm({ onSuccess = () => {} }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { register: registerUser } = useAuth();
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -30,6 +29,7 @@ export function RegisterForm() {
       password: "",
       confirmPassword: "",
       role: USER_ROLES.SEEKER,
+      companyName: "",
     },
   });
 
@@ -38,13 +38,15 @@ export function RegisterForm() {
 
   const onSubmit = async (values) => {
     try {
-      const user = await registerUser(values);
+      const user = await registerUser({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        role: values.role,
+        company_name: values.companyName,
+      });
       toast.success("Account created");
-      navigate(
-        user.role === USER_ROLES.EMPLOYER
-          ? "/employer/dashboard"
-          : "/seeker/dashboard"
-      );
+      onSuccess(user);
     } catch (error) {
       toast.error(error.message ?? "Could not create account");
     }
@@ -59,9 +61,7 @@ export function RegisterForm() {
             type="button"
             onClick={() => setValue("role", option)}
             className={`rounded-md py-2 text-sm font-medium capitalize transition-colors ${
-              role === option
-                ? "bg-white text-ink-900 shadow-sm"
-                : "text-ink-500"
+              role === option ? "bg-white text-ink-900 shadow-sm" : "text-ink-500"
             }`}
           >
             {option}
@@ -71,11 +71,21 @@ export function RegisterForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 flex flex-col gap-4">
         <TextInput
-          label={isEmployer ? "Company name" : "Full name"}
-          placeholder={isEmployer ? "Acme Corp" : "Jane Doe"}
+          label="Full name"
+          placeholder="Jane Doe"
           error={errors.name?.message}
           {...register("name")}
         />
+
+        {isEmployer && (
+          <TextInput
+            label="Company name"
+            placeholder="Acme Corp"
+            error={errors.companyName?.message}
+            {...register("companyName")}
+          />
+        )}
+
         <TextInput
           label="Email"
           type="email"
@@ -98,11 +108,7 @@ export function RegisterForm() {
             className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-600 focus:outline-none"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
-            {showPassword ? (
-              <EyeOff className="h-5 w-5" />
-            ) : (
-              <Eye className="h-5 w-5" />
-            )}
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
 
@@ -120,11 +126,7 @@ export function RegisterForm() {
             className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-600 focus:outline-none"
             aria-label={showConfirmPassword ? "Hide password" : "Show password"}
           >
-            {showConfirmPassword ? (
-              <EyeOff className="h-5 w-5" />
-            ) : (
-              <Eye className="h-5 w-5" />
-            )}
+            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
 

@@ -1,9 +1,25 @@
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
-import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import { Bell, ChevronDown, LogOut, Search, Settings, UserCircle } from "lucide-react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
+import {
+  Sun,
+  Moon,
+  Bell,
+  ChevronDown,
+  LogOut,
+  Search,
+  Settings,
+  UserCircle,
+} from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/utils/cn";
+import { useTheme } from "@/hooks/useTheme";
 
 function initials(name = "") {
   return name
@@ -16,6 +32,8 @@ function initials(name = "") {
 
 export function DashboardTopbar({ title, accountPath, changePasswordPath }) {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+
 
   return (
     <header className="flex h-20 items-center justify-between gap-4 border-b border-ink-100 bg-white px-6">
@@ -40,6 +58,18 @@ export function DashboardTopbar({ title, accountPath, changePasswordPath }) {
         >
           <Bell className="h-5 w-5" />
           <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-amber-500" />
+        </button>
+
+        <button
+          onClick={toggleTheme}
+          className="flex h-10 w-10 items-center justify-center rounded-full text-ink-500 hover:bg-ink-50"
+          aria-label="Toggle theme"
+        >
+          {theme === "dark" ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <Moon className="h-5 w-5" />
+          )}
         </button>
 
         <Menu as="div" className="relative">
@@ -69,7 +99,7 @@ export function DashboardTopbar({ title, accountPath, changePasswordPath }) {
                       to={accountPath}
                       className={cn(
                         "flex items-center gap-2 px-3.5 py-2.5 text-sm text-ink-700",
-                        focus && "bg-brand-50 text-brand-600"
+                        focus && "bg-brand-50 text-brand-600",
                       )}
                     >
                       <UserCircle className="h-4 w-4" />
@@ -85,7 +115,7 @@ export function DashboardTopbar({ title, accountPath, changePasswordPath }) {
                       to={changePasswordPath}
                       className={cn(
                         "flex items-center gap-2 px-3.5 py-2.5 text-sm text-ink-700",
-                        focus && "bg-brand-50 text-brand-600"
+                        focus && "bg-brand-50 text-brand-600",
                       )}
                     >
                       <Settings className="h-4 w-4" />
@@ -100,11 +130,11 @@ export function DashboardTopbar({ title, accountPath, changePasswordPath }) {
                     onClick={logout}
                     className={cn(
                       "flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-sm text-ink-700",
-                      focus && "bg-brand-50 text-brand-600"
+                      focus && "bg-brand-50 text-brand-600",
                     )}
                   >
                     <LogOut className="h-4 w-4" />
-                    Log out
+                    <Link to="/login">Logout</Link>
                   </button>
                 )}
               </MenuItem>

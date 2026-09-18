@@ -28,7 +28,7 @@ export function LoginForm({ onSuccess }) {
     try {
       const user = await login(values);
       toast.success("Welcome back!");
-      onSuccess?.();
+      onSuccess?.(user);
       navigate(
         user.role === USER_ROLES.EMPLOYER
           ? "/employer/dashboard"

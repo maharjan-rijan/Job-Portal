@@ -33,7 +33,7 @@ export function AccountOverview() {
           </div>
           <div>
             <h1 className="text-lg font-semibold text-ink-900">
-              {user?.name ?? "Your company"}
+              {user?.company?.name ?? user?.name ?? "Your company"}
             </h1>
             <Badge tone="brand" className="mt-1">
               Employer

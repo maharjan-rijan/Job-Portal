@@ -51,7 +51,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    //element: <ProtectedRoute allowedRoles={[USER_ROLES.SEEKER]} />,
+    element: <ProtectedRoute allowedRoles={[USER_ROLES.SEEKER]} />,
     children: [
       {
         element: <SeekerLayout />,
@@ -67,7 +67,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    // element: <ProtectedRoute allowedRoles={[USER_ROLES.EMPLOYER]} />,
+    element: <ProtectedRoute allowedRoles={[USER_ROLES.EMPLOYER]} />,
     children: [
       {
         element: <EmployerLayout />,
