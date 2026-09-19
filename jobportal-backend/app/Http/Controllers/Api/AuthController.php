@@ -12,57 +12,57 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-         $validator = Validator::make($request->all(), [
-        'name' => 'required|string|min:2',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|string|min:6',
-        'role' => 'required|in:seeker,employer',
-        'company_name' => 'required_if:role,employer|string|nullable',
-    ]);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|min:2',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'role' => 'required|in:seeker,employer',
+            'company_name' => 'required_if:role,employer|string|nullable',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json(['message' => $validator->errors()->first()], 422);
-    }
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'role' => $request->role,
-    ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]);
 
-    if ($request->role === 'employer') {
-        $user->company()->create(['name' => $request->company_name]);
-    }
+        if ($request->role === 'employer') {
+            $user->company()->create(['name' => $request->company_name]);
+        }
 
-    return response()->json([
-        'token' => $user->createToken('auth_token')->plainTextToken,
-        'user' => $user->load('company'),
-    ], 201);
+        return response()->json([
+            'token' => $user->createToken('auth_token')->plainTextToken,
+            'user' => $user->load('company'),
+        ], 201);
     }
 
     public function login(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'email' => 'required|email',
-        'password' => 'required|string',
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json(['message' => $validator->errors()->first()], 422);
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        return response()->json([
+            'token' => $user->createToken('auth_token')->plainTextToken,
+            'user' => $user->load('company'),
+        ]);
     }
-
-    $user = User::where('email', $request->email)->first();
-
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'Invalid credentials'], 401);
-    }
-
-    return response()->json([
-        'token' => $user->createToken('auth_token')->plainTextToken,
-        'user' => $user->load('company'),
-    ]);
-}
 
     public function logout(Request $request)
     {
@@ -70,6 +70,32 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out']);
     }
 
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'currentPassword' => 'required|string',
+            'newPassword' => 'required|string|min:6',
+            'confirmNewPassword' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $user = $request->user();
+
+        if (!Hash::check($request->currentPassword, $user->password)) {
+            return response()->json(['message' => 'Current password is incorrect'], 422);
+        }
+
+        if (Hash::check($request->newPassword, $user->password)) {
+            return response()->json(['message' => 'New password must be different from the current password'], 422);
+        }
+
+        $user->update(['password' => Hash::make($request->newPassword)]);
+
+        return response()->json(['message' => 'Password updated successfully']);
+    }
     public function me(Request $request)
     {
         return response()->json($request->user()->load('company'));

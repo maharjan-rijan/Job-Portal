@@ -27,6 +27,28 @@ export function useSaveJob() {
       id ? jobService.update(id, payload) : jobService.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.jobs.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.jobs.mine });
+    },
+  });
+}
+
+/** Employer's own jobs — powers the Manage Jobs page. */
+export function useMyJobs() {
+  return useQuery({
+    queryKey: queryKeys.jobs.mine,
+    queryFn: jobService.mine,
+  });
+}
+
+/** Used by Manage Jobs' delete action. */
+export function useDeleteJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id) => jobService.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.jobs.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.jobs.mine });
     },
   });
 }

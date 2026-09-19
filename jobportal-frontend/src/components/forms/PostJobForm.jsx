@@ -37,7 +37,7 @@ export function PostJobForm({ job, onSuccess }) {
       salaryMax: job?.salaryMax ?? "",
       vacancies: job?.vacancies ?? 1,
       experienceLevel: job?.experienceLevel ?? "",
-      applicationDeadline: job?.applicationDeadline ?? "",
+      applicationDeadline: job?.applicationDeadline?.slice(0, 10) ?? "",
       description: job?.description ?? "",
       responsibilities: listToText(job?.responsibilities),
       requirements: listToText(job?.requirements),

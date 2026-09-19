@@ -1,20 +1,17 @@
 import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { Heart, MapPin, Globe, CalendarDays } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
+import { Heart, MapPin, Globe, CalendarDays, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { Modal } from "@/components/ui/Modal";
+import { LoginForm } from "@/components/forms/LoginForm";
 import { ApplyForm } from "@/components/forms/ApplyForm";
 import { NotFound } from "@/pages/public/NotFound";
-import { MOCK_JOBS } from "@/lib/mockData";
+import { useJob } from "@/hooks/useJobs";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  formatDate,
-  formatRelative,
-  formatSalaryRange,
-} from "@/utils/formatters";
+import { formatDate, formatRelative, formatSalaryRange } from "@/utils/formatters";
 
 function initials(name) {
   return name
@@ -45,21 +42,26 @@ function ListSection({ title, items }) {
 export function JobDetails() {
   const { jobId } = useParams();
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
 
   const [saved, setSaved] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
 
-  // TODO: once a backend exists, swap this for `useJob(jobId)` from
-  // hooks/useJobs.js — the lookup below only exists to keep the page
-  // functional against MOCK_JOBS.
-  const job = MOCK_JOBS.find((item) => item.id === jobId);
+  const { data: job, isLoading, isError } = useJob(jobId);
 
-  if (!job) return <NotFound />;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-24">
+        <Loader2 className="h-6 w-6 animate-spin text-secondary" />
+      </div>
+    );
+  }
+
+  if (isError || !job) return <NotFound />;
 
   const handleApplyClick = () => {
     if (!isAuthenticated) {
-      navigate("/login");
+      setLoginOpen(true);
       return;
     }
     setApplyOpen(true);
@@ -113,10 +115,7 @@ export function JobDetails() {
               </p>
             </div>
 
-            <ListSection
-              title="Responsibilities"
-              items={job.responsibilities}
-            />
+            <ListSection title="Responsibilities" items={job.responsibilities} />
             <ListSection title="Requirements" items={job.requirements} />
             <ListSection title="Benefits" items={job.benefits} />
           </Card>
@@ -151,7 +150,9 @@ export function JobDetails() {
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between gap-4">
                   <dt className="text-accent">{label}</dt>
-                  <dd className="text-right font-medium text-text">{value}</dd>
+                  <dd className="text-right font-medium text-text">
+                    {value}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -174,6 +175,15 @@ export function JobDetails() {
           </Card>
         </div>
       </div>
+
+      <Modal open={loginOpen} onClose={() => setLoginOpen(false)} title="Log in to apply">
+        <LoginForm
+          onSuccess={() => {
+            setLoginOpen(false);
+            setApplyOpen(true);
+          }}
+        />
+      </Modal>
 
       <Modal
         open={applyOpen}

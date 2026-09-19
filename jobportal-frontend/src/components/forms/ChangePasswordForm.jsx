@@ -12,7 +12,7 @@ import { Eye, EyeOff } from "lucide-react";
 export function ChangePasswordForm() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showNewConfirmedPassword, setShowNewConfirmedPassword] =
+  const [showConfirmedNewPassword, setShowConfirmedNewPassword] =
     useState(false);
   const {
     register,
@@ -88,20 +88,20 @@ export function ChangePasswordForm() {
       <div className="relative">
         <TextInput
           label="Confirm new password"
-          type={showNewConfirmedPassword ? "text" : "password"}
+          type={showConfirmedNewPassword ? "text" : "password"}
           placeholder="••••••••"
-          error={errors.confirmPassword?.message}
-          {...register("confirmPassword")}
+          error={errors.confirmNewPassword?.message}
+          {...register("confirmNewPassword")}
         />
         <button
           type="button"
-          onClick={() => setShowNewConfirmedPassword((prev) => !prev)}
+          onClick={() => setShowConfirmedNewPassword((prev) => !prev)}
           className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
           aria-label={
-            showNewConfirmedPassword ? "Hide password" : "Show password"
+            showConfirmedNewPassword ? "Hide password" : "Show password"
           }
         >
-          {showNewConfirmedPassword ? (
+          {showConfirmedNewPassword ? (
             <EyeOff className="h-5 w-5" />
           ) : (
             <Eye className="h-5 w-5" />
@@ -112,5 +112,5 @@ export function ChangePasswordForm() {
         Update password
       </Button>
     </form>
-  );
+  ); 
 }

@@ -7,6 +7,8 @@ import {
   FilePlus,
   Users,
   FileBarChart,
+  BriefcaseBusiness,
+  Bookmark,
 } from "lucide-react";
 import { USER_ROLES } from "@/utils/constants";
 
@@ -24,7 +26,10 @@ export const DASHBOARD_NAV = {
     changePasswordPath: "/seeker/change-password",
     items: [
       { label: "Dashboard", to: "/seeker/dashboard", icon: LayoutDashboard },
+      { label: "My Account", to: "/seeker/account", icon: Users },
       { label: "Browse Jobs", to: "/seeker/browse-jobs", icon: Search },
+      { label: "Applied Jobs", to: "/seeker/applied-jobs", icon: BriefcaseBusiness },
+      { label: "Saved Jobs", to: "/seeker/saved-jobs", icon: Bookmark },
       { label: "My Resume", to: "/seeker/resume", icon: FileText },
       { label: "Job Alerts", to: "/seeker/job-alerts", icon: Bell },
     ],
@@ -39,16 +44,18 @@ export const DASHBOARD_NAV = {
       { label: "Manage Jobs", to: "/employer/jobs", icon: Briefcase },
       { label: "Post a Job", to: "/employer/jobs/new", icon: FilePlus },
       { label: "Applications", to: "/employer/applications", icon: Users },
+      { label: "Manage Resumes", to: "/employer/resumes", icon: FileText }
     ],
   },
   [USER_ROLES.ADMIN]: {
     title: "Admin Dashboard",
     dashboardPath: "/admin/dashboard",
-    accountPath: null,
-    changePasswordPath: null,
+    accountPath: "/admin/account",
+    changePasswordPath: "/admin/change-password",
     items: [
       { label: "Dashboard", to: "/admin/dashboard", icon: LayoutDashboard },
       { label: "Users", to: "/admin/users", icon: Users },
+      { label: "Job Types", to: "/admin/job-types", icon: BriefcaseBusiness },
       { label: "Jobs", to: "/admin/jobs", icon: Briefcase },
       { label: "Reports", to: "/admin/reports", icon: FileBarChart },
     ],

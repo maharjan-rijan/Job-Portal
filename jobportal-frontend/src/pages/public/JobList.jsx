@@ -1,115 +1,64 @@
-import { useMemo, useState } from "react";
-import { Search, MapPin, Briefcase } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import { SearchBar } from "@/components/ui/SearchBar";
 import { JobCard } from "@/components/ui/JobCard";
-import { TextInput } from "@/components/ui/TextInput";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { MOCK_JOBS } from "@/lib/mockData";
+import { useJobs } from "@/hooks/useJobs";
 
 export function JobList() {
-  const [keyword, setKeyword] = useState("");
-  const [location, setLocation] = useState("");
-  const [jobTitle, setJobTitle] = useState("");
+  const [searchParams] = useSearchParams();
+  const [keyword, setKeyword] = useState(searchParams.get("q") ?? "");
+  const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
 
-  const [activeFilters, setActiveFilters] = useState({
-    keyword: "",
-    location: "",
-    jobTitle: "",
-  });
+  // Avoid firing a request on every keystroke.
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebouncedKeyword(keyword), 400);
+    return () => clearTimeout(timeout);
+  }, [keyword]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setActiveFilters({ jobTitle, keyword, location });
-  };
-
-  const jobs = useMemo(() => {
-    const t = activeFilters.jobTitle.trim().toLowerCase();
-    const k = activeFilters.keyword.trim().toLowerCase();
-    const l = activeFilters.location.trim().toLowerCase();
-
-    return MOCK_JOBS.filter((job) => {
-      const matchesTitle = t ? job.title.toLowerCase().includes(t) : true;
-      const matchesKeyword = k
-        ? `${job.title} ${job.company} ${job.description || ""}`
-            .toLowerCase()
-            .includes(k)
-        : true;
-
-      const matchesLocation = l ? job.location.toLowerCase().includes(l) : true;
-
-      return matchesTitle && matchesKeyword && matchesLocation;
-    });
-  }, [activeFilters]);
+  const { data, isLoading, isError, error } = useJobs(
+    debouncedKeyword ? { q: debouncedKeyword } : undefined
+  );
+  const jobs = data?.data ?? [];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-semibold text-text">Browse jobs</h1>
       <p className="mt-1 text-sm text-accent">
-        {jobs.length} open role{jobs.length === 1 ? "" : "s"}
+        {isLoading ? "Loading…" : `${jobs.length} open role${jobs.length === 1 ? "" : "s"}`}
       </p>
 
-      <form
-        onSubmit={handleSearch}
-        className="mt-6 flex flex-col gap-3 rounded-card border border-primary/10 bg-surface p-3 shadow-sm sm:flex-row sm:items-center"
-      >
-        {/* Job Title Search */}
-        <div className="flex flex-1 items-center gap-2 px-3">
-          <Briefcase className="h-5 w-5 text-accent shrink-0" />
-          <TextInput
-            type="text"
-            placeholder="Job title"
-            value={jobTitle}
-            onChange={(e) => setJobTitle(e.target.value)}
-            className="h-11 w-full border-0 text-sm text-text placeholder:text-accent focus:outline-none"
-          />
+      <SearchBar
+        value={keyword}
+        onChange={setKeyword}
+        placeholder="Search by title, company, or location"
+        className="mt-6"
+      />
+
+      {isLoading && (
+        <div className="flex justify-center py-16">
+          <Loader2 className="h-6 w-6 animate-spin text-secondary" />
         </div>
-        <div className="hidden h-8 w-px bg-ink-100 sm:block" />
-        {/* Keyword Search */}
-        <div className="flex flex-1 items-center gap-2 px-3">
-          <Search className="h-5 w-5 text-accent shrink-0" />
-          <TextInput
-            type="text"
-            placeholder="Keywords or skills"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            className="h-11 w-full border-0 text-sm text-text placeholder:text-accent focus:outline-none"
-          />
-        </div>
+      )}
 
-        <div className="hidden h-8 w-px bg-ink-100 sm:block" />
+      {isError && (
+        <p className="py-12 text-center text-sm text-red-600">
+          Could not load jobs{error?.message ? `: ${error.message}` : ""}.
+        </p>
+      )}
 
-        {/* Location Search */}
-        <div className="flex flex-1 items-center gap-2 px-3">
-          <MapPin className="h-5 w-5 text-accent shrink-0" />
-          <TextInput
-            type="text"
-            placeholder="City or state"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="h-11 w-full border-0 text-sm text-text placeholder:text-accent focus:outline-none"
-          />
-        </div>
-
-        <Button
-          type="submit"
-          className="flex h-11 items-center justify-center rounded-lg bg-secondary px-6 text-sm font-medium text-white hover:bg-brand-600 shrink-0"
-        >
-          Search Jobs
-        </Button>
-      </form>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {jobs.map((job) => (
-          <JobCard key={job.id} job={job} />
-        ))}
-        {jobs.length === 0 && (
-          <Card className="col-span-full py-12 text-center">
-            <p className="text-sm text-accent">
-              No jobs match your search criteria.
+      {!isLoading && !isError && (
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {jobs.map((job) => (
+            <JobCard key={job.id} job={job} />
+          ))}
+          {jobs.length === 0 && (
+            <p className="col-span-full py-12 text-center text-sm text-accent">
+              No jobs match "{keyword}".
             </p>
-          </Card>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

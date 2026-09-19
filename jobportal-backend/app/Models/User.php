@@ -23,4 +23,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Company::class);
     }
+
+    public function jobPosts(): HasOne
+    {
+        return $this->hasOne(JobPost::class, 'employer_id');
+    }
 }

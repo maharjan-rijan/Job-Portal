@@ -1,13 +1,50 @@
 import api from "@/lib/axios";
 
+/**
+ * The backend returns snake_case DB columns and nests company info under
+ * employer.company; this adapts that shape into what the UI already
+ * expects (camelCase, flat company/companyWebsite). Keeping the mapping
+ * here means components never need to know the wire format changed.
+ */
+function normalizeJob(job) {
+  if (!job) return job;
+  return {
+    id: String(job.id),
+    title: job.title,
+    type: job.type,
+    location: job.location,
+    salaryMin: job.salary_min ?? job.salaryMin ?? null,
+    salaryMax: job.salary_max ?? job.salaryMax ?? null,
+    vacancies: job.vacancies,
+    experienceLevel: job.experience_level ?? job.experienceLevel ?? null,
+    applicationDeadline: job.application_deadline ?? job.applicationDeadline ?? null,
+    description: job.description,
+    responsibilities: job.responsibilities ?? [],
+    requirements: job.requirements ?? [],
+    benefits: job.benefits ?? [],
+    status: job.status ?? "Open",
+    postedAt: job.created_at ?? job.postedAt ?? null,
+    company: job.employer?.company?.name ?? job.employer?.name ?? "—",
+    companyWebsite: job.employer?.company?.website ?? "",
+    applicantsCount: job.applicants_count ?? 0,
+  };
+}
+
 export const jobService = {
-  list: (params) => api.get("/jobs", { params }).then((r) => r.data),
+  list: (params) =>
+    api.get("/jobs", { params }).then((r) => ({
+      data: (r.data.data ?? []).map(normalizeJob),
+      meta: r.data.meta ?? null,
+    })),
 
-  getById: (id) => api.get(`/jobs/${id}`).then((r) => r.data),
+  getById: (id) => api.get(`/jobs/${id}`).then((r) => normalizeJob(r.data)),
 
-  create: (payload) => api.post("/jobs", payload).then((r) => r.data),
+  mine: () => api.get("/jobs/mine").then((r) => r.data.map(normalizeJob)),
 
-  update: (id, payload) => api.put(`/jobs/${id}`, payload).then((r) => r.data),
+  create: (payload) => api.post("/jobs", payload).then((r) => normalizeJob(r.data)),
+
+  update: (id, payload) =>
+    api.put(`/jobs/${id}`, payload).then((r) => normalizeJob(r.data)),
 
   remove: (id) => api.delete(`/jobs/${id}`).then((r) => r.data),
 

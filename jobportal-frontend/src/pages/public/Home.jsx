@@ -1,10 +1,24 @@
-import { Link } from "react-router-dom";
-import { Search, MapPin, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Search, MapPin, ArrowRight, Loader2 } from "lucide-react";
 import { JobCard } from "@/components/ui/JobCard";
-import { MOCK_JOBS } from "@/lib/mockData";
-import { TextInput } from "@/components/ui/TextInput";
+import { useJobs } from "@/hooks/useJobs";
 
 export function Home() {
+  const navigate = useNavigate();
+  const [keyword, setKeyword] = useState("");
+  const [location, setLocation] = useState("");
+  const { data, isLoading } = useJobs();
+  const featuredJobs = (data?.data ?? []).slice(0, 4);
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const params = new URLSearchParams();
+    if (keyword) params.set("q", keyword);
+    if (location) params.set("location", location);
+    navigate(params.size ? `/jobs?${params}` : "/jobs");
+  };
+
   return (
     <>
       <section className="border-b border-primary/10 bg-background">
@@ -19,37 +33,46 @@ export function Home() {
             </p>
           </div>
 
-          <form className="mt-8 flex flex-col gap-3 rounded-card bg-surface p-3 shadow-sm sm:flex-row sm:items-center">
+          <form
+            onSubmit={handleSearch}
+            className="mt-8 flex flex-col gap-3 rounded-card bg-surface p-3 shadow-sm sm:flex-row sm:items-center"
+          >
             <div className="flex flex-1 items-center gap-2 px-3">
               <Search className="h-5 w-5 text-accent" />
-              <TextInput
+              <input
                 type="text"
+                value={keyword}
+                onChange={(event) => setKeyword(event.target.value)}
                 placeholder="Job title, keywords, or company"
                 className="h-11 w-full border-0 text-sm text-text placeholder:text-accent focus:outline-none"
               />
             </div>
-            <div className="hidden h-8 w-px bg-ink-100 sm:block" />
+            <div className="hidden h-8 w-px bg-primary/10 sm:block" />
             <div className="flex flex-1 items-center gap-2 px-3">
               <MapPin className="h-5 w-5 text-accent" />
-              <TextInput
+              <input
                 type="text"
+                value={location}
+                onChange={(event) => setLocation(event.target.value)}
                 placeholder="City or state"
                 className="h-11 w-full border-0 text-sm text-text placeholder:text-accent focus:outline-none"
               />
             </div>
-            <Link
-              to="/jobs"
-              className="flex h-11 items-center justify-center rounded-lg bg-secondary px-6 text-sm font-medium text-white hover:bg-brand-600"
+            <button
+              type="submit"
+              className="flex h-11 items-center justify-center rounded-lg bg-secondary px-6 text-sm font-medium text-white hover:bg-secondary/90"
             >
               Search Jobs
-            </Link>
+            </button>
           </form>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
-          <h2 className="text-2xl font-semibold text-text">Featured jobs</h2>
+          <h2 className="text-2xl font-semibold text-text">
+            Featured jobs
+          </h2>
           <Link
             to="/jobs"
             className="flex items-center gap-1 text-sm font-medium text-secondary hover:text-secondary"
@@ -58,9 +81,17 @@ export function Home() {
           </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
-          {MOCK_JOBS.map((job) => (
-            <JobCard key={job.id} job={job} />
-          ))}
+          {isLoading && (
+            <div className="col-span-full flex justify-center py-12">
+              <Loader2 className="h-6 w-6 animate-spin text-secondary" />
+            </div>
+          )}
+          {!isLoading && featuredJobs.map((job) => <JobCard key={job.id} job={job} />)}
+          {!isLoading && featuredJobs.length === 0 && (
+            <p className="col-span-full py-12 text-center text-sm text-accent">
+              No jobs posted yet — check back soon.
+            </p>
+          )}
         </div>
       </section>
     </>
