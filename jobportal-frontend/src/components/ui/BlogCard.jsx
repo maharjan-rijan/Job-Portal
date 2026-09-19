@@ -10,13 +10,13 @@ export function BlogCard({ post }) {
       <Badge tone="brand" className="w-fit">
         {post.category}
       </Badge>
-      <h3 className="mt-3 text-lg font-semibold text-ink-900">
-        <Link to={`/blog/${post.id}`} className="hover:text-brand-500">
+      <h3 className="mt-3 text-lg font-semibold text-text">
+        <Link to={`/blog/${post.id}`} className="hover:text-secondary">
           {post.title}
         </Link>
       </h3>
-      <p className="mt-2 flex-1 text-sm text-ink-500">{post.excerpt}</p>
-      <div className="mt-4 flex items-center gap-4 border-t border-ink-100 pt-4 text-xs text-ink-400">
+      <p className="mt-2 flex-1 text-sm text-accent">{post.excerpt}</p>
+      <div className="mt-4 flex items-center gap-4 border-t border-primary/10 pt-4 text-xs text-accent">
         <span className="flex items-center gap-1.5">
           <User className="h-3.5 w-3.5" />
           {post.author}

@@ -58,7 +58,7 @@ export function ResetPasswordForm() {
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-600 focus:outline-none"
+          className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? (
@@ -80,7 +80,7 @@ export function ResetPasswordForm() {
         <button
           type="button"
           onClick={() => setShowConfirmPassword((prev) => !prev)}
-          className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-600 focus:outline-none"
+          className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
           aria-label={showConfirmPassword ? "Hide password" : "Show password"}
         >
           {showConfirmPassword ? (

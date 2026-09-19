@@ -13,19 +13,23 @@ export function StatisticsPanel({ title, subtitle, tabs, dateRangeLabel }) {
       <TabGroup>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-base font-semibold text-ink-900">{title}</h2>
-            {subtitle && <p className="mt-0.5 text-sm text-ink-500">{subtitle}</p>}
+            <h2 className="text-base font-semibold text-text">{title}</h2>
+            {subtitle && (
+              <p className="mt-0.5 text-sm text-accent">{subtitle}</p>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <TabList className="flex rounded-lg bg-ink-50 p-1">
+            <TabList className="flex rounded-lg bg-background p-1">
               {tabs.map((tab) => (
                 <Tab
                   key={tab.label}
                   className={({ selected }) =>
                     cn(
                       "rounded-md px-3 py-1.5 text-sm font-medium outline-none",
-                      selected ? "bg-white text-ink-900 shadow-sm" : "text-ink-500"
+                      selected
+                        ? "bg-surface text-text shadow-sm"
+                        : "text-accent",
                     )
                   }
                 >
@@ -34,7 +38,7 @@ export function StatisticsPanel({ title, subtitle, tabs, dateRangeLabel }) {
               ))}
             </TabList>
             {dateRangeLabel && (
-              <span className="flex items-center gap-1.5 rounded-lg border border-ink-200 px-3 py-1.5 text-sm text-ink-600">
+              <span className="flex items-center gap-1.5 rounded-lg border border-primary/20 px-3 py-1.5 text-sm text-primary">
                 <CalendarDays className="h-4 w-4" />
                 {dateRangeLabel}
               </span>

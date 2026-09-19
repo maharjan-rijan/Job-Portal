@@ -10,22 +10,23 @@ export function BrowseJobs() {
     const q = keyword.trim().toLowerCase();
     if (!q) return MOCK_JOBS;
     return MOCK_JOBS.filter((job) =>
-      `${job.title} ${job.company} ${job.location}`.toLowerCase().includes(q)
+      `${job.title} ${job.company} ${job.location}`.toLowerCase().includes(q),
     );
   }, [keyword]);
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-ink-900">Browse jobs</h1>
-      <p className="mt-1 text-sm text-ink-500">
-        {jobs.length} open role{jobs.length === 1 ? "" : "s"} matching your profile
+      <h1 className="text-xl font-semibold text-text">Browse jobs</h1>
+      <p className="mt-1 text-sm text-accent">
+        {jobs.length} open role{jobs.length === 1 ? "" : "s"} matching your
+        profile
       </p>
 
       <SearchBar
         value={keyword}
         onChange={setKeyword}
         placeholder="Search by title, company, or location"
-        className="mt-6 bg-white"
+        className="mt-6 bg-surface"
       />
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -33,7 +34,7 @@ export function BrowseJobs() {
           <JobCard key={job.id} job={job} />
         ))}
         {jobs.length === 0 && (
-          <p className="col-span-full py-12 text-center text-sm text-ink-400">
+          <p className="col-span-full py-12 text-center text-sm text-accent">
             No jobs match "{keyword}".
           </p>
         )}

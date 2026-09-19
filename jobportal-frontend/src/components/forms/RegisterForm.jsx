@@ -54,14 +54,14 @@ export function RegisterForm({ onSuccess = () => {} }) {
 
   return (
     <div>
-      <div className="grid grid-cols-2 gap-2 rounded-lg bg-ink-50 p-1">
+      <div className="grid grid-cols-2 gap-2 rounded-lg bg-background p-1">
         {[USER_ROLES.SEEKER, USER_ROLES.EMPLOYER].map((option) => (
           <button
             key={option}
             type="button"
             onClick={() => setValue("role", option)}
             className={`rounded-md py-2 text-sm font-medium capitalize transition-colors ${
-              role === option ? "bg-white text-ink-900 shadow-sm" : "text-ink-500"
+              role === option ? "bg-surface text-text shadow-sm" : "text-accent"
             }`}
           >
             {option}
@@ -69,7 +69,10 @@ export function RegisterForm({ onSuccess = () => {} }) {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 flex flex-col gap-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-6 flex flex-col gap-4"
+      >
         <TextInput
           label="Full name"
           placeholder="Jane Doe"
@@ -105,10 +108,14 @@ export function RegisterForm({ onSuccess = () => {} }) {
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-600 focus:outline-none"
+            className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
-            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            {showPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
 
@@ -123,10 +130,14 @@ export function RegisterForm({ onSuccess = () => {} }) {
           <button
             type="button"
             onClick={() => setShowConfirmPassword((prev) => !prev)}
-            className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-600 focus:outline-none"
+            className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
             aria-label={showConfirmPassword ? "Hide password" : "Show password"}
           >
-            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            {showConfirmPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
 
@@ -135,9 +146,9 @@ export function RegisterForm({ onSuccess = () => {} }) {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-ink-500">
+      <p className="mt-6 text-center text-sm text-accent">
         Already have an account?{" "}
-        <Link to="/login" className="font-medium text-brand-500">
+        <Link to="/login" className="font-medium text-secondary">
           Log in
         </Link>
       </p>

@@ -1,10 +1,10 @@
 import { cn } from "@/utils/cn";
 
 const VARIANTS = {
-  primary: "bg-brand-500 text-white hover:bg-brand-600",
-  secondary: "bg-brand-50 text-brand-600 hover:bg-brand-100",
-  outline: "border border-ink-200 text-ink-900 hover:bg-ink-50",
-  ghost: "text-ink-700 hover:bg-ink-50",
+  primary: "bg-secondary text-white hover:bg-brand-600",
+  secondary: "bg-secondary/10 text-secondary hover:bg-brand-100",
+  outline: "border border-primary/20 text-text hover:bg-background",
+  ghost: "text-primary hover:bg-background",
   danger: "bg-red-600 text-white hover:bg-red-700",
 };
 
@@ -31,7 +31,7 @@ export function Button({
         "disabled:cursor-not-allowed disabled:opacity-60",
         VARIANTS[variant],
         SIZES[size],
-        className
+        className,
       )}
       disabled={disabled || isLoading}
       {...props}

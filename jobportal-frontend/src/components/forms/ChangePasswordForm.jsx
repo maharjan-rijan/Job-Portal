@@ -9,11 +9,11 @@ import { authService } from "@/services/authService";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-
 export function ChangePasswordForm() {
-    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-    const [showNewPassword, setShowNewPassword] = useState(false);
-    const [showNewConfirmedPassword, setShowNewConfirmedPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showNewConfirmedPassword, setShowNewConfirmedPassword] =
+    useState(false);
   const {
     register,
     handleSubmit,
@@ -41,7 +41,7 @@ export function ChangePasswordForm() {
 
   return (
     <form onSubmit={handleSubmit(mutate)} className="flex flex-col gap-4">
-        <div className="relative">
+      <div className="relative">
         <TextInput
           label="Current password"
           type={showCurrentPassword ? "text" : "password"}
@@ -52,7 +52,7 @@ export function ChangePasswordForm() {
         <button
           type="button"
           onClick={() => setShowCurrentPassword((prev) => !prev)}
-          className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-600 focus:outline-none"
+          className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
           aria-label={showCurrentPassword ? "Hide password" : "Show password"}
         >
           {showCurrentPassword ? (
@@ -74,7 +74,7 @@ export function ChangePasswordForm() {
         <button
           type="button"
           onClick={() => setShowNewPassword((prev) => !prev)}
-          className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-600 focus:outline-none"
+          className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
           aria-label={showNewPassword ? "Hide password" : "Show password"}
         >
           {showNewPassword ? (
@@ -96,8 +96,10 @@ export function ChangePasswordForm() {
         <button
           type="button"
           onClick={() => setShowNewConfirmedPassword((prev) => !prev)}
-          className="absolute right-3 top-[34px] text-ink-400 hover:text-ink-600 focus:outline-none"
-          aria-label={showNewConfirmedPassword ? "Hide password" : "Show password"}
+          className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
+          aria-label={
+            showNewConfirmedPassword ? "Hide password" : "Show password"
+          }
         >
           {showNewConfirmedPassword ? (
             <EyeOff className="h-5 w-5" />

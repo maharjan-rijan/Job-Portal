@@ -23,22 +23,22 @@ export function SearchBar({
     <form
       onSubmit={handleSubmit}
       className={cn(
-        "flex items-center gap-2 rounded-lg border border-ink-200 bg-white px-3.5",
-        className
+        "flex items-center gap-2 rounded-lg border border-primary/20 bg-surface px-3.5",
+        className,
       )}
     >
-      <Search className="h-4.5 w-4.5 shrink-0 text-ink-300" />
+      <Search className="h-4.5 w-4.5 shrink-0 text-accent" />
       <input
         type="text"
         value={value}
         onChange={(event) => onChange?.(event.target.value)}
         placeholder={placeholder}
-        className="h-11 w-full border-0 bg-transparent text-sm text-ink-900 placeholder:text-ink-300 focus:outline-none"
+        className="h-11 w-full border-0 bg-transparent text-sm text-text placeholder:text-accent focus:outline-none"
       />
       {onSubmit && (
         <button
           type="submit"
-          className="shrink-0 rounded-md bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600"
+          className="shrink-0 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-white hover:bg-brand-600"
         >
           {submitLabel}
         </button>

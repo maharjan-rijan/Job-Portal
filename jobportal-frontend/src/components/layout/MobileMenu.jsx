@@ -9,13 +9,13 @@ import { NAV_LINKS } from "@/components/layout/js/navLinks";
 
 export function MobileMenu({ onNavigate, onLoginClick }) {
   return (
-    <nav className="flex flex-col gap-1 border-t border-ink-100 px-4 py-3 lg:hidden">
+    <nav className="flex flex-col gap-1 border-t border-primary/10 px-4 py-3 lg:hidden">
       {NAV_LINKS.map((link) =>
         link.children ? (
           <Disclosure key={link.label}>
             {({ open }) => (
               <>
-                <DisclosureButton className="flex w-full items-center justify-between rounded-md px-2 py-2 text-sm font-medium text-ink-700 hover:bg-ink-50">
+                <DisclosureButton className="flex w-full items-center justify-between rounded-md px-2 py-2 text-sm font-medium text-primary hover:bg-background">
                   {link.label}
                   <ChevronDown
                     className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
@@ -27,7 +27,7 @@ export function MobileMenu({ onNavigate, onLoginClick }) {
                       key={child.to}
                       to={child.to}
                       onClick={onNavigate}
-                      className="rounded-md px-2 py-2 text-sm text-ink-500 hover:bg-ink-50 hover:text-ink-900"
+                      className="rounded-md px-2 py-2 text-sm text-accent hover:bg-background hover:text-text"
                     >
                       {child.label}
                     </NavLink>
@@ -44,7 +44,7 @@ export function MobileMenu({ onNavigate, onLoginClick }) {
             onClick={onNavigate}
             className={({ isActive }) =>
               `rounded-md px-2 py-2 text-sm font-medium ${
-                isActive ? "text-brand-500" : "text-ink-700 hover:bg-ink-50"
+                isActive ? "text-secondary" : "text-primary hover:bg-background"
               }`
             }
           >
@@ -54,7 +54,7 @@ export function MobileMenu({ onNavigate, onLoginClick }) {
       )}
       <button
         onClick={onLoginClick}
-        className="rounded-md px-2 py-2 text-left text-sm font-medium text-ink-700 hover:bg-ink-50"
+        className="rounded-md px-2 py-2 text-left text-sm font-medium text-primary hover:bg-background"
       >
         Log in
       </button>

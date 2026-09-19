@@ -8,10 +8,10 @@ export function Login() {
 
   return (
     <div>
-      <h1 className="text-center text-xl font-semibold text-ink-900">
+      <h1 className="text-center text-xl font-semibold text-text">
         Welcome back
       </h1>
-      <p className="mt-1 text-center text-sm text-ink-500">
+      <p className="mt-1 text-center text-sm text-accent">
         Log in to manage your jobs and applications.
       </p>
 
@@ -19,9 +19,9 @@ export function Login() {
         <LoginForm onSuccess={() => navigate(redirectTo, { replace: true })} />
       </div>
 
-      <p className="mt-6 text-center text-sm text-ink-500">
+      <p className="mt-6 text-center text-sm text-accent">
         Don't have an account?{" "}
-        <Link to="/register" className="font-medium text-brand-500">
+        <Link to="/register" className="font-medium text-secondary">
           Sign up
         </Link>
       </p>

@@ -12,10 +12,14 @@ const ROTATE = -90 - GAP_DEGREES / 2; // centers the gap at the bottom
 export function RadialProgress({ percent, label }) {
   const trackFraction = ARC_DEGREES / 360;
   const trackLength = CIRCUMFERENCE * trackFraction;
-  const progressLength = trackLength * (Math.min(Math.max(percent, 0), 100) / 100);
+  const progressLength =
+    trackLength * (Math.min(Math.max(percent, 0), 100) / 100);
 
   return (
-    <div className="relative mx-auto" style={{ width: SIZE, height: SIZE * 0.72 }}>
+    <div
+      className="relative mx-auto"
+      style={{ width: SIZE, height: SIZE * 0.72 }}
+    >
       <svg
         width={SIZE}
         height={SIZE}
@@ -46,7 +50,7 @@ export function RadialProgress({ percent, label }) {
         </g>
       </svg>
       <div className="absolute inset-x-0 top-[42%] flex flex-col items-center gap-1 -translate-y-1/2">
-        <span className="text-3xl font-bold text-ink-900">{percent}%</span>
+        <span className="text-3xl font-bold text-text">{percent}%</span>
         {label && (
           <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">
             {label}

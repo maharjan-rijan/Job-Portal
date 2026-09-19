@@ -128,6 +128,36 @@ export const MOCK_JOBS = [
   },
 ];
 
+export const MOCK_EMPLOYER_JOBS = [
+  {
+    id: "1",
+    title: "Software Engineer",
+    type: "Full time",
+    location: "New York, USA",
+    applicantsCount: 24,
+    status: "Open",
+    postedAt: "2026-09-10",
+  },
+  {
+    id: "2",
+    title: "Graphic Designer",
+    type: "Internship",
+    location: "Washington, USA",
+    applicantsCount: 11,
+    status: "Open",
+    postedAt: "2026-09-08",
+  },
+  {
+    id: "3",
+    title: "UI/UX Designer",
+    type: "Part time",
+    location: "Cupertino, USA",
+    applicantsCount: 31,
+    status: "Closed",
+    postedAt: "2026-09-05",
+  },
+];
+
 export const MOCK_JOB_ALERTS = [
   { id: "1", name: "Web Designer", keywords: "Web Designer", type: "Full time", frequency: "Daily" },
   { id: "2", name: "UI/UX Designer", keywords: "UI/UX Designer", type: "Full time", frequency: "Daily" },

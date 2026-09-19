@@ -48,11 +48,13 @@ export function ResumeForm() {
   return (
     <form onSubmit={handleSubmit(mutate)} className="flex flex-col gap-6">
       <Card>
-        <h2 className="text-base font-semibold text-ink-900">
-          Basic information
-        </h2>
+        <h2 className="text-base font-semibold text-text">Basic information</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <TextInput label="Name" error={errors.name?.message} {...register("name")} />
+          <TextInput
+            label="Name"
+            error={errors.name?.message}
+            {...register("name")}
+          />
           <TextInput
             label="Email"
             type="email"
@@ -87,7 +89,7 @@ export function ResumeForm() {
       </Card>
 
       <Card>
-        <h2 className="text-base font-semibold text-ink-900">Education</h2>
+        <h2 className="text-base font-semibold text-text">Education</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <TextInput
             label="Degree"
@@ -131,9 +133,7 @@ export function ResumeForm() {
       </Card>
 
       <Card>
-        <h2 className="text-base font-semibold text-ink-900">
-          Work experience
-        </h2>
+        <h2 className="text-base font-semibold text-text">Work experience</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <TextInput
             label="Company name"

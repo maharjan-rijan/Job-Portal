@@ -1,4 +1,10 @@
-import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import { Fragment } from "react";
 import { X } from "lucide-react";
 
@@ -28,15 +34,15 @@ export function Modal({ open, onClose, title, children }) {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <DialogPanel className="w-full max-w-md rounded-card bg-white p-6 shadow-xl">
+            <DialogPanel className="w-full max-w-md rounded-card bg-surface p-6 shadow-xl">
               <div className="mb-4 flex items-center justify-between">
-                <DialogTitle className="text-lg font-semibold text-ink-900">
+                <DialogTitle className="text-lg font-semibold text-text">
                   {title}
                 </DialogTitle>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text-ink-400 hover:text-ink-700"
+                  className="text-accent hover:text-primary"
                   aria-label="Close"
                 >
                   <X className="h-5 w-5" />

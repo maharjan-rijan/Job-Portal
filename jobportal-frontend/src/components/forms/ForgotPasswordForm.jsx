@@ -36,13 +36,14 @@ export function ForgotPasswordForm() {
 
   if (isSubmitted) {
     return (
-      <div className="rounded-lg border border-ink-100 bg-ink-50 p-6 text-center">
-        <p className="text-sm text-ink-700">
-          Check your inbox! We've sent password reset instructions to your email.
+      <div className="rounded-lg border border-primary/10 bg-background p-6 text-center">
+        <p className="text-sm text-primary">
+          Check your inbox! We've sent password reset instructions to your
+          email.
         </p>
         <Link
           to="/login"
-          className="mt-4 inline-block text-sm font-medium text-brand-500"
+          className="mt-4 inline-block text-sm font-medium text-secondary"
         >
           Back to Log in
         </Link>

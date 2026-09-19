@@ -10,7 +10,11 @@ import { ApplyForm } from "@/components/forms/ApplyForm";
 import { NotFound } from "@/pages/public/NotFound";
 import { MOCK_JOBS } from "@/lib/mockData";
 import { useAuth } from "@/hooks/useAuth";
-import { formatDate, formatRelative, formatSalaryRange } from "@/utils/formatters";
+import {
+  formatDate,
+  formatRelative,
+  formatSalaryRange,
+} from "@/utils/formatters";
 
 function initials(name) {
   return name
@@ -25,11 +29,11 @@ function ListSection({ title, items }) {
   if (!items?.length) return null;
   return (
     <div className="mt-6">
-      <h2 className="text-base font-semibold text-ink-900">{title}</h2>
-      <ul className="mt-3 flex flex-col gap-2 text-sm text-ink-600">
+      <h2 className="text-base font-semibold text-text">{title}</h2>
+      <ul className="mt-3 flex flex-col gap-2 text-sm text-primary">
         {items.map((item) => (
           <li key={item} className="flex gap-2">
-            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />
+            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-secondary" />
             {item}
           </li>
         ))}
@@ -69,47 +73,50 @@ export function JobDetails() {
           <Card>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex gap-4">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-lg font-semibold text-brand-600">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-lg font-semibold text-secondary">
                   {initials(job.company)}
                 </div>
                 <div>
-                  <h1 className="text-xl font-semibold text-ink-900">
+                  <h1 className="text-xl font-semibold text-text">
                     {job.title}
                   </h1>
-                  <p className="mt-1 text-sm text-ink-500">
+                  <p className="mt-1 text-sm text-accent">
                     <a
                       href={`https://${job.companyWebsite}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="font-medium text-brand-500 hover:underline"
+                      className="font-medium text-secondary hover:underline"
                     >
                       {job.company}
                     </a>
                   </p>
-                  <p className="mt-1 flex items-center gap-1.5 text-sm text-ink-500">
+                  <p className="mt-1 flex items-center gap-1.5 text-sm text-accent">
                     <MapPin className="h-4 w-4" />
                     {job.location}
                   </p>
                 </div>
               </div>
               <div className="flex flex-col items-start gap-2 sm:items-end">
-                <span className="text-sm font-semibold text-ink-900">
+                <span className="text-sm font-semibold text-text">
                   {formatSalaryRange(job.salaryMin, job.salaryMax)}
                 </span>
                 <Badge tone="brand">{job.type}</Badge>
               </div>
             </div>
 
-            <div className="mt-6 border-t border-ink-100 pt-6">
-              <h2 className="text-base font-semibold text-ink-900">
+            <div className="mt-6 border-t border-primary/10 pt-6">
+              <h2 className="text-base font-semibold text-text">
                 Job Description
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-ink-600">
+              <p className="mt-3 text-sm leading-relaxed text-primary">
                 {job.description}
               </p>
             </div>
 
-            <ListSection title="Responsibilities" items={job.responsibilities} />
+            <ListSection
+              title="Responsibilities"
+              items={job.responsibilities}
+            />
             <ListSection title="Requirements" items={job.requirements} />
             <ListSection title="Benefits" items={job.benefits} />
           </Card>
@@ -131,7 +138,7 @@ export function JobDetails() {
           </Card>
 
           <Card>
-            <h2 className="text-sm font-semibold text-ink-900">Job Overview</h2>
+            <h2 className="text-sm font-semibold text-text">Job Overview</h2>
             <dl className="mt-4 flex flex-col gap-3 text-sm">
               {[
                 ["Published on", formatDate(job.postedAt)],
@@ -143,27 +150,25 @@ export function JobDetails() {
                 ["Application Deadline", formatDate(job.applicationDeadline)],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between gap-4">
-                  <dt className="text-ink-500">{label}</dt>
-                  <dd className="text-right font-medium text-ink-900">
-                    {value}
-                  </dd>
+                  <dt className="text-accent">{label}</dt>
+                  <dd className="text-right font-medium text-text">{value}</dd>
                 </div>
               ))}
             </dl>
           </Card>
 
-          <Card className="flex flex-col gap-2 text-sm text-ink-500">
+          <Card className="flex flex-col gap-2 text-sm text-accent">
             <p className="flex items-center gap-1.5">
-              <Globe className="h-4 w-4 text-brand-500" />
+              <Globe className="h-4 w-4 text-secondary" />
               <Link
                 to={`https://${job.companyWebsite}`}
-                className="hover:text-brand-500"
+                className="hover:text-secondary"
               >
                 {job.companyWebsite}
               </Link>
             </p>
             <p className="flex items-center gap-1.5">
-              <CalendarDays className="h-4 w-4 text-brand-500" />
+              <CalendarDays className="h-4 w-4 text-secondary" />
               Posted {formatRelative(job.postedAt)}
             </p>
           </Card>

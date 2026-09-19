@@ -30,8 +30,8 @@ export function JobAlerts() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-ink-900">Job alerts</h1>
-          <p className="mt-1 text-sm text-ink-500">
+          <h1 className="text-xl font-semibold text-text">Job alerts</h1>
+          <p className="mt-1 text-sm text-accent">
             Get notified when new jobs match your saved searches.
           </p>
         </div>
@@ -42,7 +42,7 @@ export function JobAlerts() {
       </div>
 
       <Card className="mt-6 p-0">
-        <div className="hidden grid-cols-[2fr_2fr_1.5fr_1fr_auto] gap-4 border-b border-ink-100 px-5 py-3 text-xs font-medium uppercase text-ink-400 sm:grid">
+        <div className="hidden grid-cols-[2fr_2fr_1.5fr_1fr_auto] gap-4 border-b border-primary/10 px-5 py-3 text-xs font-medium uppercase text-accent sm:grid">
           <span>Name</span>
           <span>Keywords</span>
           <span>Contract type</span>
@@ -53,17 +53,17 @@ export function JobAlerts() {
         {alerts.map((alert) => (
           <div
             key={alert.id}
-            className="grid grid-cols-2 gap-3 border-b border-ink-100 px-5 py-4 text-sm last:border-0 sm:grid-cols-[2fr_2fr_1.5fr_1fr_auto] sm:items-center"
+            className="grid grid-cols-2 gap-3 border-b border-primary/10 px-5 py-4 text-sm last:border-0 sm:grid-cols-[2fr_2fr_1.5fr_1fr_auto] sm:items-center"
           >
-            <span className="font-medium text-ink-900">{alert.name}</span>
-            <span className="text-ink-500">{alert.keywords}</span>
+            <span className="font-medium text-text">{alert.name}</span>
+            <span className="text-accent">{alert.keywords}</span>
             <span>
               <Badge tone="brand">{alert.type}</Badge>
             </span>
-            <span className="text-ink-500">{alert.frequency}</span>
+            <span className="text-accent">{alert.frequency}</span>
             <button
               onClick={() => handleDelete(alert.id)}
-              className="justify-self-end text-ink-400 hover:text-red-600"
+              className="justify-self-end text-accent hover:text-red-600"
               aria-label={`Remove ${alert.name} alert`}
             >
               <Trash2 className="h-4 w-4" />
@@ -72,7 +72,7 @@ export function JobAlerts() {
         ))}
 
         {alerts.length === 0 && (
-          <p className="px-5 py-10 text-center text-sm text-ink-400">
+          <p className="px-5 py-10 text-center text-sm text-accent">
             No alerts yet — create one to get notified about new roles.
           </p>
         )}

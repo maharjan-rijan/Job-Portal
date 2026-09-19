@@ -32,7 +32,7 @@ export function LoginForm({ onSuccess }) {
       navigate(
         user.role === USER_ROLES.EMPLOYER
           ? "/employer/dashboard"
-          : "/seeker/dashboard"
+          : "/seeker/dashboard",
       );
     } catch (error) {
       toast.error(error.message ?? "Invalid email or password");
@@ -51,7 +51,7 @@ export function LoginForm({ onSuccess }) {
 
       <div className="relative">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-ink-900">Password</label>
+          <label className="text-sm font-medium text-text">Password</label>
         </div>
         <div className="relative mt-1">
           <TextInput
@@ -63,7 +63,7 @@ export function LoginForm({ onSuccess }) {
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-3 top-3 text-ink-400 hover:text-ink-600 focus:outline-none"
+            className="absolute right-3 top-3 text-accent hover:text-primary focus:outline-none"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
@@ -76,7 +76,7 @@ export function LoginForm({ onSuccess }) {
         <div className="relative text-end mt-1">
           <Link
             to="/forgot-password"
-            className="text-xs font-medium text-brand-500 hover:text-brand-600 "
+            className="text-xs font-medium text-secondary hover:text-secondary "
           >
             Forgot Password?
           </Link>

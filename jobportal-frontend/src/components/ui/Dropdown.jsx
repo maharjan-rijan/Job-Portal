@@ -29,21 +29,23 @@ export function Dropdown({
     <div className={cn("flex flex-col gap-1.5", className)}>
       <Listbox value={value} onChange={onChange}>
         {label && (
-          <ListboxLabel className="text-sm font-medium text-ink-700">
+          <ListboxLabel className="text-sm font-medium text-primary">
             {label}
           </ListboxLabel>
         )}
         <div className="relative">
           <ListboxButton
             className={cn(
-              "flex h-11 w-full items-center justify-between rounded-lg border border-ink-200 bg-white px-3.5 text-left text-sm text-ink-900",
+              "flex h-11 w-full items-center justify-between rounded-lg border border-primary/20 bg-surface px-3.5 text-left text-sm text-text",
               "focus:border-brand-500 focus:outline-none",
-              !selected && "text-ink-300",
-              error && "border-red-500"
+              !selected && "text-accent",
+              error && "border-red-500",
             )}
           >
-            <span className="truncate">{selected ? selected.label : placeholder}</span>
-            <ChevronDown className="h-4 w-4 shrink-0 text-ink-400" />
+            <span className="truncate">
+              {selected ? selected.label : placeholder}
+            </span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-accent" />
           </ListboxButton>
 
           <Transition
@@ -52,7 +54,7 @@ export function Dropdown({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <ListboxOptions className="absolute z-20 mt-1.5 max-h-60 w-full overflow-auto rounded-lg border border-ink-100 bg-white py-1 text-sm shadow-lg focus:outline-none">
+            <ListboxOptions className="absolute z-20 mt-1.5 max-h-60 w-full overflow-auto rounded-lg border border-primary/10 bg-surface py-1 text-sm shadow-lg focus:outline-none">
               {options.map((option) => (
                 <ListboxOption
                   key={option.value}
@@ -60,15 +62,19 @@ export function Dropdown({
                   className={({ focus, selected: isSelected }) =>
                     cn(
                       "flex cursor-pointer items-center justify-between px-3.5 py-2.5",
-                      focus && "bg-brand-50",
-                      isSelected ? "font-medium text-brand-600" : "text-ink-700"
+                      focus && "bg-secondary/10",
+                      isSelected
+                        ? "font-medium text-secondary"
+                        : "text-primary",
                     )
                   }
                 >
                   {({ selected: isSelected }) => (
                     <>
                       <span className="truncate">{option.label}</span>
-                      {isSelected && <Check className="h-4 w-4 text-brand-500" />}
+                      {isSelected && (
+                        <Check className="h-4 w-4 text-secondary" />
+                      )}
                     </>
                   )}
                 </ListboxOption>

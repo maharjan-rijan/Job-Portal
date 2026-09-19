@@ -3,14 +3,14 @@ import { cn } from "@/utils/cn";
 
 export const TextArea = forwardRef(function TextArea(
   { label, error, className, id, rows = 5, ...props },
-  ref
+  ref,
 ) {
   const inputId = id ?? props.name;
 
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-ink-700">
+        <label htmlFor={inputId} className="text-sm font-medium text-primary">
           {label}
         </label>
       )}
@@ -19,10 +19,10 @@ export const TextArea = forwardRef(function TextArea(
         ref={ref}
         rows={rows}
         className={cn(
-          "rounded-lg border border-ink-200 px-3.5 py-3 text-sm text-ink-900",
-          "placeholder:text-ink-300 focus:border-brand-500",
+          "rounded-lg border border-primary/20 px-3.5 py-3 text-sm text-text",
+          "placeholder:text-accent focus:border-brand-500",
           error && "border-red-500",
-          className
+          className,
         )}
         {...props}
       />

@@ -31,6 +31,6 @@
     <text x="120" y="158" fill="#FFFFFF" class="logo-text">Job</text>
 
     <!-- Text: 'Sansar' (Energetic Coral / Orange) -->
-    <text x="415" y="158" fill="#F97316" class="logo-text">Sansar</text>
+    <text x="415" y="158" fill="#10b981" class="logo-text">Sansar</text>
   </g>
 </svg>
