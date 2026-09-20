@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Globe, CalendarDays } from "lucide-react";
+import { Mail, Globe, CalendarDays, Pencil } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
@@ -40,9 +40,15 @@ export function AccountOverview() {
             </Badge>
           </div>
         </div>
-        <SecondaryButton as={Link} to="/employer/jobs/new">
-          Post a job
-        </SecondaryButton>
+        <div className="flex gap-2">
+          <SecondaryButton as={Link} to="/employer/profile/edit">
+            <Pencil className="h-4 w-4" />
+            Edit profile
+          </SecondaryButton>
+          <SecondaryButton as={Link} to="/employer/jobs/new">
+            Post a job
+          </SecondaryButton>
+        </div>
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -57,7 +63,9 @@ export function AccountOverview() {
       </div>
 
       <Card>
-        <h2 className="text-base font-semibold text-text">Account details</h2>
+        <h2 className="text-base font-semibold text-text">
+          Account details
+        </h2>
         <dl className="mt-4 flex flex-col gap-3 text-sm">
           <div className="flex items-center gap-2">
             <Mail className="h-4 w-4 text-secondary" />
@@ -70,14 +78,14 @@ export function AccountOverview() {
             <Globe className="h-4 w-4 text-secondary" />
             <dt className="text-accent">Website</dt>
             <dd className="ml-auto font-medium text-text">
-              {user?.website ?? "Not set"}
+              {user?.company?.website ?? "Not set"}
             </dd>
           </div>
           <div className="flex items-center gap-2">
             <CalendarDays className="h-4 w-4 text-secondary" />
             <dt className="text-accent">Member since</dt>
             <dd className="ml-auto font-medium text-text">
-              {formatDate(user?.createdAt)}
+              {formatDate(user?.created_at)}
             </dd>
           </div>
         </dl>

@@ -39,8 +39,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = useCallback(async () => {
+    try {
+      await authService.logout();
+    } catch {
+      // token may already be invalid/expired — clear local state regardless
+    }
     localStorage.removeItem("accessToken");
     setUser(null);
+  }, []);
+
+  /** Merges a partial user update (e.g. after saving profile/company edits). */
+  const updateUser = useCallback((patch) => {
+    setUser((prev) => (prev ? { ...prev, ...patch } : prev));
   }, []);
 
   useEffect(() => {
@@ -56,8 +66,9 @@ export function AuthProvider({ children }) {
       login,
       register,
       logout,
+      updateUser,
     }),
-    [user, isLoading, bootstrap, login, register, logout]
+    [user, isLoading, bootstrap, login, register, logout, updateUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

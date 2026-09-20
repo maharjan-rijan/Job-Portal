@@ -77,7 +77,7 @@ export function AccountOverview() {
             <CalendarDays className="h-4 w-4 text-secondary" />
             <dt className="text-accent">Member since</dt>
             <dd className="ml-auto font-medium text-text">
-              {formatDate(user?.createdAt)}
+              {formatDate(user?.created_at)}
             </dd>
           </div>
         </dl>

@@ -2,13 +2,13 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::get('/jobs', [JobController::class, 'index']);
-Route::get('/jobs/{job}', [JobController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
@@ -24,7 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/jobs', [JobController::class, 'store']);
         Route::put('/jobs/{job}', [JobController::class, 'update']);
         Route::delete('/jobs/{job}', [JobController::class, 'destroy']);
+
+        Route::put('/profile', [ProfileController::class, 'update']);
     });
+    Route::get('/jobs/{job}', [JobController::class, 'show']);
+
     Route::middleware('role:admin')->group(function () {
         // admin-only endpoints
     });

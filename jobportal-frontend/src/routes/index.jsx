@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import { PublicLayout } from "@/layouts/PublicLayout";
 import { AuthLayout } from "@/layouts/AuthLayout";
+import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 
 import { Home } from "@/pages/public/Home";
@@ -17,18 +18,17 @@ import { Register } from "@/pages/auth/Register";
 import { SeekerDashboard } from "@/pages/seeker/Dashboard";
 import { BrowseJobs } from "@/pages/seeker/BrowseJobs";
 import { Resume } from "@/pages/seeker/Resume";
-import { JobAlerts } from "@/pages/seeker/JobAlerts";
 import { AccountOverview as SeekerAccountOverview } from "@/pages/seeker/AccountOverview";
 import { ChangePassword } from "@/pages/auth/ChangePassword";
 import { EmployerDashboard } from "@/pages/employer/Dashboard";
-import { AccountOverview as EmployerAccountOverview } from "@/pages/employer/AccountOverview";
-import { AdminDashboard } from "@/pages/admin/Dashboard";
-import { DashboardLayout } from "@/layouts/DashboardLayout";
-
-import { USER_ROLES } from "@/utils/constants";
 import { ManageJobs } from "@/pages/employer/job/ManageJobs";
 import { PostJob } from "@/pages/employer/job/PostJob";
 import { EditJob } from "@/pages/employer/job/EditJob";
+import { AccountOverview as EmployerAccountOverview } from "@/pages/employer/AccountOverview";
+import { EditProfile as EmployerEditProfile } from "@/pages/employer/EditProfile";
+import { AdminDashboard } from "@/pages/admin/Dashboard";
+
+import { USER_ROLES } from "@/utils/constants";
 
 export const router = createBrowserRouter([
   {
@@ -59,7 +59,7 @@ export const router = createBrowserRouter([
           { path: "/seeker/dashboard", element: <SeekerDashboard /> },
           { path: "/seeker/browse-jobs", element: <BrowseJobs /> },
           { path: "/seeker/resume", element: <Resume /> },
-          { path: "/seeker/job-alerts", element: <JobAlerts /> },
+          // { path: "/seeker/job-alerts", element: <JobAlerts /> },
           { path: "/seeker/account", element: <SeekerAccountOverview /> },
           { path: "/seeker/change-password", element: <ChangePassword /> },
         ],
@@ -77,6 +77,7 @@ export const router = createBrowserRouter([
           { path: "/employer/jobs/new", element: <PostJob /> },
           { path: "/employer/jobs/:jobId/edit", element: <EditJob /> },
           { path: "/employer/account", element: <EmployerAccountOverview /> },
+          { path: "/employer/profile/edit", element: <EmployerEditProfile /> },
           { path: "/employer/change-password", element: <ChangePassword /> },
         ],
       },
@@ -87,12 +88,7 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <DashboardLayout />,
-        children: [
-          { path: "/admin/dashboard", element: <AdminDashboard /> },
-          // { path: "/admin/account", element: <AdminAccountOverview /> },
-          { path: "/admin/change-password", element: <ChangePassword /> },
-          // { path: "/admin/job-types", element: <JobTypes /> },
-        ],
+        children: [{ path: "/admin/dashboard", element: <AdminDashboard /> }],
       },
     ],
   },
