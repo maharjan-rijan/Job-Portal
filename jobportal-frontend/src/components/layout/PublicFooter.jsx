@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import logo from "@/assets/images/logo/logo.svg";
+import { useAuth } from "@/hooks/useAuth";
+import { getFooterLinkGroups, LEGAL_LINKS } from "@/components/layout/js/footerLinks";
 
 export function PublicFooter() {
+  const { user } = useAuth();
+  const groups = getFooterLinkGroups(user?.role);
+
   return (
     <footer className="border-t border-primary/10 bg-ink-900">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -15,21 +20,36 @@ export function PublicFooter() {
             </p>
           </div>
           <div className="flex gap-12 text-sm text-accent">
-            <div className="flex flex-col gap-2">
-              <span className="font-medium text-white">Candidates</span>
-              <Link to="/jobs">Browse jobs</Link>
-              <Link to="/register">Create profile</Link>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="font-medium text-white">Employers</span>
-              <Link to="/employer/dashboard">Post a job</Link>
-              <Link to="/employer/dashboard">Manage applications</Link>
-            </div>
+            {groups.map((group) => (
+              <div key={group.heading} className="flex flex-col gap-2">
+                <span className="font-medium text-white">{group.heading}</span>
+                {group.links.map((link) => (
+                  <Link key={`${link.to}-${link.label}`} to={link.to}>
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
-        <p className="mt-10 text-xs text-accent">
-          © {new Date().getFullYear()} JobSansar. All rights reserved.
-        </p>
+        <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-primary/10 pt-6 sm:flex-row sm:items-center">
+          <p className="text-xs text-accent">
+            © {new Date().getFullYear()} JobSansar. All rights reserved.
+          </p>
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-accent">
+            {LEGAL_LINKS.map((link) => (
+              <Link
+                key={link.label}
+                to={link.to}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
     </footer>
   );

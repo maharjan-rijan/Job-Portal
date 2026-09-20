@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\JobApplication;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use App\Models\JobPost;
@@ -22,5 +23,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Route::model('job', JobPost::class);
+        Route::model('application', JobApplication::class);
     }
 }

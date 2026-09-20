@@ -11,7 +11,7 @@ class JobController extends Controller
 {
     public function index(Request $request)
     {
-        $query = JobPost::query()->where('status', 'Open')->latest();
+        $query = JobPost::query()->with('employer.company')->where('status', 'Open')->latest();
 
         if ($request->filled('q')) {
             $query->where('title', 'like', '%' . $request->q . '%');

@@ -33,10 +33,11 @@ export function useSaveJob() {
 }
 
 /** Employer's own jobs — powers the Manage Jobs page. */
-export function useMyJobs() {
+export function useMyJobs(options = {}) {
   return useQuery({
     queryKey: queryKeys.jobs.mine,
     queryFn: jobService.mine,
+    enabled: options.enabled ?? true,
   });
 }
 

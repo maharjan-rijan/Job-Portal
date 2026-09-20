@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JobPost extends Model
@@ -24,11 +25,15 @@ class JobPost extends Model
             'application_deadline' => 'date',
         ];
     }
+    public function applications(): HasMany
+{
+    return $this->hasMany(JobApplication::class);
+}
 
     public function employer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'employer_id');
     }
 
-    
+
 }

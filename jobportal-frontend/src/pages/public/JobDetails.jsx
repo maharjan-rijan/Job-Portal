@@ -11,7 +11,11 @@ import { ApplyForm } from "@/components/forms/ApplyForm";
 import { NotFound } from "@/pages/public/NotFound";
 import { useJob } from "@/hooks/useJobs";
 import { useAuth } from "@/hooks/useAuth";
-import { formatDate, formatRelative, formatSalaryRange } from "@/utils/formatters";
+import {
+  formatDate,
+  formatRelative,
+  formatSalaryRange,
+} from "@/utils/formatters";
 
 function initials(name) {
   return name
@@ -115,7 +119,10 @@ export function JobDetails() {
               </p>
             </div>
 
-            <ListSection title="Responsibilities" items={job.responsibilities} />
+            <ListSection
+              title="Responsibilities"
+              items={job.responsibilities}
+            />
             <ListSection title="Requirements" items={job.requirements} />
             <ListSection title="Benefits" items={job.benefits} />
           </Card>
@@ -123,12 +130,31 @@ export function JobDetails() {
 
         {/* Sidebar */}
         <div className="flex flex-col gap-6 lg:sticky lg:top-24">
+          {!isAuthenticated && (
+            <Card className="bg-secondary/5 text-sm text-primary">
+              <p>
+                You need to{" "}
+                <button
+                  onClick={() => setLoginOpen(true)}
+                  className="font-medium text-secondary hover:underline"
+                >
+                  log in
+                </button>{" "}
+                to apply for this job.
+              </p>
+            </Card>
+          )}
           <Card className="flex flex-col gap-3 sm:flex-row">
-            <PrimaryButton onClick={handleApplyClick} className="flex-1">
+            <PrimaryButton
+              onClick={handleApplyClick}
+              disabled={!isAuthenticated}
+              className="flex-1"
+            >
               Apply Now
             </PrimaryButton>
             <SecondaryButton
               onClick={() => setSaved((value) => !value)}
+              disabled={!isAuthenticated}
               className="flex-1"
             >
               <Heart className={saved ? "h-4 w-4 fill-current" : "h-4 w-4"} />
@@ -150,9 +176,7 @@ export function JobDetails() {
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between gap-4">
                   <dt className="text-accent">{label}</dt>
-                  <dd className="text-right font-medium text-text">
-                    {value}
-                  </dd>
+                  <dd className="text-right font-medium text-text">{value}</dd>
                 </div>
               ))}
             </dl>
@@ -176,7 +200,11 @@ export function JobDetails() {
         </div>
       </div>
 
-      <Modal open={loginOpen} onClose={() => setLoginOpen(false)} title="Log in to apply">
+      <Modal
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        title="Log in to apply"
+      >
         <LoginForm
           onSuccess={() => {
             setLoginOpen(false);

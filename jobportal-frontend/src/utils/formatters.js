@@ -1,4 +1,4 @@
-import { format, formatDistanceToNow, isValid, parseISO } from "date-fns";
+import { format, formatDistanceToNowStrict, isValid, parseISO } from "date-fns";
 
 function toDate(value) {
   const date = typeof value === "string" ? parseISO(value) : value;
@@ -14,7 +14,7 @@ export function formatDate(value, pattern = "MMM d, yyyy") {
 /** "3 days ago" — used on job cards and application timelines. */
 export function formatRelative(value) {
   const date = toDate(value);
-  return date ? formatDistanceToNow(date, { addSuffix: true }) : "—";
+  return date ? formatDistanceToNowStrict(date, { addSuffix: true }) : "—";
 }
 
 /** "$60,000 – $80,000" style salary range formatting. */

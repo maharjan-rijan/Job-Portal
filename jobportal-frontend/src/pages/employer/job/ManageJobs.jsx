@@ -78,16 +78,16 @@ export function ManageJobs() {
                   Posted {formatDate(job.postedAt)}
                 </p>
               </div>
-              <span className="text-accent">{job.type}</span>
+              <span className="text-accent ">{job.type}</span>
               <span className="text-accent">{job.location}</span>
               <Link
                 to="/employer/applications"
                 className="flex items-center gap-1.5 text-secondary hover:underline"
               >
-                <Users className="h-3.5 w-3.5" />
+                <Users className="h-3.5 w-3.5 items-center" />
                 {job.applicantsCount}
               </Link>
-              <button onClick={() => toggleStatus(job)} className="w-fit">
+              <button onClick={() => toggleStatus(job)} className="w-fit ">
                 <Badge tone={job.status === "Open" ? "success" : "neutral"}>
                   {job.status}
                 </Badge>
