@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
-import { Globe, DollarSign, MapPin } from "lucide-react";
+import { Globe, MapPin, Banknote } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { formatSalaryRange, formatRelative } from "@/utils/formatters";
+import { convertUsdToNPR } from "@/utils/formatters";
 
-export function JobCard({ job }) {
+export function JobCard({ job, currency="USD" }) {
+  const salaryMin = currency === "NPR" ? convertUsdToNPR(job.salaryMin) : job.salaryMin;
+  const salaryMax = currency === "NPR" ? convertUsdToNPR(job.salaryMax) : job.salaryMax;
   return (
     <Card className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex-1">
@@ -25,8 +28,8 @@ export function JobCard({ job }) {
             {job.companyWebsite}
           </li>
           <li className="flex items-center gap-1.5">
-            <DollarSign className="h-4 w-4 text-secondary" />
-            {formatSalaryRange(job.salaryMin, job.salaryMax)}
+            <Banknote className="h-4 w-4 text-secondary" />
+            {formatSalaryRange(salaryMin, salaryMax, currency)}
           </li>
           <li className="flex items-center gap-1.5">
             <MapPin className="h-4 w-4 text-secondary" />

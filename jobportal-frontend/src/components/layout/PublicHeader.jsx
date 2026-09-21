@@ -178,7 +178,7 @@ export function PublicHeader() {
                 </span>
                 <span className="text-sm font-medium text-primary">
                   {user?.name ?? "Guest"}
-                </span>
+                </span>A
               </div>
               {dashboardPath && (
                 <Link

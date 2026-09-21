@@ -31,8 +31,8 @@ export function LoginForm({ onSuccess }) {
       onSuccess?.(user);
       navigate(
         user.role === USER_ROLES.EMPLOYER
-          ? "/employer/dashboard"
-          : "/seeker/dashboard",
+          ? "/"
+          : "/",
       );
     } catch (error) {
       toast.error(error.message ?? "Invalid email or password");

@@ -11,6 +11,10 @@ import { ApplyForm } from "@/components/forms/ApplyForm";
 import { NotFound } from "@/pages/public/NotFound";
 import { useJob } from "@/hooks/useJobs";
 import { useAuth } from "@/hooks/useAuth";
+import {  useCurrency } from "@/hooks/useCurrency";
+import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
+import { convertUsdToNPR } from "@/utils/formatters";
+
 import {
   formatDate,
   formatRelative,
@@ -50,6 +54,7 @@ export function JobDetails() {
   const [saved, setSaved] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
+  const [currency, setCurrency] = useCurrency();
 
   const { data: job, isLoading, isError } = useJob(jobId);
 
@@ -63,6 +68,8 @@ export function JobDetails() {
 
   if (isError || !job) return <NotFound />;
 
+  const salaryMin = currency === "NPR" ? convertUsdToNPR(job.salaryMin) : job.salaryMin;
+  const salaryMax = currency === "NPR" ? convertUsdToNPR(job.salaryMax) : job.salaryMax;
   const handleApplyClick = () => {
     if (!isAuthenticated) {
       setLoginOpen(true);
@@ -103,8 +110,10 @@ export function JobDetails() {
                 </div>
               </div>
               <div className="flex flex-col items-start gap-2 sm:items-end">
+
+                <CurrencyToggle value={currency} onChange={setCurrency} />
                 <span className="text-sm font-semibold text-text">
-                  {formatSalaryRange(job.salaryMin, job.salaryMax)}
+                  {formatSalaryRange(salaryMin, salaryMax, currency)}
                 </span>
                 <Badge tone="brand">{job.type}</Badge>
               </div>

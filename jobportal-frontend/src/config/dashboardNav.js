@@ -16,6 +16,7 @@ import { USER_ROLES } from "@/utils/constants";
 export const DASHBOARD_NAV = {
   [USER_ROLES.SEEKER]: {
     title: "Job Seeker Dashboard",
+    dashboardPath: "/seeker/dashboard",
     accountPath: "/seeker/account",
     changePasswordPath: "/seeker/change-password",
     items: [
@@ -35,6 +36,7 @@ export const DASHBOARD_NAV = {
   },
   [USER_ROLES.EMPLOYER]: {
     title: "Employer Dashboard",
+    dashboardPath: "/employer/dashboard",
     accountPath: "/employer/account",
     changePasswordPath: "/employer/change-password",
     items: [
@@ -49,6 +51,7 @@ export const DASHBOARD_NAV = {
   },
   [USER_ROLES.ADMIN]: {
     title: "Admin Dashboard",
+    dashboardPath: "/admin/dashboard",
     accountPath: null,
     changePasswordPath: null,
     items: [
@@ -64,6 +67,7 @@ export function getDashboardNav(role) {
   return (
     DASHBOARD_NAV[role] ?? {
       title: "Dashboard",
+      dashboardPath: null,
       accountPath: null,
       changePasswordPath: null,
       items: [],

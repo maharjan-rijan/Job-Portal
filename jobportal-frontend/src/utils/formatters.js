@@ -29,3 +29,8 @@ export function formatSalaryRange(min, max, currency = "USD") {
   if (min && max) return `${formatter.format(min)} – ${formatter.format(max)}`;
   return formatter.format(min ?? max);
 }
+
+const USD_TO_NPR_RATE = 133;
+
+export function convertUsdToNPR(amount) {
+  return amount == null ? amount : Math.round(amount * USD_TO_NPR_RATE);}
