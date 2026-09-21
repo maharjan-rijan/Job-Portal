@@ -15,19 +15,22 @@ import { BlogPost } from "@/pages/public/BlogPost";
 import { NotFound } from "@/pages/public/NotFound";
 import { Login } from "@/pages/auth/Login";
 import { Register } from "@/pages/auth/Register";
+import { Dashboard } from "@/pages/auth/Dashboard";
 import { BrowseJobs } from "@/pages/seeker/BrowseJobs";
 import { Resume } from "@/pages/seeker/Resume";
+import { JobAlerts } from "@/pages/seeker/JobAlerts";
+import { AccountOverview } from "@/pages/account/AccountOverview";
 import { ChangePassword } from "@/pages/auth/ChangePassword";
 import { ManageJobs } from "@/pages/employer/job/ManageJobs";
 import { PostJob } from "@/pages/employer/job/PostJob";
 import { EditJob } from "@/pages/employer/job/EditJob";
-import { AccountOverview } from "@/pages/account/AccountOverview";
+import { Applications } from "@/pages/employer/Applications";
+import { BrowseResumes } from "@/pages/employer/Resume/BrowseResume";
+import { ResumeDetail } from "@/pages/employer/Resume/ResumeDetail";
 import { EditProfile as EmployerEditProfile } from "@/pages/employer/EditProfile";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
 
 import { USER_ROLES } from "@/utils/constants";
-import { Dashboard } from "@/pages/auth/Dashboard";
-import { Applications } from "@/pages/employer/Applications";
 
 export const router = createBrowserRouter([
   {
@@ -58,7 +61,7 @@ export const router = createBrowserRouter([
           { path: "/seeker/dashboard", element: <Dashboard /> },
           { path: "/seeker/browse-jobs", element: <BrowseJobs /> },
           { path: "/seeker/resume", element: <Resume /> },
-          // { path: "/seeker/job-alerts", element: <JobAlerts /> },
+          { path: "/seeker/job-alerts", element: <JobAlerts /> },
           { path: "/seeker/account", element: <AccountOverview /> },
           { path: "/seeker/change-password", element: <ChangePassword /> },
         ],
@@ -76,6 +79,8 @@ export const router = createBrowserRouter([
           { path: "/employer/jobs/new", element: <PostJob /> },
           { path: "/employer/jobs/:jobId/edit", element: <EditJob /> },
           { path: "/employer/applications", element: <Applications /> },
+          { path: "/employer/resumes", element: <BrowseResumes /> },
+          { path: "/employer/resumes/:resumeId", element: <ResumeDetail /> },
           { path: "/employer/account", element: <AccountOverview /> },
           { path: "/employer/profile/edit", element: <EmployerEditProfile /> },
           { path: "/employer/change-password", element: <ChangePassword /> },

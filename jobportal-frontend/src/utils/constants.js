@@ -14,6 +14,16 @@ export const JOB_TYPES = [
 
 export const ALERT_FREQUENCIES = ["Daily", "Weekly", "Monthly"];
 
+export const SOCIAL_PLATFORMS = [
+  "LinkedIn",
+  "GitHub",
+  "Twitter / X",
+  "Portfolio",
+  "Behance",
+  "Dribbble",
+  "Other",
+];
+
 export const APPLICATION_STATUS = {
   APPLIED: "applied",
   SHORTLISTED: "shortlisted",

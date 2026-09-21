@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ResumeController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -18,8 +19,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Role-gated example routes, matching the React app's role checks:
     Route::middleware('role:seeker')->group(function () {
-            Route::post('/jobs/{job}/applications', [JobApplicationController::class, 'store']);
-
+        Route::post('/jobs/{job}/applications', [JobApplicationController::class, 'store']);
+        Route::get('/resumes/me', [ResumeController::class, 'show']);
+        Route::put('/resumes/me', [ResumeController::class, 'update']);
     });
     Route::middleware('role:employer')->group(function () {
         Route::get('/jobs/mine', [JobController::class, 'mine']);
@@ -28,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/jobs/{job}', [JobController::class, 'destroy']);
         Route::get('/applications', [JobApplicationController::class, 'index']);
         Route::patch('/applications/{application}/status', [JobApplicationController::class, 'updateStatus']);
+        Route::get('/resumes', [ResumeController::class, 'index']);
+        Route::get('/resumes/{resume}', [ResumeController::class, 'showById']);
 
 
         Route::put('/profile', [ProfileController::class, 'update']);

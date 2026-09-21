@@ -19,7 +19,9 @@ export const queryKeys = {
   },
   resumes: {
     all: ["resumes"],
+    list: (filters) => ["resumes", "list", filters ?? {}],
     detail: (id) => ["resumes", "detail", id],
+    mine: ["resumes", "mine"],
   },
   auth: {
     me: ["auth", "me"],
