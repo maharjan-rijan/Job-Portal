@@ -32,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/applications/{application}/status', [JobApplicationController::class, 'updateStatus']);
         Route::get('/resumes', [ResumeController::class, 'index']);
         Route::get('/resumes/{resume}', [ResumeController::class, 'showById']);
+        Route::get('/resumes/{resume}/pdf', [ResumeController::class, 'downloadPdf']);
 
 
         Route::put('/profile', [ProfileController::class, 'update']);

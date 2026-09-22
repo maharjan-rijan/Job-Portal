@@ -6,10 +6,29 @@ use App\Http\Controllers\Controller;
 use App\Models\Resume;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class ResumeController extends Controller
 {
 
+    public function downloadPdf(Resume $resume)
+    {
+        $pdf = Pdf::loadView('pdf.resume', ['resume' => $resume]);
+        $filename = str_replace(' ', '-', strtolower($resume->name ?? 'resume')) . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    public function downloadMyPdf(Request $request)
+    {
+        $resume = $request->user()->resume;
+        if (!$resume) {
+            return response()->json(['message' => 'No resume yet'], 404);
+        }
+        $pdf = Pdf::loadView('pdf.resume', ['resume' => $resume]);
+        return $pdf->download('my-resume.pdf');
+    }
     public function show(Request $request)
     {
         $resume = $request->user()->resume;
@@ -86,7 +105,7 @@ class ResumeController extends Controller
             $keyword = $request->q;
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', "%{$keyword}%")
-                  ->orWhere('location', 'like', "%{$keyword}%");
+                    ->orWhere('location', 'like', "%{$keyword}%");
             });
         }
 

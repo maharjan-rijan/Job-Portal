@@ -24,6 +24,7 @@ function normalizeJob(job) {
     benefits: job.benefits ?? [],
     status: job.status ?? "Open",
     postedAt: job.created_at ?? job.postedAt ?? null,
+    employerId: job.employer_id != null ? String(job.employer_id) : job.employer?.id != null ? String(job.employer.id) : null,
     company: job.employer?.company?.name ?? job.employer?.name ?? "—",
     companyWebsite: job.employer?.company?.website ?? "",
     applicantsCount: job.applicants_count ?? 0,

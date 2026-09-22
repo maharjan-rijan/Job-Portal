@@ -11,7 +11,7 @@ import { ApplyForm } from "@/components/forms/ApplyForm";
 import { NotFound } from "@/pages/public/NotFound";
 import { useJob } from "@/hooks/useJobs";
 import { useAuth } from "@/hooks/useAuth";
-import {  useCurrency } from "@/hooks/useCurrency";
+import { useCurrency } from "@/hooks/useCurrency";
 import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 import { convertUsdToNPR } from "@/utils/formatters";
 
@@ -20,6 +20,7 @@ import {
   formatRelative,
   formatSalaryRange,
 } from "@/utils/formatters";
+import { Button } from "@/components/ui/Button";
 
 function initials(name) {
   return name
@@ -49,10 +50,8 @@ function ListSection({ title, items }) {
 
 export function JobDetails() {
   const { jobId } = useParams();
-  const { isAuthenticated } = useAuth();
-
+  const { user, isAuthenticated } = useAuth();
   const [saved, setSaved] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
   const [currency, setCurrency] = useCurrency();
 
@@ -68,8 +67,19 @@ export function JobDetails() {
 
   if (isError || !job) return <NotFound />;
 
-  const salaryMin = currency === "NPR" ? convertUsdToNPR(job.salaryMin) : job.salaryMin;
-  const salaryMax = currency === "NPR" ? convertUsdToNPR(job.salaryMax) : job.salaryMax;
+  const employerId = job.employer_id || job.employerId;
+  const isOwner = user?.id === employerId;
+
+  const salaryMin =
+    currency === "NPR" ? convertUsdToNPR(job.salaryMin) : job.salaryMin;
+  const salaryMax =
+    currency === "NPR" ? convertUsdToNPR(job.salaryMax) : job.salaryMax;
+
+  const isOwnJob =
+    isAuthenticated &&
+    user?.id != null &&
+    job.employerId != null &&
+    String(user.id) === job.employerId;
   const handleApplyClick = () => {
     if (!isAuthenticated) {
       setLoginOpen(true);
@@ -110,7 +120,6 @@ export function JobDetails() {
                 </div>
               </div>
               <div className="flex flex-col items-start gap-2 sm:items-end">
-
                 <CurrencyToggle value={currency} onChange={setCurrency} />
                 <span className="text-sm font-semibold text-text">
                   {formatSalaryRange(salaryMin, salaryMax, currency)}
@@ -143,12 +152,15 @@ export function JobDetails() {
             <Card className="bg-secondary/5 text-sm text-primary">
               <p>
                 You need to{" "}
-                <button
-                  onClick={() => setLoginOpen(true)}
+                <Button
+                  as={Link}
+                  to="/login"
+                  variant="ghost"
+                  size="m"
                   className="font-medium text-secondary hover:underline"
                 >
                   log in
-                </button>{" "}
+                </Button>{" "}
                 to apply for this job.
               </p>
             </Card>
@@ -156,14 +168,14 @@ export function JobDetails() {
           <Card className="flex flex-col gap-3 sm:flex-row">
             <PrimaryButton
               onClick={handleApplyClick}
-              disabled={!isAuthenticated}
+              disabled={!isAuthenticated || isOwnJob}
               className="flex-1"
             >
               Apply Now
             </PrimaryButton>
             <SecondaryButton
               onClick={() => setSaved((value) => !value)}
-              disabled={!isAuthenticated}
+              disabled={!isAuthenticated || isOwner}
               className="flex-1"
             >
               <Heart className={saved ? "h-4 w-4 fill-current" : "h-4 w-4"} />
@@ -208,19 +220,6 @@ export function JobDetails() {
           </Card>
         </div>
       </div>
-
-      <Modal
-        open={loginOpen}
-        onClose={() => setLoginOpen(false)}
-        title="Log in to apply"
-      >
-        <LoginForm
-          onSuccess={() => {
-            setLoginOpen(false);
-            setApplyOpen(true);
-          }}
-        />
-      </Modal>
 
       <Modal
         open={applyOpen}
