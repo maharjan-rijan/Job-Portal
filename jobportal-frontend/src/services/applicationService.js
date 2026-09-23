@@ -5,7 +5,7 @@ function normalizeApplication(app) {
   if (!app) return app;
   return {
     id: String(app.id),
-    jobId: field(app, "job_id", "jobId"),
+    jobId: app.job?.id ?? field(app, "job_id", "jobId"),
     jobTitle: app.job?.title ?? app.jobTitle ?? "—",
     company: app.job?.employer?.company?.name ?? app.job?.employer?.name ?? null,
     name: field(app, "full_name", "name", "—"),

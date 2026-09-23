@@ -44,9 +44,9 @@ const ROLE_CONFIG = {
     editPath: "/employer/profile/edit",
     secondaryAction: { to: "/employer/jobs/new", label: "Post a job" },
     stats: [
-      { label: "Open jobs", value: 2 },
-      { label: "Total applicants", value: 66 },
-      { label: "Company profile", value: "85%" },
+      { label: "Open Jobs", value: 2 },
+      { label: "Total Applications", value: 66 },
+      { label: "Company Profile", value: "85%" },
     ],
     details: [
       { icon: Mail, label: "Email", value: (user) => user?.email ?? "—" },
