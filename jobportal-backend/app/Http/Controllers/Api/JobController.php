@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Job\StoreJobRequest;
+use App\Http\Requests\Job\UpdateJobRequest;
 use App\Models\JobPost;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
+    /** camelCase request keys that don't match their snake_case DB column. */
+    private const FIELD_MAP = [
+        'salaryMin' => 'salary_min',
+        'salaryMax' => 'salary_max',
+        'experienceLevel' => 'experience_level',
+        'applicationDeadline' => 'application_deadline',
+    ];
+
     public function index(Request $request)
     {
         $query = JobPost::query()->with('employer.company')->where('status', 'Open')->latest();
@@ -45,98 +54,49 @@ class JobController extends Controller
         return response()->json($jobs);
     }
 
-    public function store(Request $request)
+    public function store(StoreJobRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|min:3',
-            'type' => 'required|string',
-            'location' => 'required|string|min:2',
-            'salaryMin' => 'nullable|numeric|min:0',
-            'salaryMax' => 'nullable|numeric|min:0',
-            'vacancies' => 'required|integer|min:1',
-            'experienceLevel' => 'nullable|string',
-            'applicationDeadline' => 'nullable|date',
-            'description' => 'required|string|min:20',
-            'responsibilities' => 'nullable|array',
-            'requirements' => 'nullable|array',
-            'benefits' => 'nullable|array',
-        ]);
+        // Unset fields default to an empty array on create, matching the
+        // column defaults (JSON columns) rather than being left out.
+        $data = $this->mapJobData($request->validated()) + [
+            'responsibilities' => [],
+            'requirements' => [],
+            'benefits' => [],
+        ];
 
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
-
-        $job = $request->user()->jobPosts()->create([
-            'title' => $request->title,
-            'type' => $request->type,
-            'location' => $request->location,
-            'salary_min' => $request->salaryMin,
-            'salary_max' => $request->salaryMax,
-            'vacancies' => $request->vacancies,
-            'experience_level' => $request->experienceLevel,
-            'application_deadline' => $request->applicationDeadline,
-            'description' => $request->description,
-            'responsibilities' => $request->responsibilities ?? [],
-            'requirements' => $request->requirements ?? [],
-            'benefits' => $request->benefits ?? [],
-        ]);
+        $job = $request->user()->jobPosts()->create($data);
 
         return response()->json($job, 201);
     }
 
-    public function update(Request $request, JobPost $job)
+    public function update(UpdateJobRequest $request, JobPost $job)
     {
-        if ($job->employer_id !== $request->user()->id) {
-            return response()->json(['message' => 'You do not own this job'], 403);
-        }
+        $this->authorize('update', $job);
 
-        $validator = Validator::make($request->all(), [
-            'title' => 'sometimes|string|min:3',
-            'type' => 'sometimes|string',
-            'location' => 'sometimes|string|min:2',
-            'salaryMin' => 'nullable|numeric|min:0',
-            'salaryMax' => 'nullable|numeric|min:0',
-            'vacancies' => 'sometimes|integer|min:1',
-            'experienceLevel' => 'nullable|string',
-            'applicationDeadline' => 'nullable|date',
-            'description' => 'sometimes|string|min:20',
-            'responsibilities' => 'nullable|array',
-            'requirements' => 'nullable|array',
-            'benefits' => 'nullable|array',
-            'status' => 'sometimes|in:Open,Closed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
-
-        $job->update([
-            'title' => $request->title ?? $job->title,
-            'type' => $request->type ?? $job->type,
-            'location' => $request->location ?? $job->location,
-            'salary_min' => $request->salaryMin ?? $job->salary_min,
-            'salary_max' => $request->salaryMax ?? $job->salary_max,
-            'vacancies' => $request->vacancies ?? $job->vacancies,
-            'experience_level' => $request->experienceLevel ?? $job->experience_level,
-            'application_deadline' => $request->applicationDeadline ?? $job->application_deadline,
-            'description' => $request->description ?? $job->description,
-            'responsibilities' => $request->responsibilities ?? $job->responsibilities,
-            'requirements' => $request->requirements ?? $job->requirements,
-            'benefits' => $request->benefits ?? $job->benefits,
-            'status' => $request->status ?? $job->status,
-        ]);
+        // Only the keys actually present in the (sometimes-validated) input
+        // are included here, so omitted fields keep their existing value —
+        // no manual "$request->x ?? $job->x" fallback needed per field.
+        $job->update($this->mapJobData($request->validated()));
 
         return response()->json($job);
     }
 
     public function destroy(Request $request, JobPost $job)
     {
-        if ($job->employer_id !== $request->user()->id) {
-            return response()->json(['message' => 'You do not own this job'], 403);
-        }
+        $this->authorize('delete', $job);
 
         $job->delete();
 
         return response()->json(['message' => 'Job deleted']);
+    }
+
+    /** Renames the request's camelCase keys to the model's snake_case columns. */
+    private function mapJobData(array $validated): array
+    {
+        $data = [];
+        foreach ($validated as $key => $value) {
+            $data[self::FIELD_MAP[$key] ?? $key] = $value;
+        }
+        return $data;
     }
 }

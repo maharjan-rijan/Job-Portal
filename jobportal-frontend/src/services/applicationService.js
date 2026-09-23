@@ -1,23 +1,32 @@
 import api from "@/lib/axios";
+import { field } from "@/utils/normalize";
 
 function normalizeApplication(app) {
   if (!app) return app;
   return {
     id: String(app.id),
-    jobId: app.job_id ?? app.jobId,
+    jobId: field(app, "job_id", "jobId"),
     jobTitle: app.job?.title ?? app.jobTitle ?? "—",
-    name: app.full_name ?? app.name ?? "—",
+    company: app.job?.employer?.company?.name ?? app.job?.employer?.name ?? null,
+    name: field(app, "full_name", "name", "—"),
     email: app.email ?? "—",
-    resumeUrl: app.resume_url ?? app.resumeUrl ?? null,
-    coverNote: app.cover_note ?? app.coverNote ?? "",
+    resumeUrl: field(app, "resume_url", "resumeUrl"),
+    coverNote: field(app, "cover_note", "coverNote", ""),
     status: app.status ?? "applied",
-    appliedAt: app.created_at ?? app.appliedAt ?? null,
+    appliedAt: field(app, "created_at", "appliedAt"),
   };
 }
 
 export const applicationService = {
   list: (params) =>
     api.get("/applications", { params }).then((r) => {
+      const raw = Array.isArray(r.data) ? r.data : r.data.data ?? [];
+      return raw.map(normalizeApplication);
+    }),
+
+  /** Seeker-only: the applications the current user has submitted. */
+  mine: () =>
+    api.get("/applications/mine").then((r) => {
       const raw = Array.isArray(r.data) ? r.data : r.data.data ?? [];
       return raw.map(normalizeApplication);
     }),

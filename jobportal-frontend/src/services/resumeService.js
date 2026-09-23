@@ -1,9 +1,10 @@
 import api from "@/lib/axios";
+import { field } from "@/utils/normalize";
 
 function normalizeEducationEntry(entry) {
   return {
     degree: entry.degree ?? "",
-    fieldOfStudy: entry.field_of_study ?? entry.fieldOfStudy ?? "",
+    fieldOfStudy: field(entry, "field_of_study", "fieldOfStudy", ""),
     school: entry.school ?? "",
     from: entry.from ?? "",
     to: entry.to ?? "",
@@ -13,8 +14,8 @@ function normalizeEducationEntry(entry) {
 
 function normalizeExperienceEntry(entry) {
   return {
-    companyName: entry.company_name ?? entry.companyName ?? "",
-    jobTitle: entry.job_title ?? entry.jobTitle ?? "",
+    companyName: field(entry, "company_name", "companyName", ""),
+    jobTitle: field(entry, "job_title", "jobTitle", ""),
     from: entry.from ?? "",
     to: entry.to ?? "",
     description: entry.description ?? "",
@@ -43,12 +44,12 @@ function normalizeResume(resume) {
     title: resume.title,
     location: resume.location,
     website: resume.website ?? "",
-    expectedSalary: resume.expected_salary ?? resume.expectedSalary ?? "",
+    expectedSalary: field(resume, "expected_salary", "expectedSalary", ""),
     education: (resume.education ?? []).map(normalizeEducationEntry),
     experience: (resume.experience ?? []).map(normalizeExperienceEntry),
     socialLinks: (resume.social_links ?? resume.socialLinks ?? []).map(normalizeSocialLinkEntry),
     achievements: (resume.achievements ?? []).map(normalizeAchievementEntry),
-    updatedAt: resume.updated_at ?? resume.updatedAt ?? null,
+    updatedAt: field(resume, "updated_at", "updatedAt"),
   };
 }
 

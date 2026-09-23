@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ResumeController;
+use App\Http\Controllers\Api\SavedJobController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -20,6 +21,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Role-gated example routes, matching the React app's role checks:
     Route::middleware('role:seeker')->group(function () {
         Route::post('/jobs/{job}/applications', [JobApplicationController::class, 'store']);
+        Route::get('/applications/mine', [JobApplicationController::class, 'mine']);
+        Route::get('/saved-jobs', [SavedJobController::class, 'index']);
+        Route::post('/saved-jobs/{job}', [SavedJobController::class, 'store']);
+        Route::delete('/saved-jobs/{job}', [SavedJobController::class, 'destroy']);
         Route::get('/resumes/me', [ResumeController::class, 'show']);
         Route::put('/resumes/me', [ResumeController::class, 'update']);
     });

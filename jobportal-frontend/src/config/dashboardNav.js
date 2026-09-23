@@ -10,6 +10,7 @@ import {
   FilePlus,
   Users,
   FileBarChart,
+  Heart,
 } from "lucide-react";
 import { USER_ROLES } from "@/utils/constants";
 
@@ -22,13 +23,14 @@ export const DASHBOARD_NAV = {
     items: [
       { label: "Dashboard", to: "/seeker/dashboard", icon: LayoutDashboard },
       { label: "Browse Jobs", to: "/seeker/browse-jobs", icon: Search },
-      { label: "My Resume", to: "/seeker/resume", icon: FileText },
-      { label: "Job Alerts", to: "/seeker/job-alerts", icon: Bell },
+      { label: "Saved Jobs", to: "/seeker/saved-jobs", icon: Heart },
       {
         label: "Applied Jobs",
         to: "/seeker/applied-jobs",
         icon: BriefcaseBusiness,
       },
+      { label: "My Resume", to: "/seeker/resume", icon: FileText },
+      { label: "Job Alerts", to: "/seeker/job-alerts", icon: Bell },
 
       { label: "Account", to: "/seeker/account", icon: UserCircle },
       { label: "Change Password", to: "/seeker/change-password", icon: Lock },

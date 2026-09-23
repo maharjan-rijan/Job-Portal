@@ -1,8 +1,3 @@
-/**
- * Central query-key factory. Keeping keys in one place avoids typos and
- * makes cache invalidation predictable (e.g. queryClient.invalidateQueries
- * ({ queryKey: queryKeys.jobs.all })).
- */
 export const queryKeys = {
   jobs: {
     all: ["jobs"],
@@ -16,6 +11,10 @@ export const queryKeys = {
   applications: {
     all: ["applications"],
     list: (filters) => ["applications", "list", filters ?? {}],
+    mine: ["applications", "mine"],  
+  },
+  savedJobs: {                        
+    all: ["savedJobs"],
   },
   resumes: {
     all: ["resumes"],

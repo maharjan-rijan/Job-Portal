@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { Loader2, Pencil, Plus, Trash2, Users } from "lucide-react";
+import { Pencil, Plus, Trash2, Users } from "lucide-react";
 import toast from "react-hot-toast";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { QueryState } from "@/components/ui/QueryState";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { formatDate } from "@/utils/formatters";
 import { useMyJobs, useSaveJob, useDeleteJob } from "@/hooks/useJobs";
@@ -44,19 +45,7 @@ export function ManageJobs() {
         </PrimaryButton>
       </div>
 
-      {isLoading && (
-        <div className="flex justify-center py-16">
-          <Loader2 className="h-6 w-6 animate-spin text-secondary" />
-        </div>
-      )}
-
-      {isError && (
-        <p className="py-12 text-center text-sm text-red-600">
-          Could not load your jobs{error?.message ? `: ${error.message}` : ""}.
-        </p>
-      )}
-
-      {!isLoading && !isError && (
+      <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load your jobs">
         <Card className="mt-6 p-0">
           <div className="hidden grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-4 border-b border-primary/10 px-5 py-3 text-xs font-medium uppercase text-accent sm:grid">
             <span>Title</span>
@@ -118,7 +107,7 @@ export function ManageJobs() {
             </p>
           )}
         </Card>
-      )}
+      </QueryState>
     </div>
   );
 }

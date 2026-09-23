@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { Spinner } from "@/components/ui/Spinner";
 import { PostJobForm } from "@/components/forms/PostJobForm";
 import { NotFound } from "@/pages/public/NotFound";
 import { useJob } from "@/hooks/useJobs";
@@ -11,13 +11,7 @@ export function EditJob() {
 
   const { data: job, isLoading, isError } = useJob(jobId);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-secondary" />
-      </div>
-    );
-  }
+  if (isLoading) return <Spinner fullSection />;
 
   if (isError || !job) return <NotFound />;
 

@@ -8,6 +8,8 @@ import { StatisticsPanel } from "@/components/ui/StatisticsPanel";
 import { MiniBarChart } from "@/components/ui/MiniBarChart";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyJobs } from "@/hooks/useJobs";
+import { useMyApplications, useApplications } from "@/hooks/useApplications";
+import { useSavedJobs } from "@/hooks/useSavedJobs";
 import { formatDate } from "@/utils/formatters";
 import { cn } from "@/utils/cn";
 import { USER_ROLES } from "@/utils/constants";
@@ -41,10 +43,11 @@ const STATUS_TONE = { applied: "neutral", interview: "brand", rejected: "danger"
  */
 const ROLE_CONFIG = {
   [USER_ROLES.SEEKER]: {
-    stats: [
-      { icon: FileText, label: "Applications sent", value: 12, trend: { direction: "up", value: "8.2%" } },
-      { icon: Heart, label: "Saved jobs", value: 8, trend: { direction: "up", value: "2.4%" } },
-      { icon: CalendarCheck, label: "Interviews scheduled", value: 3, trend: { direction: "up", value: "1 new" } },
+    // value is filled in below from real query data — see STAT_VALUES.
+    statDefs: [
+      { key: "applications", icon: FileText, label: "Applications sent" },
+      { key: "saved", icon: Heart, label: "Saved jobs" },
+      { key: "interviews", icon: CalendarCheck, label: "Interviews scheduled" },
     ],
     statsGridCols: "sm:grid-cols-3",
     radial: null,
@@ -61,9 +64,9 @@ const ROLE_CONFIG = {
     bottomItems: RECENT_APPLICATIONS,
   },
   [USER_ROLES.EMPLOYER]: {
-    stats: [
-      { icon: Briefcase, label: "Open jobs", value: 2, trend: { direction: "up", value: "1 new" } },
-      { icon: Users2, label: "Total applicants", value: 66, trend: { direction: "up", value: "12.4%" } },
+    statDefs: [
+      { key: "openJobs", icon: Briefcase, label: "Open jobs" },
+      { key: "totalApplicants", icon: Users2, label: "Total applicants" },
     ],
     statsGridCols: "sm:grid-cols-2",
     radial: {
@@ -103,6 +106,26 @@ export function Dashboard() {
   });
   const recentJobs = (myJobs ?? []).slice(0, 5);
 
+  // One extra query per role, purely to power the stat cards below —
+  // each is gated to the role that actually owns the endpoint, same
+  // pattern as useMyJobs above.
+  const { data: employerApplications } = useApplications(undefined, { enabled: isEmployer });
+  const { data: myApplications } = useMyApplications({ enabled: !isEmployer });
+  const { data: savedJobs } = useSavedJobs({ enabled: !isEmployer });
+
+  const STAT_VALUES = {
+    applications: myApplications?.length ?? 0,
+    saved: savedJobs?.length ?? 0,
+    interviews: (myApplications ?? []).filter((app) => app.status === "interview").length,
+    openJobs: (myJobs ?? []).filter((job) => job.status === "Open").length,
+    totalApplicants: employerApplications?.length ?? 0,
+  };
+
+  const stats = config.statDefs.map((def) => ({
+    ...def,
+    value: STAT_VALUES[def.key],
+  }));
+
   return (
     <div className="flex flex-col gap-6">
       <div className={cn("grid gap-6", config.radial && "lg:grid-cols-3")}>
@@ -113,7 +136,7 @@ export function Dashboard() {
             config.radial && "lg:col-span-2"
           )}
         >
-          {config.stats.map((stat) => (
+          {stats.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>

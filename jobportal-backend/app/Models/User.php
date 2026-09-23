@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -32,5 +33,10 @@ class User extends Authenticatable
     public function resume(): HasOne
     {
         return $this->hasOne(Resume::class, 'user_id');
+    }
+
+    public function savedJobs(): BelongsToMany
+    {
+        return $this->belongsToMany(JobPost::class, 'saved_jobs')->withTimestamps();
     }
 }

@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { field } from "@/utils/normalize";
 
 /**
  * The backend returns snake_case DB columns and nests company info under
@@ -6,24 +7,24 @@ import api from "@/lib/axios";
  * expects (camelCase, flat company/companyWebsite). Keeping the mapping
  * here means components never need to know the wire format changed.
  */
-function normalizeJob(job) {
+export function normalizeJob(job) {
   if (!job) return job;
   return {
     id: String(job.id),
     title: job.title,
     type: job.type,
     location: job.location,
-    salaryMin: job.salary_min ?? job.salaryMin ?? null,
-    salaryMax: job.salary_max ?? job.salaryMax ?? null,
+    salaryMin: field(job, "salary_min", "salaryMin"),
+    salaryMax: field(job, "salary_max", "salaryMax"),
     vacancies: job.vacancies,
-    experienceLevel: job.experience_level ?? job.experienceLevel ?? null,
-    applicationDeadline: job.application_deadline ?? job.applicationDeadline ?? null,
+    experienceLevel: field(job, "experience_level", "experienceLevel"),
+    applicationDeadline: field(job, "application_deadline", "applicationDeadline"),
     description: job.description,
     responsibilities: job.responsibilities ?? [],
     requirements: job.requirements ?? [],
     benefits: job.benefits ?? [],
     status: job.status ?? "Open",
-    postedAt: job.created_at ?? job.postedAt ?? null,
+    postedAt: field(job, "created_at", "postedAt"),
     employerId: job.employer_id != null ? String(job.employer_id) : job.employer?.id != null ? String(job.employer.id) : null,
     company: job.employer?.company?.name ?? job.employer?.name ?? "—",
     companyWebsite: job.employer?.company?.website ?? "",

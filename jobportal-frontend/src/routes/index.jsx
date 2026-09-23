@@ -31,6 +31,8 @@ import { EditProfile as EmployerEditProfile } from "@/pages/employer/EditProfile
 import { AdminDashboard } from "@/pages/admin/Dashboard";
 
 import { USER_ROLES } from "@/utils/constants";
+import { SavedJobs } from "@/pages/seeker/SavedJobs";
+import { MyApplications } from "@/pages/seeker/MyApplications";
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +62,8 @@ export const router = createBrowserRouter([
         children: [
           { path: "/seeker/dashboard", element: <Dashboard /> },
           { path: "/seeker/browse-jobs", element: <BrowseJobs /> },
+          { path: "/seeker/saved-jobs", element: <SavedJobs /> },
+          { path: "/seeker/applied-jobs", element: <MyApplications /> },
           { path: "/seeker/resume", element: <Resume /> },
           { path: "/seeker/job-alerts", element: <JobAlerts /> },
           { path: "/seeker/account", element: <AccountOverview /> },

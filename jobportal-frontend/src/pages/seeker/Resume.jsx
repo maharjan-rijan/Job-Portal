@@ -1,6 +1,7 @@
-import { Loader2 } from "lucide-react";
 import { ResumeForm } from "@/components/forms/ResumeForm";
+import { QueryState } from "@/components/ui/QueryState";
 import { useResume } from "@/hooks/useResume";
+
 export function Resume() {
   const { data: resume, isLoading, isError } = useResume();
 
@@ -11,23 +12,15 @@ export function Resume() {
         Keep this up to date — employers see it when you apply.
       </p>
 
-      {isLoading && (
-        <div className="flex justify-center py-16">
-          <Loader2 className="h-6 w-6 animate-spin text-secondary" />
-        </div>
-      )}
-
-      {isError && (
-        <p className="py-12 text-center text-sm text-red-600">
-          Could not load your resume. You can still fill it out below.
-        </p>
-      )}
-
-      {!isLoading && (
+      <QueryState
+        isLoading={isLoading}
+        isError={isError}
+        errorLabel="Could not load your resume. You can still fill it out below"
+      >
         <div className="mt-6">
           <ResumeForm resume={resume} />
         </div>
-      )}
+      </QueryState>
     </div>
   );
 }

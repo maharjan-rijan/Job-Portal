@@ -1,6 +1,5 @@
 import { useParams, Link } from "react-router-dom";
 import {
-  Loader2,
   Mail,
   Globe,
   MapPin,
@@ -11,6 +10,7 @@ import {
   Download,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { Spinner } from "@/components/ui/Spinner";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { NotFound } from "@/pages/public/NotFound";
 import { useResumeDetail } from "@/hooks/useResume";
@@ -111,13 +111,7 @@ export function ResumeDetail() {
   const { resumeId } = useParams();
   const { data: resume, isLoading, isError } = useResumeDetail(resumeId);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-secondary" />
-      </div>
-    );
-  }
+  if (isLoading) return <Spinner fullSection />;
 
   if (isError || !resume) return <NotFound />;
 

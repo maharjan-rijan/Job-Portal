@@ -3,27 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\JobApplication\StoreJobApplicationRequest;
+use App\Http\Requests\JobApplication\UpdateJobApplicationStatusRequest;
 use App\Models\JobApplication;
 use App\Models\JobPost;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class JobApplicationController extends Controller
 {
     /** POST /jobs/{job}/applications — any authenticated user can apply. */
-    public function store(Request $request, JobPost $job)
+    public function store(StoreJobApplicationRequest $request, JobPost $job)
     {
-        $validator = Validator::make($request->all(), [
-            'fullName' => 'required|string|min:2',
-            'email' => 'required|email',
-            'resumeUrl' => 'required|url',
-            'coverNote' => 'nullable|string|max:500',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
-
         $application = $job->applications()->create([
             'seeker_id' => $request->user()->id,
             'full_name' => $request->fullName,
@@ -39,7 +29,7 @@ class JobApplicationController extends Controller
     public function index(Request $request)
     {
         $query = JobApplication::query()
-            ->whereHas('job', fn ($q) => $q->where('employer_id', $request->user()->id))
+            ->whereHas('job', fn($q) => $q->where('employer_id', $request->user()->id))
             ->with('job')
             ->latest();
 
@@ -53,20 +43,22 @@ class JobApplicationController extends Controller
         return response()->json($query->get());
     }
 
-    /** PATCH /applications/{application}/status — employer-only, must own the job. */
-    public function updateStatus(Request $request, JobApplication $application)
+    public function mine(Request $request)
     {
-        if ($application->job->employer_id !== $request->user()->id) {
-            return response()->json(['message' => 'You do not own this job'], 403);
-        }
+        $applications = JobApplication::query()
+            ->where('seeker_id', $request->user()->id)
+            ->with('job.employer.company')
+            ->latest()
+            ->get();
 
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|in:applied,shortlisted,interview,rejected,hired',
-        ]);
+        return response()->json($applications);
+    }
 
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
+
+    /** PATCH /applications/{application}/status — employer-only, must own the job. */
+    public function updateStatus(UpdateJobApplicationStatusRequest $request, JobApplication $application)
+    {
+        $this->authorize('updateStatus', $application);
 
         $application->update(['status' => $request->status]);
 

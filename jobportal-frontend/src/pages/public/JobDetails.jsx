@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Heart, MapPin, Globe, CalendarDays, Loader2 } from "lucide-react";
+import { Heart, MapPin, Globe, CalendarDays } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { Spinner } from "@/components/ui/Spinner";
 import { Badge } from "@/components/ui/Badge";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { Modal } from "@/components/ui/Modal";
-import { LoginForm } from "@/components/forms/LoginForm";
 import { ApplyForm } from "@/components/forms/ApplyForm";
 import { NotFound } from "@/pages/public/NotFound";
 import { useJob } from "@/hooks/useJobs";
+import { useSavedJobs, useToggleSavedJob } from "@/hooks/useSavedJobs";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 import { convertUsdToNPR } from "@/utils/formatters";
+import { USER_ROLES } from "@/utils/constants";
 
 import {
   formatDate,
@@ -51,21 +53,31 @@ function ListSection({ title, items }) {
 export function JobDetails() {
   const { jobId } = useParams();
   const { user, isAuthenticated } = useAuth();
-  const [saved, setSaved] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
   const [currency, setCurrency] = useCurrency();
 
+  // /saved-jobs is a seeker-only endpoint, so only fetch/mutate it for
+  // authenticated seekers — an employer viewing their own listing or a
+  // logged-out visitor just sees an inert, unsaved heart.
+  const canSave = isAuthenticated && user?.role === USER_ROLES.SEEKER;
+  const { data: savedJobs = [] } = useSavedJobs({ enabled: canSave });
+  const { save, unsave } = useToggleSavedJob();
+
   const { data: job, isLoading, isError } = useJob(jobId);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-secondary" />
-      </div>
-    );
-  }
+  if (isLoading) return <Spinner fullSection />;
 
   if (isError || !job) return <NotFound />;
+
+  const isSaved = savedJobs.some((saved) => saved.id === job.id);
+  const isSaving = save.isPending || unsave.isPending;
+  const handleToggleSave = () => {
+    if (isSaved) {
+      unsave.mutate(job.id);
+    } else {
+      save.mutate(job.id);
+    }
+  };
 
   const employerId = job.employer_id || job.employerId;
   const isOwner = user?.id === employerId;
@@ -174,12 +186,12 @@ export function JobDetails() {
               Apply Now
             </PrimaryButton>
             <SecondaryButton
-              onClick={() => setSaved((value) => !value)}
-              disabled={!isAuthenticated || isOwner}
+              onClick={handleToggleSave}
+              disabled={!canSave || isOwner || isSaving}
               className="flex-1"
             >
-              <Heart className={saved ? "h-4 w-4 fill-current" : "h-4 w-4"} />
-              {saved ? "Saved" : "Save Job"}
+              <Heart className={isSaved ? "h-4 w-4 fill-current" : "h-4 w-4"} />
+              {isSaved ? "Saved" : "Save Job"}
             </SecondaryButton>
           </Card>
 

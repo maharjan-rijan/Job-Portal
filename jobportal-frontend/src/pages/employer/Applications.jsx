@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { ExternalLink, Loader2, Mail } from "lucide-react";
+import { ExternalLink, Mail } from "lucide-react";
 import toast from "react-hot-toast";
 import { Card } from "@/components/ui/Card";
 import { Dropdown } from "@/components/ui/Dropdown";
+import { QueryState } from "@/components/ui/QueryState";
 import { useApplications, useUpdateApplicationStatus } from "@/hooks/useApplications";
 import { useMyJobs } from "@/hooks/useJobs";
 import { formatDate } from "@/utils/formatters";
@@ -71,19 +72,7 @@ export function Applications() {
         />
       </div>
 
-      {isLoading && (
-        <div className="flex justify-center py-16">
-          <Loader2 className="h-6 w-6 animate-spin text-secondary" />
-        </div>
-      )}
-
-      {isError && (
-        <p className="py-12 text-center text-sm text-red-600">
-          Could not load applicants{error?.message ? `: ${error.message}` : ""}.
-        </p>
-      )}
-
-      {!isLoading && !isError && (
+      <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load applicants">
         <Card className="mt-6 p-0">
           <div className="hidden grid-cols-[2fr_2fr_1fr_1fr_1.3fr] gap-4 border-b border-primary/10 px-5 py-3 text-xs font-medium uppercase text-accent sm:grid">
             <span>Applicant</span>
@@ -143,7 +132,7 @@ export function Applications() {
             </p>
           )}
         </Card>
-      )}
+      </QueryState>
     </div>
   );
 }
