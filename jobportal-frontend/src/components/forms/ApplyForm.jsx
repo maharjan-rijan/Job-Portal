@@ -1,12 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { TextInput } from "@/components/ui/TextInput";
 import { TextArea } from "@/components/ui/TextArea";
 import { Button } from "@/components/ui/Button";
 import { applySchema } from "@/lib/validation/applySchema";
-import { applicationService } from "@/services/applicationService";
+import { useApplyToJob } from "@/hooks/useApplications";
 import { useAuth } from "@/hooks/useAuth";
 
 export function ApplyForm({ jobId, onSuccess }) {
@@ -25,19 +24,25 @@ export function ApplyForm({ jobId, onSuccess }) {
     },
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (payload) => applicationService.applyToJob(jobId, payload),
-    onSuccess: () => {
-      toast.success("Application submitted!");
-      onSuccess?.();
-    },
-    onError: (error) => {
-      toast.error(error.message ?? "Could not submit your application");
-    },
-  });
+ const { mutate, isPending } = useApplyToJob();
+
+  const onSubmit = (payload) => {
+    mutate(
+      { jobId, payload },
+      {
+        onSuccess: () => {
+          toast.success("Application submitted!");
+          onSuccess?.();
+        },
+        onError: (error) => {
+          toast.error(error.message ?? "Could not submit your application");
+        },
+      }
+    );
+  };
 
   return (
-    <form onSubmit={handleSubmit(mutate)} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <TextInput
         label="Full name"
         placeholder="Jane Doe"

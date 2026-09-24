@@ -8,6 +8,7 @@ import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { useSaveJob } from "@/hooks/useJobs";
 import { jobSchema } from "@/lib/validation/jobSchema";
 import { JOB_TYPES } from "@/utils/constants";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 const listToText = (list) => (Array.isArray(list) ? list.join("\n") : "");
 const textToList = (text) =>
@@ -65,7 +66,7 @@ export function PostJobForm({ job, onSuccess }) {
         onError: (error) => {
           toast.error(error.message ?? "Could not save this job");
         },
-      }
+      },
     );
   };
 
@@ -140,27 +141,48 @@ export function PostJobForm({ job, onSuccess }) {
         {...register("applicationDeadline")}
       />
 
-      <TextArea
-        label="Job description"
-        rows={5}
-        placeholder="What will this person do day to day?"
-        error={errors.description?.message}
-        {...register("description")}
+      <Controller
+        name="description"
+        control={control}
+        render={({ field }) => (
+          <RichTextEditor
+            label="Job description"
+            placeholder="What will this person do day to day?"
+            error={errors.description?.message}
+            value={field.value}
+            onChange={field.onChange}
+          />
+        )}
       />
-      <TextArea
-        label="Responsibilities"
-        rows={4}
-        placeholder={"One per line, e.g.\nOwn features end-to-end\nParticipate in code review"}
-        error={errors.responsibilities?.message}
-        {...register("responsibilities")}
+
+      <Controller
+        name="responsibilities"
+        control={control}
+        render={({ field }) => (
+          <RichTextEditor
+            label="Responsibilities"
+            placeholder="One per line, e.g.Own features end-to-end Participate in code review"
+            error={errors.responsibilities?.message}
+            value={field.value}
+            onChange={field.onChange}
+          />
+        )}
       />
-      <TextArea
-        label="Requirements"
-        rows={4}
-        placeholder={"One per line, e.g.\n3+ years experience\nComfortable with React"}
-        error={errors.requirements?.message}
-        {...register("requirements")}
+
+      <Controller
+        name="requirements"
+        control={control}
+        render={({ field }) => (
+          <RichTextEditor
+            label="Requirements"
+            placeholder="One per line, e.g.Own features end-to-end Participate in code review"
+            error={errors.requirements?.message}
+            value={field.value}
+            onChange={field.onChange}
+          />
+        )}
       />
+
       <TextArea
         label="Benefits"
         rows={4}

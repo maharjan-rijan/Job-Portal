@@ -1,15 +1,9 @@
 import { Link } from "react-router-dom";
-import {
-  FileText,
-  Heart,
-  CalendarCheck,
-  Users2,
-  Briefcase,
-  Loader2,
-} from "lucide-react";
+import { FileText, Heart, CalendarCheck, Users2, Briefcase } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { StatCard } from "@/components/ui/StatCard";
+import { QueryState } from "@/components/ui/QueryState";
 import { RadialProgress } from "@/components/ui/RadialProgress";
 import { StatisticsPanel } from "@/components/ui/StatisticsPanel";
 import { MiniBarChart } from "@/components/ui/MiniBarChart";
@@ -19,63 +13,20 @@ import { useMyApplications, useApplications } from "@/hooks/useApplications";
 import { useSavedJobs } from "@/hooks/useSavedJobs";
 import { formatDate } from "@/utils/formatters";
 import { cn } from "@/utils/cn";
-import { USER_ROLES } from "@/utils/constants";
+import { USER_ROLES, APPLICATION_STATUS_TONE } from "@/utils/constants";
 
 const MONTHLY_APPLICATIONS = [
-  { month: "Jan", value: 2 },
-  { month: "Feb", value: 4 },
-  { month: "Mar", value: 3 },
-  { month: "Apr", value: 5 },
-  { month: "May", value: 3 },
-  { month: "Jun", value: 2 },
-  { month: "Jul", value: 4 },
-  { month: "Aug", value: 1 },
-  { month: "Sep", value: 3 },
-  { month: "Oct", value: 6 },
-  { month: "Nov", value: 5 },
-  { month: "Dec", value: 1 },
+  { month: "Jan", value: 2 }, { month: "Feb", value: 4 }, { month: "Mar", value: 3 },
+  { month: "Apr", value: 5 }, { month: "May", value: 3 }, { month: "Jun", value: 2 },
+  { month: "Jul", value: 4 }, { month: "Aug", value: 1 }, { month: "Sep", value: 3 },
+  { month: "Oct", value: 6 }, { month: "Nov", value: 5 }, { month: "Dec", value: 1 },
 ];
 
 const WEEKLY_APPLICATIONS = [
-  { day: "Mon", value: 4 },
-  { day: "Tue", value: 7 },
-  { day: "Wed", value: 5 },
-  { day: "Thu", value: 9 },
-  { day: "Fri", value: 6 },
-  { day: "Sat", value: 2 },
+  { day: "Mon", value: 4 }, { day: "Tue", value: 7 }, { day: "Wed", value: 5 },
+  { day: "Thu", value: 9 }, { day: "Fri", value: 6 }, { day: "Sat", value: 2 },
   { day: "Sun", value: 3 },
 ];
-
-const RECENT_APPLICATIONS = [
-  {
-    id: "1",
-    title: "Software Engineer",
-    company: "Winbrans",
-    status: "interview",
-    appliedAt: "2026-09-10",
-  },
-  {
-    id: "2",
-    title: "UI/UX Designer",
-    company: "UD Design",
-    status: "applied",
-    appliedAt: "2026-09-08",
-  },
-  {
-    id: "3",
-    title: "Web Developer",
-    company: "Webinner",
-    status: "rejected",
-    appliedAt: "2026-08-30",
-  },
-];
-
-const STATUS_TONE = {
-  applied: "neutral",
-  interview: "brand",
-  rejected: "danger",
-  hired: "success",
-};
 
 /**
  * Everything that differs between the seeker and employer dashboards
@@ -88,7 +39,7 @@ const ROLE_CONFIG = {
     // value is filled in below from real query data — see STAT_VALUES.
     statDefs: [
       { key: "applications", icon: FileText, label: "Applications sent" },
-      { key: "saved", icon: Heart, label: "Saved Jobs" },
+      { key: "saved", icon: Heart, label: "Saved jobs" },
       { key: "interviews", icon: CalendarCheck, label: "Interviews scheduled" },
     ],
     statsGridCols: "sm:grid-cols-3",
@@ -101,14 +52,15 @@ const ROLE_CONFIG = {
       { label: "Interviews", multiplier: 0.4 },
       { label: "Offers", multiplier: 0.15 },
     ],
-    bottomTitle: "Recent Applications",
+    bottomTitle: "Recent applications",
     bottomIcon: CalendarCheck,
-    // bottomItems: RECENT_APPLICATIONS,
+    // items intentionally omitted — real data comes from useMyApplications()
+    // in the component, same as the employer branch's useMyJobs() below.
   },
   [USER_ROLES.EMPLOYER]: {
     statDefs: [
-      { key: "openJobs", icon: Briefcase, label: "Open Jobs" },
-      { key: "totalApplicants", icon: Users2, label: "Total Applicants" },
+      { key: "openJobs", icon: Briefcase, label: "Open jobs" },
+      { key: "totalApplicants", icon: Users2, label: "Total applicants" },
     ],
     statsGridCols: "sm:grid-cols-2",
     radial: {
@@ -117,11 +69,7 @@ const ROLE_CONFIG = {
       percent: 55,
       label: "+10%",
       note: "You're on track to fill both roles by month end.",
-      footer: [
-        ["Target", "5"],
-        ["Filled", "3"],
-        ["This week", "1"],
-      ],
+      footer: [["Target", "5"], ["Filled", "3"], ["This week", "1"]],
     },
     chartTitle: "Statistics",
     chartSubtitle: "Applicant activity across your open roles",
@@ -131,7 +79,7 @@ const ROLE_CONFIG = {
       { label: "Interviews", multiplier: 0.35 },
       { label: "Hires", multiplier: 0.1 },
     ],
-    bottomTitle: "Your Jobs",
+    bottomTitle: "Your jobs",
     bottomIcon: CalendarCheck,
     // items/renderer intentionally omitted — the employer branch fetches
     // real data via useMyJobs() in the component instead (see below).
@@ -147,47 +95,30 @@ export function Dashboard() {
   // Only fetches for employers — /jobs/mine is an employer-only endpoint,
   // and this hook still runs (per Rules of Hooks) for a seeker, it just
   // stays disabled and its result is unused in that branch.
-  const {
-    data: myJobs,
-    isLoading: jobsLoading,
-    isError: jobsError,
-  } = useMyJobs({
+  const { data: myJobs, isLoading: jobsLoading, isError: jobsError } = useMyJobs({
     enabled: isEmployer,
   });
-  const { data: employerApplications } = useApplications(undefined, { enabled: isEmployer});
-
-  const recentJobs = (myJobs ?? []).slice(0, 5).map((job) => {
-    const applicantsCount = (employerApplications ?? []).filter(
-      (app) => String(app.jobId) === String(job.id),
-    ).length;
-    return {
-      ...job,
-      applicantsCount,
-    };
-  });
+  const recentJobs = (myJobs ?? []).slice(0, 5);
 
   // One extra query per role, purely to power the stat cards below —
   // each is gated to the role that actually owns the endpoint, same
   // pattern as useMyJobs above.
-
-  const { data: myApplications } = useMyApplications({ enabled: !isEmployer });
+  const { data: employerApplications } = useApplications(undefined, { enabled: isEmployer });
+  const {
+    data: myApplications,
+    isLoading: applicationsLoading,
+    isError: applicationsError,
+  } = useMyApplications({ enabled: !isEmployer });
   const { data: savedJobs } = useSavedJobs({ enabled: !isEmployer });
 
-  const recentApplications = (myApplications ?? [])
-    .slice()
-    .sort((a, b) => {
-      const dateA = new Date(a.appliedAt ?? a.createdAt ?? 0);
-      const dateB = new Date(b.appliedAt ?? b.createdAt ?? 0);
-      return dateB - dateA;
-    })
-    .slice(0, 5);
+  // applicationService.mine() is already newest-first from the backend
+  // (JobApplication::latest()), so this is just "take the top 5".
+  const recentApplications = (myApplications ?? []).slice(0, 5);
 
   const STAT_VALUES = {
     applications: myApplications?.length ?? 0,
     saved: savedJobs?.length ?? 0,
-    interviews: (myApplications ?? []).filter(
-      (app) => app.status === "interview",
-    ).length,
+    interviews: (myApplications ?? []).filter((app) => app.status === "interview").length,
     openJobs: (myJobs ?? []).filter((job) => job.status === "Open").length,
     totalApplicants: employerApplications?.length ?? 0,
   };
@@ -204,7 +135,7 @@ export function Dashboard() {
           className={cn(
             "grid gap-4",
             config.statsGridCols,
-            config.radial && "lg:col-span-2",
+            config.radial && "lg:col-span-2"
           )}
         >
           {stats.map((stat) => (
@@ -222,18 +153,13 @@ export function Dashboard() {
             <p className="mt-0.5 self-start text-sm text-accent">
               {config.radial.subtitle}
             </p>
-            <RadialProgress
-              percent={config.radial.percent}
-              label={config.radial.label}
-            />
+            <RadialProgress percent={config.radial.percent} label={config.radial.label} />
             <p className="text-sm text-accent">{config.radial.note}</p>
             <div className="mt-4 grid w-full grid-cols-3 divide-x divide-primary/10 border-t border-primary/10 pt-4 text-center">
               {config.radial.footer.map(([label, value]) => (
                 <div key={label}>
                   <p className="text-xs text-accent">{label}</p>
-                  <p className="mt-1 text-sm font-semibold text-text">
-                    {value}
-                  </p>
+                  <p className="mt-1 text-sm font-semibold text-text">{value}</p>
                 </div>
               ))}
             </div>
@@ -262,15 +188,10 @@ export function Dashboard() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <BottomIcon className="h-4 w-4 text-secondary" />
-            <h2 className="text-base font-semibold text-text">
-              {config.bottomTitle}
-            </h2>
+            <h2 className="text-base font-semibold text-text">{config.bottomTitle}</h2>
           </div>
           {isEmployer && (
-            <Link
-              to="/employer/jobs"
-              className="text-sm text-secondary hover:underline"
-            >
+            <Link to="/employer/jobs" className="text-sm text-secondary hover:underline">
               View all
             </Link>
           )}
@@ -278,32 +199,16 @@ export function Dashboard() {
 
         {isEmployer ? (
           <div className="mt-4">
-            {jobsLoading && (
-              <div className="flex justify-center py-8">
-                <Loader2 className="h-5 w-5 animate-spin text-secondary" />
-              </div>
-            )}
-            {jobsError && (
-              <p className="py-6 text-center text-sm text-red-600">
-                Could not load your jobs.
-              </p>
-            )}
-            {!jobsLoading && !jobsError && (
+            <QueryState isLoading={jobsLoading} isError={jobsError} errorLabel="Could not load your jobs">
               <div className="divide-y divide-primary/10">
                 {recentJobs.map((job) => (
-                  <div
-                    key={job.id}
-                    className="flex items-center justify-between py-3 text-sm"
-                  >
+                  <div key={job.id} className="flex items-center justify-between py-3 text-sm">
                     <p className="font-medium text-text">{job.title}</p>
                     <div className="flex items-center gap-4">
                       <span className="text-accent">
-                        {job.applicantsCount} applicant
-                        {job.applicantsCount === 1 ? "" : "s"}
+                        {job.applicantsCount} applicant{job.applicantsCount === 1 ? "" : "s"}
                       </span>
-                      <Badge
-                        tone={job.status === "Open" ? "success" : "neutral"}
-                      >
+                      <Badge tone={job.status === "Open" ? "success" : "neutral"}>
                         {job.status}
                       </Badge>
                     </div>
@@ -315,29 +220,37 @@ export function Dashboard() {
                   </p>
                 )}
               </div>
-            )}
+            </QueryState>
           </div>
         ) : (
-          <div className="mt-4 divide-y divide-primary/10">
-            {recentApplications.map((app) => (
-              <div
-                key={app.id}
-                className="flex items-center justify-between py-3 text-sm"
-              >
-                <div>
-                  <p className="font-medium text-text">{app.title}</p>
-                  <p className="text-accent">{app.company}</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-accent">
-                    {formatDate(app.appliedAt ?? app.createdAt)}
-                  </span>
-                  <Badge tone={STATUS_TONE[app.status] ?? "neutral"}>
-                    {app.status}
-                  </Badge>
-                </div>
+          <div className="mt-4">
+            <QueryState
+              isLoading={applicationsLoading}
+              isError={applicationsError}
+              errorLabel="Could not load your applications"
+            >
+              <div className="divide-y divide-primary/10">
+                {recentApplications.map((app) => (
+                  <div key={app.id} className="flex items-center justify-between py-3 text-sm">
+                    <div>
+                      <p className="font-medium text-text">{app.jobTitle}</p>
+                      <p className="text-accent">{app.company ?? "—"}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-accent">{formatDate(app.appliedAt)}</span>
+                      <Badge tone={APPLICATION_STATUS_TONE[app.status] ?? "neutral"} className="capitalize">
+                        {app.status}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+                {recentApplications.length === 0 && (
+                  <p className="py-6 text-center text-sm text-accent">
+                    You haven't applied to any jobs yet.
+                  </p>
+                )}
               </div>
-            ))}
+            </QueryState>
           </div>
         )}
       </Card>

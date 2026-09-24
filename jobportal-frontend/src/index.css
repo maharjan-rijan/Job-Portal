@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography" ;
 
 /*
   Semantic color system — light values on :root, dark overrides under

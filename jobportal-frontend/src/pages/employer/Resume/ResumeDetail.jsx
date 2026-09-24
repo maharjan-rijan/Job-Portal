@@ -14,6 +14,7 @@ import { Spinner } from "@/components/ui/Spinner";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { NotFound } from "@/pages/public/NotFound";
 import { useResumeDetail } from "@/hooks/useResume";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
 
 function initials(name = "") {
   return name
@@ -38,7 +39,7 @@ function buildResumeHtml(resume) {
       <div style="margin-bottom:12px">
         <strong>${esc(e.degree)}, ${esc(e.fieldOfStudy)}</strong><br/>
         <span style="color:#555">${esc(e.school)} · ${esc(e.from)} – ${esc(e.to)}</span>
-        ${e.description ? `<p style="margin:4px 0 0">${esc(e.description)}</p>` : ""}
+        ${e.description ? `<div style="margin:4px 0 0">${sanitizeHtml(e.description)}</div>` : ""}
       </div>`
     )
     .join("");
@@ -197,7 +198,10 @@ export function ResumeDetail() {
                     {entry.school} · {entry.from} – {entry.to}
                   </p>
                   {entry.description && (
-                    <p className="mt-2 text-sm text-accent">{entry.description}</p>
+                    <div
+                      className="prose prose-sm mt-2 max-w-none text-accent"
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(entry.description) }}
+                    />
                   )}
                 </div>
               ))}

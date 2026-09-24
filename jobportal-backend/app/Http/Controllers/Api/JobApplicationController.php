@@ -14,6 +14,13 @@ class JobApplicationController extends Controller
     /** POST /jobs/{job}/applications — any authenticated user can apply. */
     public function store(StoreJobApplicationRequest $request, JobPost $job)
     {
+        $alreadyApplied = $job->applications()
+            ->where('seeker_id', $request->user()->id)
+            ->exists();
+
+        if ($alreadyApplied) {
+            return response()->json(['message' => 'You have already applied to this job'], 422);
+        }
         $application = $job->applications()->create([
             'seeker_id' => $request->user()->id,
             'full_name' => $request->fullName,

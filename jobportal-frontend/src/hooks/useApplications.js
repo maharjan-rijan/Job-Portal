@@ -20,6 +20,17 @@ export function useMyApplications(options = {}) {
   });
 }
 
+export function useApplyToJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ jobId, payload }) => applicationService.applyToJob(jobId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.applications.mine });
+    },
+  });
+}
+
 /** Used by the Applications page's per-row status dropdown. */
 export function useUpdateApplicationStatus() {
   const queryClient = useQueryClient();

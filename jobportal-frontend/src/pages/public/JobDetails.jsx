@@ -11,6 +11,7 @@ import { ApplyForm } from "@/components/forms/ApplyForm";
 import { NotFound } from "@/pages/public/NotFound";
 import { useJob } from "@/hooks/useJobs";
 import { useSavedJobs, useToggleSavedJob } from "@/hooks/useSavedJobs";
+import { useMyApplications } from "@/hooks/useApplications";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
@@ -63,11 +64,16 @@ export function JobDetails() {
   const { data: savedJobs = [] } = useSavedJobs({ enabled: canSave });
   const { save, unsave } = useToggleSavedJob();
 
+  // Same gating as savedJobs above — /applications/mine is seeker-only.
+  const { data: myApplications = [] } = useMyApplications({ enabled: canSave });
+
   const { data: job, isLoading, isError } = useJob(jobId);
 
   if (isLoading) return <Spinner fullSection />;
 
   if (isError || !job) return <NotFound />;
+
+  const hasApplied = myApplications.some((app) => String(app.jobId) === String(job.id));
 
   const isSaved = savedJobs.some((saved) => saved.id === job.id);
   const isSaving = save.isPending || unsave.isPending;
@@ -180,14 +186,14 @@ export function JobDetails() {
           <Card className="flex flex-col gap-3 sm:flex-row">
             <PrimaryButton
               onClick={handleApplyClick}
-              disabled={!isAuthenticated || isOwnJob}
+              disabled={!isAuthenticated || isOwnJob || hasApplied}
               className="flex-1"
             >
-              Apply Now
+              {hasApplied ? "Applied" : "Apply Now"}
             </PrimaryButton>
             <SecondaryButton
               onClick={handleToggleSave}
-              disabled={!canSave || isOwner || isSaving}
+              disabled={!canSave || isOwner || isSaving || hasApplied}
               className="flex-1"
             >
               <Heart className={isSaved ? "h-4 w-4 fill-current" : "h-4 w-4"} />

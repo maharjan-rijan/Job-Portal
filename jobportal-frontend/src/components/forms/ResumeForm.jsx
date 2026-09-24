@@ -5,6 +5,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { TextInput } from "@/components/ui/TextInput";
 import { TextArea } from "@/components/ui/TextArea";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Dropdown } from "@/components/ui/Dropdown";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
@@ -83,7 +84,9 @@ export function ResumeForm({ resume }) {
           email: resume.email ?? user?.email ?? "",
           ...BLANK_RESUME,
           ...resume,
-          education: resume.education?.length ? resume.education : [BLANK_EDUCATION_ENTRY],
+          education: resume.education?.length
+            ? resume.education
+            : [BLANK_EDUCATION_ENTRY],
           experience: resume.experience ?? [],
           socialLinks: resume.socialLinks ?? [],
           achievements: resume.achievements ?? [],
@@ -108,11 +111,13 @@ export function ResumeForm({ resume }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <Card>
-        <h2 className="text-base font-semibold text-text">
-          Basic information
-        </h2>
+        <h2 className="text-base font-semibold text-text">Basic information</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <TextInput label="Name" error={errors.name?.message} {...register("name")} />
+          <TextInput
+            label="Name"
+            error={errors.name?.message}
+            {...register("name")}
+          />
           <TextInput
             label="Email"
             type="email"
@@ -154,7 +159,9 @@ export function ResumeForm({ resume }) {
           onAdd={() => education.append(BLANK_EDUCATION_ENTRY)}
         />
         {errors.education?.root?.message && (
-          <p className="mt-2 text-xs text-red-600">{errors.education.root.message}</p>
+          <p className="mt-2 text-xs text-red-600">
+            {errors.education.root.message}
+          </p>
         )}
         <div className="mt-4 flex flex-col gap-5">
           {education.fields.map((field, index) => (
@@ -203,10 +210,17 @@ export function ResumeForm({ resume }) {
                   />
                 )}
               </div>
-              <TextArea
-                label="Description (optional)"
-                error={errors.education?.[index]?.description?.message}
-                {...register(`education.${index}.description`)}
+              <Controller
+                control={control}
+                name={`education.${index}.description`}
+                render={({ field: controllerField }) => (
+                  <RichTextEditor
+                    label="Description (optional)"
+                    error={errors.education?.[index]?.description?.message}
+                    value={controllerField.value}
+                    onChange={controllerField.onChange}
+                  />
+                )}
               />
             </div>
           ))}
@@ -261,10 +275,17 @@ export function ResumeForm({ resume }) {
                   label="Remove this experience entry"
                 />
               </div>
-              <TextArea
-                label="Description (optional)"
-                error={errors.experience?.[index]?.description?.message}
-                {...register(`experience.${index}.description`)}
+              <Controller
+                control={control}
+                name={`experience.${index}.description`}
+                render={({ field: controllerField }) => (
+                  <RichTextEditor
+                    label="Description (optional)"
+                    error={errors.experience?.[index]?.description?.message}
+                    value={controllerField.value}
+                    onChange={controllerField.onChange}
+                  />
+                )}
               />
             </div>
           ))}
@@ -292,7 +313,10 @@ export function ResumeForm({ resume }) {
                     <Dropdown
                       label="Platform"
                       placeholder="Select"
-                      options={SOCIAL_PLATFORMS.map((p) => ({ label: p, value: p }))}
+                      options={SOCIAL_PLATFORMS.map((p) => ({
+                        label: p,
+                        value: p,
+                      }))}
                       value={controllerField.value}
                       onChange={controllerField.onChange}
                       error={errors.socialLinks?.[index]?.platform?.message}
@@ -359,17 +383,28 @@ export function ResumeForm({ resume }) {
                   label="Remove this achievement"
                 />
               </div>
-              <TextArea
-                label="Description (optional)"
-                error={errors.achievements?.[index]?.description?.message}
-                {...register(`achievements.${index}.description`)}
+              <Controller
+                control={control}
+                name={`achievements.${index}.description`}
+                render={({ field: controllerField }) => (
+                  <RichTextEditor
+                    label="Description (optional)"
+                    error={errors.achievements?.[index]?.description?.message}
+                    value={controllerField.value}
+                    onChange={controllerField.onChange}
+                  />
+                )}
               />
             </div>
           ))}
         </div>
       </Card>
 
-      <PrimaryButton type="submit" isLoading={isSubmitting || isPending} className="w-fit">
+      <PrimaryButton
+        type="submit"
+        isLoading={isSubmitting || isPending}
+        className="w-fit"
+      >
         Save resume
       </PrimaryButton>
     </form>
