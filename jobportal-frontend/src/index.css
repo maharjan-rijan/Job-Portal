@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography" ;
+@plugin "@tailwindcss/typography";
 
 /*
   Semantic color system — light values on :root, dark overrides under
@@ -65,4 +65,9 @@
     outline: 2px solid var(--color-secondary);
     outline-offset: 2px;
   }
+}
+
+@page {
+  size: A4;
+  margin: 0.5in;
 }

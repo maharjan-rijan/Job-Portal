@@ -36,6 +36,9 @@ class ResumeUpdateRequest extends ApiFormRequest
             'achievements.*.issuer' => 'nullable|string',
             'achievements.*.date' => 'nullable|string',
             'achievements.*.description' => 'nullable|string',
+
+            'template' => 'nullable|string|in:classic,modern,minimal',
+            'color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
         ];
     }
 }

@@ -23,7 +23,14 @@ class JobController extends Controller
         $query = JobPost::query()->with('employer.company')->where('status', 'Open')->latest();
 
         if ($request->filled('q')) {
-            $query->where('title', 'like', '%' . $request->q . '%');
+            $keyword = $request->q;
+            $query->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%")
+                    ->orWhere('location', 'like', "%{$keyword}%")
+                    ->orWhereHas('employer.company', fn($c) => $c->where('name', 'like', "%{$keyword}%"))
+                    ->orWhereHas('employer', fn($u) => $u->where('name', 'like', "%{$keyword}%"));
+            });
         }
         if ($request->filled('location')) {
             $query->where('location', 'like', '%' . $request->location . '%');

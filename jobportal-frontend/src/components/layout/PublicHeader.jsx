@@ -25,7 +25,7 @@ const NAV_LINKS = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Find Jobs", to: "/jobs" },
-  { label: "Blog", to: "/blog-list" },
+  { label: "Blog", to: "/blog" },
   { label: "Contact", to: "/contact" },
 ];
 

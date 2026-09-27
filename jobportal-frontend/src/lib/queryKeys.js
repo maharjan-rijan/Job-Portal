@@ -11,9 +11,9 @@ export const queryKeys = {
   applications: {
     all: ["applications"],
     list: (filters) => ["applications", "list", filters ?? {}],
-    mine: ["applications", "mine"],  
+    mine: ["applications", "mine"],
   },
-  savedJobs: {                        
+  savedJobs: {
     all: ["savedJobs"],
   },
   resumes: {
@@ -21,6 +21,15 @@ export const queryKeys = {
     list: (filters) => ["resumes", "list", filters ?? {}],
     detail: (id) => ["resumes", "detail", id],
     mine: ["resumes", "mine"],
+  },
+  blog: {
+    all: ["blog"],
+    list: (filters) => ["blog", "list", filters ?? {}],
+    detail: (id) => ["blog", "detail", id],
+  },
+
+  admin: {
+    dashboard: ["admin", "dashboard"],
   },
   auth: {
     me: ["auth", "me"],

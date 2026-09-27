@@ -2,25 +2,28 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, User } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { BlogCard } from "@/components/ui/BlogCard";
-import { MOCK_BLOG_POSTS } from "@/lib/mockData";
+import { Spinner } from "@/components/ui/Spinner";
+import { useBlogPost, useBlogPosts } from "@/hooks/useBlog";
 import { formatDate } from "@/utils/formatters";
 import { NotFound } from "@/pages/public/NotFound";
 
 export function BlogPost() {
   const { postId } = useParams();
-  const post = MOCK_BLOG_POSTS.find((item) => item.id === postId);
+  const { data: post, isLoading, isError } = useBlogPost(postId);
 
-  if (!post) return <NotFound />;
+  // Only needed once the post itself has loaded, so this stays disabled
+  // until then rather than firing an extra request up front.
+  const { data: allPosts = [] } = useBlogPosts(undefined, { enabled: Boolean(post) });
+  const related = allPosts.filter((item) => item.id !== postId).slice(0, 2);
 
-  const related = MOCK_BLOG_POSTS.filter((item) => item.id !== post.id).slice(
-    0,
-    2,
-  );
+  if (isLoading) return <Spinner fullSection />;
+
+  if (isError || !post) return <NotFound />;
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
       <Link
-        to="/blog-list"
+        to="/blog"
         className="flex items-center gap-1.5 text-sm font-medium text-accent hover:text-text"
       >
         <ArrowLeft className="h-4 w-4" />

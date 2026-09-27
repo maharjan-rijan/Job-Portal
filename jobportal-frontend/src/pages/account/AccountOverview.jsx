@@ -16,11 +16,6 @@ function initials(name = "") {
     .toUpperCase();
 }
 
-/**
- * Everything that differs between a seeker's and an employer's Account
- * Overview lives here — the JSX below is identical for both, it just
- * reads from whichever config matches the logged-in user's role.
- */
 const ROLE_CONFIG = {
   [USER_ROLES.SEEKER]: {
     badgeLabel: "Job Seeker",
@@ -34,15 +29,23 @@ const ROLE_CONFIG = {
     ],
     details: [
       { icon: Mail, label: "Email", value: (user) => user?.email ?? "—" },
-      { icon: MapPin, label: "Location", value: (user) => user?.location ?? "Not set" },
-      { icon: CalendarDays, label: "Member since", value: (user) => formatDate(user?.created_at) },
+      {
+        icon: MapPin,
+        label: "Location",
+        value: (user) => user?.location ?? "Not set",
+      },
+      {
+        icon: CalendarDays,
+        label: "Member since",
+        value: (user) => formatDate(user?.created_at),
+      },
     ],
   },
   [USER_ROLES.EMPLOYER]: {
     badgeLabel: "Employer",
     displayName: (user) => user?.company?.name ?? user?.name ?? "Your company",
     editPath: "/employer/profile/edit",
-    secondaryAction: { to: "/employer/jobs/new", label: "Post a job" },
+    secondaryAction: null,
     stats: [
       { label: "Open Jobs", value: 2 },
       { label: "Total Applications", value: 66 },
@@ -50,8 +53,16 @@ const ROLE_CONFIG = {
     ],
     details: [
       { icon: Mail, label: "Email", value: (user) => user?.email ?? "—" },
-      { icon: Globe, label: "Website", value: (user) => user?.company?.website ?? "Not set" },
-      { icon: CalendarDays, label: "Member since", value: (user) => formatDate(user?.created_at) },
+      {
+        icon: Globe,
+        label: "Website",
+        value: (user) => user?.company?.website ?? "Not set",
+      },
+      {
+        icon: CalendarDays,
+        label: "Member since",
+        value: (user) => formatDate(user?.created_at),
+      },
     ],
   },
 };
@@ -101,9 +112,7 @@ export function AccountOverview() {
       </div>
 
       <Card>
-        <h2 className="text-base font-semibold text-text">
-          Account details
-        </h2>
+        <h2 className="text-base font-semibold text-text">Account details</h2>
         <dl className="mt-4 flex flex-col gap-3 text-sm">
           {config.details.map(({ icon: Icon, label, value }) => (
             <div key={label} className="flex items-center gap-2">

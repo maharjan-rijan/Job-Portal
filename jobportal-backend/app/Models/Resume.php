@@ -17,6 +17,8 @@ class Resume extends Model
         'experience',
         'social_links',
         'achievements',
+        'template',
+        'color',
     ];
 
     protected function casts(): array

@@ -49,6 +49,8 @@ function normalizeResume(resume) {
     experience: (resume.experience ?? []).map(normalizeExperienceEntry),
     socialLinks: (resume.social_links ?? resume.socialLinks ?? []).map(normalizeSocialLinkEntry),
     achievements: (resume.achievements ?? []).map(normalizeAchievementEntry),
+    template: resume.template ?? "classic",
+    color: resume.color ?? "#0f172a",
     updatedAt: field(resume, "updated_at", "updatedAt"),
   };
 }
@@ -76,4 +78,14 @@ export const resumeService = {
     }),
 
   getById: (id) => api.get(`/resumes/${id}`).then((r) => normalizeResume(r.data)),
+
+  // Employer-only: download a candidate's resume as a PDF (same blob
+  // pattern as downloadMyPdf below).
+  downloadPdf: (id) =>
+    api.get(`/resumes/${id}/pdf`, { responseType: "blob" }).then((r) => r.data),
+
+  // Returns the raw PDF as a Blob — the caller wraps it in an object URL
+  // to trigger a browser download (see ResumePreview.jsx).
+  downloadMyPdf: () =>
+    api.get("/resumes/me/pdf", { responseType: "blob" }).then((r) => r.data),
 };

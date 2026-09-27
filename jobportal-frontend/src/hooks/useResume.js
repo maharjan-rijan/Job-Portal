@@ -37,3 +37,17 @@ export function useResumeDetail(id) {
     enabled: Boolean(id),
   });
 }
+
+/** Downloads the logged-in seeker's own resume as a PDF. */
+export function useDownloadMyResumePdf() {
+  return useMutation({
+    mutationFn: resumeService.downloadMyPdf,
+  });
+}
+
+/** Employer-only: downloads a specific candidate's resume as a PDF. */
+export function useDownloadResumePdf() {
+  return useMutation({
+    mutationFn: resumeService.downloadPdf,
+  });
+}

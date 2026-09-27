@@ -1,207 +1,128 @@
 import { Users, Building2, Briefcase, FileCheck } from "lucide-react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { StatCard } from "@/components/ui/StatCard";
 import { RadialProgress } from "@/components/ui/RadialProgress";
 import { StatisticsPanel } from "@/components/ui/StatisticsPanel";
+import { MiniBarChart } from "@/components/ui/MiniBarChart";
+import { QueryState } from "@/components/ui/QueryState";
+import { useAdminDashboard } from "@/hooks/useAdmin";
+import { formatRelative } from "@/utils/formatters";
 
-const MONTHLY_SIGNUPS = [
-  { month: "Jan", value: 120 },
-  { month: "Feb", value: 180 },
-  { month: "Mar", value: 150 },
-  { month: "Apr", value: 220 },
-  { month: "May", value: 190 },
-  { month: "Jun", value: 260 },
-  { month: "Jul", value: 240 },
-  { month: "Aug", value: 210 },
-  { month: "Sep", value: 280 },
-  { month: "Oct", value: 310 },
-  { month: "Nov", value: 290 },
-  { month: "Dec", value: 180 },
-];
-
-const RECENT_ACTIVITY = [
-  {
-    id: "1",
-    label: "New employer verified",
-    meta: "Winbrans",
-    time: "2h ago",
-    tone: "success",
-  },
-  {
-    id: "2",
-    label: "Job flagged for review",
-    meta: "Sales Manager @ Marketers",
-    time: "5h ago",
-    tone: "warning",
-  },
-  {
-    id: "3",
-    label: "New seeker signup",
-    meta: "priya.n@example.com",
-    time: "1d ago",
-    tone: "neutral",
-  },
-];
-
-function MiniBarChart({ data }) {
-  return (
-    <div className="h-64">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data}>
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke="#e3e7eb"
-            vertical={false}
-          />
-          <XAxis
-            dataKey="month"
-            stroke="#8b98a5"
-            fontSize={12}
-            axisLine={false}
-            tickLine={false}
-          />
-          <YAxis
-            stroke="#8b98a5"
-            fontSize={12}
-            axisLine={false}
-            tickLine={false}
-            allowDecimals={false}
-          />
-          <Tooltip />
-          <Bar dataKey="value" fill="#2042e3" radius={[4, 4, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
+// Maps the backend's event `type` to how it's badged here. Kept in the
+// component (not constants.js) since nothing outside this page cares
+// about admin activity types.
+const ACTIVITY_META = {
+  employer_signup: { badge: "Employer", tone: "success" },
+  seeker_signup: { badge: "Seeker", tone: "neutral" },
+  job_posted: { badge: "Job", tone: "brand" },
+  application_submitted: { badge: "Application", tone: "brand" },
+};
 
 export function AdminDashboard() {
+  const { data, isLoading, isError, error } = useAdminDashboard();
+
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          icon={Users}
-          label="Job seekers"
-          value="8,214"
-          trend={{ direction: "up", value: "11.0%" }}
-        />
-        <StatCard
-          icon={Building2}
-          label="Employers"
-          value="1,032"
-          trend={{ direction: "up", value: "4.6%" }}
-        />
-        <StatCard
-          icon={Briefcase}
-          label="Active jobs"
-          value="3,412"
-          trend={{ direction: "up", value: "6.8%" }}
-        />
-        <StatCard
-          icon={FileCheck}
-          label="Applications"
-          value="18,905"
-          trend={{ direction: "down", value: "2.1%" }}
-        />
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <StatisticsPanel
-            title="Platform growth"
-            subtitle="New signups across the platform"
-            dateRangeLabel="Sep 11 - Sep 17"
-            tabs={[
-              {
-                label: "Signups",
-                panel: <MiniBarChart data={MONTHLY_SIGNUPS} />,
-              },
-              {
-                label: "Jobs posted",
-                panel: (
-                  <MiniBarChart
-                    data={MONTHLY_SIGNUPS.map((d) => ({
-                      ...d,
-                      value: Math.round(d.value * 0.3),
-                    }))}
-                  />
-                ),
-              },
-              {
-                label: "Applications",
-                panel: (
-                  <MiniBarChart
-                    data={MONTHLY_SIGNUPS.map((d) => ({
-                      ...d,
-                      value: Math.round(d.value * 1.8),
-                    }))}
-                  />
-                ),
-              },
-            ]}
-          />
-        </div>
-
-        <Card className="flex flex-col items-center text-center">
-          <div className="flex w-full items-center justify-between">
-            <h2 className="text-base font-semibold text-text">
-              Monthly target
-            </h2>
+    <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load the dashboard">
+      {data && (
+        <div className="flex flex-col gap-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              icon={Users}
+              label="Job seekers"
+              value={data.stats.seekers.value.toLocaleString()}
+              trend={data.stats.seekers.trend}
+            />
+            <StatCard
+              icon={Building2}
+              label="Employers"
+              value={data.stats.employers.value.toLocaleString()}
+              trend={data.stats.employers.trend}
+            />
+            <StatCard
+              icon={Briefcase}
+              label="Active jobs"
+              value={data.stats.activeJobs.value.toLocaleString()}
+              trend={data.stats.activeJobs.trend}
+            />
+            <StatCard
+              icon={FileCheck}
+              label="Applications"
+              value={data.stats.applications.value.toLocaleString()}
+              trend={data.stats.applications.trend}
+            />
           </div>
-          <p className="mt-0.5 self-start text-sm text-accent">
-            New verified employers this month
-          </p>
-          <RadialProgress percent={76} label="+10%" />
-          <p className="text-sm text-accent">
-            76 of 100 target employers onboarded so far.
-          </p>
-          <div className="mt-4 grid w-full grid-cols-3 divide-x divide-ink-100 border-t border-primary/10 pt-4 text-center">
-            {[
-              ["Target", "100"],
-              ["Onboarded", "76"],
-              ["Today", "4"],
-            ].map(([label, value]) => (
-              <div key={label}>
-                <p className="text-xs text-accent">{label}</p>
-                <p className="mt-1 text-sm font-semibold text-text">{value}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
 
-      <Card>
-        <h2 className="text-base font-semibold text-text">Recent activity</h2>
-        <div className="mt-4 divide-y divide-ink-100">
-          {RECENT_ACTIVITY.map((activity) => (
-            <div
-              key={activity.id}
-              className="flex items-center justify-between py-3 text-sm"
-            >
-              <div>
-                <p className="font-medium text-text">{activity.label}</p>
-                <p className="text-accent">{activity.meta}</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-accent">{activity.time}</span>
-                <Badge tone={activity.tone}>
-                  {activity.tone === "warning" ? "Review" : "Info"}
-                </Badge>
-              </div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <StatisticsPanel
+                title="Platform growth"
+                subtitle="New activity across the platform, last 12 months"
+                tabs={[
+                  { label: "Signups", panel: <MiniBarChart data={data.growth.signups} /> },
+                  { label: "Jobs posted", panel: <MiniBarChart data={data.growth.jobsPosted} /> },
+                  { label: "Applications", panel: <MiniBarChart data={data.growth.applications} /> },
+                ]}
+              />
             </div>
-          ))}
+
+            <Card className="flex flex-col items-center text-center">
+              <div className="flex w-full items-center justify-between">
+                <h2 className="text-base font-semibold text-text">
+                  Monthly target
+                </h2>
+              </div>
+              <p className="mt-0.5 self-start text-sm text-accent">
+                New employers this month
+              </p>
+              <RadialProgress percent={data.employerOnboarding.percent} />
+              <p className="text-sm text-accent">
+                {data.employerOnboarding.onboarded} of {data.employerOnboarding.target} target employers onboarded so far.
+              </p>
+              <div className="mt-4 grid w-full grid-cols-2 divide-x divide-ink-100 border-t border-primary/10 pt-4 text-center">
+                {[
+                  ["Target", data.employerOnboarding.target],
+                  ["Onboarded", data.employerOnboarding.onboarded],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <p className="text-xs text-accent">{label}</p>
+                    <p className="mt-1 text-sm font-semibold text-text">{value}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          <Card>
+            <h2 className="text-base font-semibold text-text">Recent activity</h2>
+            <div className="mt-4 divide-y divide-ink-100">
+              {data.recentActivity.map((activity) => {
+                const meta = ACTIVITY_META[activity.type] ?? { badge: "Info", tone: "neutral" };
+                return (
+                  <div
+                    key={activity.id}
+                    className="flex items-center justify-between py-3 text-sm"
+                  >
+                    <div>
+                      <p className="font-medium text-text">{activity.label}</p>
+                      <p className="text-accent">{activity.meta}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-accent">{formatRelative(activity.createdAt)}</span>
+                      <Badge tone={meta.tone}>{meta.badge}</Badge>
+                    </div>
+                  </div>
+                );
+              })}
+              {data.recentActivity.length === 0 && (
+                <p className="py-6 text-center text-sm text-accent">
+                  Nothing's happened on the platform yet.
+                </p>
+              )}
+            </div>
+          </Card>
         </div>
-      </Card>
-    </div>
+      )}
+    </QueryState>
   );
 }

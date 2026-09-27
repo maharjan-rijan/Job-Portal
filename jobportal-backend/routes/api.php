@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/saved-jobs/{job}', [SavedJobController::class, 'destroy']);
         Route::get('/resumes/me', [ResumeController::class, 'show']);
         Route::put('/resumes/me', [ResumeController::class, 'update']);
+        Route::get('/resumes/me/pdf', [ResumeController::class, 'downloadMyPdf']);
     });
     Route::middleware('role:employer')->group(function () {
         Route::get('/jobs/mine', [JobController::class, 'mine']);
@@ -44,7 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('role:admin')->group(function () {
-        // admin-only endpoints
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
     });
 });
 

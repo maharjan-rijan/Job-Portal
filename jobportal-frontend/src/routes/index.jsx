@@ -33,6 +33,7 @@ import { AdminDashboard } from "@/pages/admin/Dashboard";
 import { USER_ROLES } from "@/utils/constants";
 import { SavedJobs } from "@/pages/seeker/SavedJobs";
 import { MyApplications } from "@/pages/seeker/MyApplications";
+import { ResumePreview } from "@/pages/seeker/ResumePreview";
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,7 @@ export const router = createBrowserRouter([
           { path: "/seeker/saved-jobs", element: <SavedJobs /> },
           { path: "/seeker/applied-jobs", element: <MyApplications /> },
           { path: "/seeker/resume", element: <Resume /> },
+          { path: "/seeker/resume/preview", element: <ResumePreview /> },
           { path: "/seeker/job-alerts", element: <JobAlerts /> },
           { path: "/seeker/account", element: <AccountOverview /> },
           { path: "/seeker/change-password", element: <ChangePassword /> },

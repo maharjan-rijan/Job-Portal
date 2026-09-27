@@ -57,3 +57,32 @@ export const ROUTES = {
   SEEKER_DASHBOARD: "/seeker/dashboard",
   EMPLOYER_DASHBOARD: "/employer/dashboard",
 };
+
+// "classic" matches the reference design (centered header, bold colored
+// divider) and is the schema default — see the resumes migration.
+export const RESUME_TEMPLATES = [
+  {
+    id: "classic",
+    label: "Classic",
+    description: "Centered header with a bold colored divider.",
+  },
+  {
+    id: "modern",
+    label: "Modern",
+    description: "Card layout with an avatar and colored section pills.",
+  },
+  {
+    id: "minimal",
+    label: "Minimal",
+    description: "Understated, with a colored accent bar per section.",
+  },
+];
+
+export const RESUME_COLORS = [
+  { id: "black", label: "Black", hex: "#0f172a" },
+  { id: "blue", label: "Blue", hex: "#2042e3" },
+  { id: "green", label: "Green", hex: "#059669" },
+  { id: "purple", label: "Purple", hex: "#7c3aed" },
+  { id: "red", label: "Red", hex: "#b91c1c" },
+  { id: "teal", label: "Teal", hex: "#0d9488" },
+];

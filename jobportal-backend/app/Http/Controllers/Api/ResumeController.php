@@ -13,7 +13,7 @@ class ResumeController extends Controller
     public function downloadPdf(Resume $resume)
     {
         $pdf = Pdf::loadView('pdf.resume', ['resume' => $resume]);
-        $filename = str_replace(' ', '-', strtolower($resume->name ?? 'resume')) . '.pdf';
+        $filename = str_replace(' ', '-', strtolower($resume->user?->name ?? 'resume')) . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -41,6 +41,8 @@ class ResumeController extends Controller
 
     public function update(ResumeUpdateRequest $request)
     {
+        $existing = $request->user()->resume;
+
         $resume = $request->user()->resume()->updateOrCreate(
             ['user_id' => $request->user()->id],
             [
@@ -52,6 +54,8 @@ class ResumeController extends Controller
                 'experience' => $request->experience ?? [],
                 'social_links' => $request->socialLinks ?? [],
                 'achievements' => $request->achievements ?? [],
+                'template' => $request->template ?? $existing?->template ?? 'classic',
+                'color' => $request->color ?? $existing?->color ?? '#0f172a',
             ]
         );
 
@@ -66,7 +70,10 @@ class ResumeController extends Controller
             $keyword = $request->q;
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', "%{$keyword}%")
-                    ->orWhere('location', 'like', "%{$keyword}%");
+                    ->orWhere('location', 'like', "%{$keyword}%")
+                    ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$keyword}%"))
+                    ->orWhereRaw('JSON_SEARCH(education, "one", ?) IS NOT NULL', ["%{$keyword}%"])
+                    ->orWhereRaw('JSON_SEARCH(experience, "one", ?) IS NOT NULL', ["%{$keyword}%"]);
             });
         }
 

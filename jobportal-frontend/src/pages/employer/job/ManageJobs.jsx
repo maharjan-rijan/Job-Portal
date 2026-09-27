@@ -84,67 +84,95 @@ export function ManageJobs() {
         error={error}
         errorLabel="Could not load your jobs"
       >
-        <Card className="mt-6 p-0">
-          <div className="hidden grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-4 border-b border-primary/10 px-5 py-3 text-xs font-medium uppercase text-accent sm:grid">
-            <span>Title</span>
-            <span>Type</span>
-            <span>Location</span>
-            <span>Applicants</span>
-            <span>Status</span>
-            <span />
-          </div>
+        <Card className="mt-6 overflow-x-auto p-0">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-primary/10 text-xs uppercase text-accent">
+              <tr>
+                <th scope="col" className="px-5 py-3 font-medium">
+                  Title
+                </th>
+                <th scope="col" className="px-5 py-3 font-medium">
+                  Type
+                </th>
+                <th scope="col" className="px-5 py-3 font-medium">
+                  Location
+                </th>
+                <th scope="col" className="px-5 py-3 font-medium">
+                  Applicants
+                </th>
+                <th scope="col" className="px-5 py-3 font-medium">
+                  Status
+                </th>
+                <th scope="col" className="px-5 py-3 font-medium">
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-primary/10">
+              {jobsWithApplicants.map((job) => (
+                <tr key={job.id} className="hover:bg-primary/5 transition-colors">
+                  <td className="px-5 py-4 whitespace-nowrap">
+                    <p className="font-medium text-text">{job.title}</p>
+                    <p className="text-xs text-accent">
+                      Posted {formatDate(job.postedAt)}
+                    </p>
+                  </td>
 
-          {jobsWithApplicants.map((job) => (
-            <div
-              key={job.id}
-              className="grid grid-cols-2 gap-3 border-b border-primary/10 px-5 py-4 text-sm last:border-0 sm:grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] sm:items-center"
-            >
-              <div>
-                <p className="font-medium text-text">{job.title}</p>
+                  <td className="px-5 py-4 whitespace-nowrap text-accent">
+                    {job.type}
+                  </td>
 
-                <p className="text-xs text-accent">
-                  Posted {formatDate(job.postedAt)}
-                </p>
-              </div>
+                  <td className="px-5 py-4 whitespace-nowrap text-accent">
+                    {job.location}
+                  </td>
 
-              <span className="text-accent">{job.type}</span>
+                  <td className="px-5 py-4 whitespace-nowrap">
+                    <Link
+                      to="/employer/applications"
+                      className="inline-flex items-center gap-1.5 text-secondary hover:underline"
+                    >
+                      <Users className="h-3.5 w-3.5" />
+                      {job.applicantsCount}
+                    </Link>
+                  </td>
 
-              <span className="text-accent">{job.location}</span>
+                  <td className="px-5 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => toggleStatus(job)}
+                      className="w-fit focus:outline-none"
+                    >
+                      <Badge
+                        tone={job.status === "Open" ? "success" : "neutral"}
+                      >
+                        {job.status}
+                      </Badge>
+                    </button>
+                  </td>
 
-              <Link
-                to="/employer/applications"
-                className="flex items-center gap-1.5 text-secondary hover:underline"
-              >
-                <Users className="h-3.5 w-3.5" />
-                {job.applicantsCount}
-              </Link>
+                  <td className="px-5 py-4 whitespace-nowrap text-right">
+                    <div className="flex items-center justify-end gap-3">
+                      <Link
+                        to={`/employer/jobs/${job.id}/edit`}
+                        className="text-accent hover:text-secondary"
+                        aria-label={`Edit ${job.title}`}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Link>
 
-              <button onClick={() => toggleStatus(job)} className="w-fit">
-                <Badge tone={job.status === "Open" ? "success" : "neutral"}>
-                  {job.status}
-                </Badge>
-              </button>
-
-              <div className="flex justify-end gap-3">
-                <Link
-                  to={`/employer/jobs/${job.id}/edit`}
-                  className="text-accent hover:text-secondary"
-                  aria-label={`Edit ${job.title}`}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Link>
-
-                <button
-                  onClick={() => handleDelete(job.id, job.title)}
-                  disabled={isDeleting}
-                  className="text-accent hover:text-red-600 disabled:opacity-50"
-                  aria-label={`Delete ${job.title}`}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          ))}
+                      <button
+                        onClick={() => handleDelete(job.id, job.title)}
+                        disabled={isDeleting}
+                        className="text-accent hover:text-red-600 disabled:opacity-50"
+                        aria-label={`Delete ${job.title}`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           {jobs.length === 0 && (
             <p className="px-5 py-10 text-center text-sm text-accent">

@@ -16,7 +16,7 @@ export function EditJob() {
   if (isError || !job) return <NotFound />;
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-8xl">
       <h1 className="text-xl font-semibold text-text">Edit job</h1>
       <p className="mt-1 text-sm text-accent">
         Update the listing — changes are visible to candidates immediately.
