@@ -31,8 +31,29 @@ export const applicationService = {
       return raw.map(normalizeApplication);
     }),
 
-  applyToJob: (jobId, payload) =>
-    api.post(`/jobs/${jobId}/applications`, payload).then((r) => r.data),
+  // `payload.resumeFile` is a raw browser File (see ApplyForm) — when
+  // present this has to go as multipart/form-data, not JSON, so the
+  // request body is built differently for that case. The `api` instance
+  // defaults to "Content-Type: application/json", so that header is
+  // explicitly overridden here rather than left to axios to guess.
+  applyToJob: (jobId, payload) => {
+    if (payload.resumeFile instanceof File) {
+      const formData = new FormData();
+      formData.append("fullName", payload.fullName);
+      formData.append("email", payload.email);
+      if (payload.resumeUrl) formData.append("resumeUrl", payload.resumeUrl);
+      if (payload.coverNote) formData.append("coverNote", payload.coverNote);
+      formData.append("resumeFile", payload.resumeFile);
+
+      return api
+        .post(`/jobs/${jobId}/applications`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((r) => r.data);
+    }
+
+    return api.post(`/jobs/${jobId}/applications`, payload).then((r) => r.data);
+  },
 
   updateStatus: (applicationId, status) =>
     api

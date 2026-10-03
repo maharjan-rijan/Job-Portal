@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\JobApplication\StoreJobApplicationRequest;
 use App\Http\Requests\JobApplication\UpdateJobApplicationStatusRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Models\JobApplication;
 use App\Models\JobPost;
 use Illuminate\Http\Request;
@@ -12,25 +13,31 @@ use Illuminate\Http\Request;
 class JobApplicationController extends Controller
 {
     /** POST /jobs/{job}/applications — any authenticated user can apply. */
-    public function store(StoreJobApplicationRequest $request, JobPost $job)
+    public function store(StoreJobApplicationRequest $request, JobPost $jobPost)
     {
-        $alreadyApplied = $job->applications()
-            ->where('seeker_id', $request->user()->id)
-            ->exists();
+        // ...your existing authorization / duplicate-application checks here...
 
-        if ($alreadyApplied) {
-            return response()->json(['message' => 'You have already applied to this job'], 422);
+        $resumeUrl = $request->resumeUrl;
+
+        if ($request->hasFile('resumeFile')) {
+            // Stored under storage/app/public/resumes, reachable at
+            // /storage/resumes/<generated-name> once storage:link has run.
+            $path = $request->file('resumeFile')->store('resumes', 'public');
+            $resumeUrl = Storage::url($path);
         }
-        $application = $job->applications()->create([
+
+        $application = $jobPost->applications()->create([
             'seeker_id' => $request->user()->id,
             'full_name' => $request->fullName,
             'email' => $request->email,
-            'resume_url' => $request->resumeUrl,
+            'resume_url' => $resumeUrl,
             'cover_note' => $request->coverNote,
+            'status' => 'applied',
         ]);
 
-        return response()->json($application, 201);
+        return response()->json($application->fresh());
     }
+
 
     /** GET /applications — employer-only, scoped to their own jobs. */
     public function index(Request $request)

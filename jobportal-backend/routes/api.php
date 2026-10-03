@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\JobAlertController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\ProfileController;
@@ -29,6 +30,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/resumes/me', [ResumeController::class, 'show']);
         Route::put('/resumes/me', [ResumeController::class, 'update']);
         Route::get('/resumes/me/pdf', [ResumeController::class, 'downloadMyPdf']);
+
+        Route::get('/job-alerts', [JobAlertController::class, 'index']);
+        Route::post('/job-alerts', [JobAlertController::class, 'store']);
+        Route::delete('/job-alerts/{jobAlert}', [JobAlertController::class, 'destroy']);
     });
     Route::middleware('role:employer')->group(function () {
         Route::get('/jobs/mine', [JobController::class, 'mine']);

@@ -16,6 +16,9 @@ export const queryKeys = {
   savedJobs: {
     all: ["savedJobs"],
   },
+  jobAlerts: {
+    all: ["jobAlerts"],
+  },
   resumes: {
     all: ["resumes"],
     list: (filters) => ["resumes", "list", filters ?? {}],

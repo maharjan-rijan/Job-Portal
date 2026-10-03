@@ -158,12 +158,6 @@ export const MOCK_EMPLOYER_JOBS = [
   },
 ];
 
-export const MOCK_JOB_ALERTS = [
-  { id: "1", name: "Web Designer", keywords: "Web Designer", type: "Full time", frequency: "Daily" },
-  { id: "2", name: "UI/UX Designer", keywords: "UI/UX Designer", type: "Full time", frequency: "Daily" },
-  { id: "3", name: "Developer", keywords: "Developer", type: "Part time", frequency: "Weekly" },
-];
-
 export const MOCK_BLOG_POSTS = [
   {
     id: "internet-job-seekers-crucial-success",

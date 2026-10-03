@@ -98,12 +98,22 @@ export function Dashboard() {
   const { data: myJobs, isLoading: jobsLoading, isError: jobsError } = useMyJobs({
     enabled: isEmployer,
   });
-  const recentJobs = (myJobs ?? []).slice(0, 5);
 
   // One extra query per role, purely to power the stat cards below —
   // each is gated to the role that actually owns the endpoint, same
   // pattern as useMyJobs above.
   const { data: employerApplications } = useApplications(undefined, { enabled: isEmployer });
+
+  // Per-job applicant counts, computed from the same applications list
+  // rather than trusting a job.applicantsCount field from the API — this
+  // is the same workaround ManageJobs.jsx already uses, since the
+  // backend doesn't reliably annotate jobs with their applicant count.
+  const recentJobs = (myJobs ?? []).slice(0, 5).map((job) => ({
+    ...job,
+    applicantsCount: (employerApplications ?? []).filter(
+      (app) => String(app.jobId) === String(job.id)
+    ).length,
+  }));
   const {
     data: myApplications,
     isLoading: applicationsLoading,
@@ -208,6 +218,9 @@ export function Dashboard() {
                       <span className="text-accent">
                         {job.applicantsCount} applicant{job.applicantsCount === 1 ? "" : "s"}
                       </span>
+                      {/* If you renamed this to job.totalApplicants, that's why it showed
+                          nothing — normalizeJob() in jobService.js only ever outputs
+                          applicantsCount, not totalApplicants. */}
                       <Badge tone={job.status === "Open" ? "success" : "neutral"}>
                         {job.status}
                       </Badge>

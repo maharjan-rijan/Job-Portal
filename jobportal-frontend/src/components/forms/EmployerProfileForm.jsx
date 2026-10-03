@@ -132,6 +132,7 @@ export function EmployerProfileForm({ onSuccess }) {
             label="Company logo"
             previewUrl={user?.company?.logo_url}
             onChange={setLogoFile}
+            helperText="PNG or JPG, up to 2MB"
           />
           <TextArea
             label="Company description"

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { alertSchema } from "@/lib/validation/alertSchema";
 import { JOB_TYPES, ALERT_FREQUENCIES } from "@/utils/constants";
 
-export function AlertForm({ onSubmit }) {
+export function AlertForm({ onSubmit, isSubmitting = false }) {
   const {
     register,
     control,
@@ -59,7 +59,7 @@ export function AlertForm({ onSubmit }) {
           />
         )}
       />
-      <Button type="submit" className="mt-2 w-full">
+      <Button type="submit" isLoading={isSubmitting} className="mt-2 w-full">
         Create alert
       </Button>
     </form>

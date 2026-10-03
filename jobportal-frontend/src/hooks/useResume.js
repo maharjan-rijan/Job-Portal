@@ -3,10 +3,11 @@ import { resumeService } from "@/services/resumeService";
 import { queryKeys } from "@/lib/queryKeys";
 
 /** The logged-in seeker's own resume. */
-export function useResume() {
+export function useResume(options = {}) {
   return useQuery({
     queryKey: queryKeys.resumes.mine,
     queryFn: resumeService.getMine,
+    enabled: options.enabled ?? true,
   });
 }
 

@@ -1,33 +1,36 @@
 import { useRef, useState } from "react";
-import { ImagePlus, X } from "lucide-react";
+import { FileText, ImagePlus, X } from "lucide-react";
 import { cn } from "@/utils/cn";
 
-const MAX_SIZE_MB = 2;
-
-/**
- * Uncontrolled-ish file field: call `onChange(file | null)` with the raw
- * File the user picked (or null on remove). `previewUrl` lets the parent
- * show an existing image (e.g. the company's current logo) before any
- * new file has been selected.
- */
-export function FileUpload({ label, previewUrl, onChange, error, accept = "image/*" }) {
+export function FileUpload({
+  label,
+  previewUrl,
+  onChange,
+  error,
+  accept = "image/*",
+  maxSizeMB = 2,
+  helperText,
+}) {
   const inputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
   const [localPreview, setLocalPreview] = useState(null);
+  const [fileName, setFileName] = useState(null);
 
   const resolvedPreview = localPreview ?? previewUrl;
+  const hasSelection = Boolean(resolvedPreview || fileName);
 
   const handleFile = (file) => {
     if (!file) return;
-    if (!file.type.startsWith("image/")) return;
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) return;
+    if (file.size > maxSizeMB * 1024 * 1024) return;
 
-    setLocalPreview(URL.createObjectURL(file));
+    setFileName(file.name);
+    setLocalPreview(file.type.startsWith("image/") ? URL.createObjectURL(file) : null);
     onChange?.(file);
   };
 
   const handleRemove = () => {
     setLocalPreview(null);
+    setFileName(null);
     onChange?.(null);
     if (inputRef.current) inputRef.current.value = "";
   };
@@ -56,12 +59,12 @@ export function FileUpload({ label, previewUrl, onChange, error, accept = "image
         {resolvedPreview ? (
           <img
             src={resolvedPreview}
-            alt="Logo preview"
+            alt=""
             className="h-16 w-16 shrink-0 rounded-lg border border-primary/10 object-cover"
           />
         ) : (
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-primary/5 text-accent">
-            <ImagePlus className="h-6 w-6" />
+            {fileName ? <FileText className="h-6 w-6" /> : <ImagePlus className="h-6 w-6" />}
           </div>
         )}
 
@@ -71,17 +74,22 @@ export function FileUpload({ label, previewUrl, onChange, error, accept = "image
             onClick={() => inputRef.current?.click()}
             className="w-fit text-sm font-medium text-secondary hover:underline"
           >
-            {resolvedPreview ? "Change image" : "Click to upload"}
+            {hasSelection ? "Change file" : "Click to upload"}
             <span className="font-normal text-accent"> or drag and drop</span>
           </button>
-          <p className="text-xs text-accent">PNG or JPG, up to {MAX_SIZE_MB}MB</p>
+          {fileName && !resolvedPreview && (
+            <p className="truncate text-xs text-text" title={fileName}>
+              {fileName}
+            </p>
+          )}
+          <p className="text-xs text-accent">{helperText ?? `Up to ${maxSizeMB}MB`}</p>
         </div>
 
-        {resolvedPreview && (
+        {hasSelection && (
           <button
             type="button"
             onClick={handleRemove}
-            aria-label="Remove logo"
+            aria-label="Remove file"
             className="shrink-0 text-accent hover:text-red-600"
           >
             <X className="h-4 w-4" />
