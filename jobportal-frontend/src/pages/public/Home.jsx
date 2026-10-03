@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, MapPin, ArrowRight, Loader2 } from "lucide-react";
+import { Search, MapPin, ArrowRight } from "lucide-react";
 import { JobCard } from "@/components/ui/JobCard";
+import { QueryState } from "@/components/ui/QueryState";
 import { useJobs } from "@/hooks/useJobs";
-import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 import { useCurrency } from "@/hooks/useCurrency";
 
 export function Home() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
-  const [currency, setCurrency] = useCurrency();
-  const { data, isLoading } = useJobs();
+  // Currency is global now (set from the navbar's CurrencyToggle via
+  // CurrencyContext) — this page only ever reads it to format job
+  // cards, never changes it, so there's no setter to destructure here.
+  const [currency] = useCurrency();
+  const { data, isLoading, isError, error } = useJobs();
   const featuredJobs = (data?.data ?? []).slice(0, 4);
 
   const handleSearch = (event) => {
@@ -77,28 +80,27 @@ export function Home() {
             Featured jobs
           </h2>
           <div className="flex items-center gap-4">
-            <CurrencyToggle value={currency} onChange={setCurrency} />
-          <Link
-            to="/jobs"
-            className="flex items-center gap-1 text-sm font-medium text-secondary hover:text-secondary"
-          >
-            View all jobs <ArrowRight className="h-4 w-4" />
-          </Link>
+            <Link
+              to="/jobs"
+              className="flex items-center gap-1 text-sm font-medium text-secondary hover:text-secondary"
+            >
+              View all jobs <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {isLoading && (
-            <div className="col-span-full flex justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-secondary" />
-            </div>
-          )}
-          {!isLoading && featuredJobs.map((job) => <JobCard key={job.id} job={job} currency={currency} />)}
-          {!isLoading && featuredJobs.length === 0 && (
-            <p className="col-span-full py-12 text-center text-sm text-accent">
-              No jobs posted yet — check back soon.
-            </p>
-          )}
-        </div>
+
+        <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load featured jobs">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {featuredJobs.map((job) => (
+              <JobCard key={job.id} job={job} currency={currency} />
+            ))}
+            {featuredJobs.length === 0 && (
+              <p className="col-span-full py-12 text-center text-sm text-accent">
+                No jobs posted yet — check back soon.
+              </p>
+            )}
+          </div>
+        </QueryState>
       </section>
     </>
   );

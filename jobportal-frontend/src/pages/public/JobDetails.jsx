@@ -14,7 +14,6 @@ import { useSavedJobs, useToggleSavedJob } from "@/hooks/useSavedJobs";
 import { useMyApplications } from "@/hooks/useApplications";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
-import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 import { convertUsdToNPR } from "@/utils/formatters";
 import { USER_ROLES } from "@/utils/constants";
 
@@ -55,7 +54,7 @@ export function JobDetails() {
   const { jobId } = useParams();
   const { user, isAuthenticated } = useAuth();
   const [applyOpen, setApplyOpen] = useState(false);
-  const [currency, setCurrency] = useCurrency();
+  const [currency] = useCurrency();
 
   // /saved-jobs is a seeker-only endpoint, so only fetch/mutate it for
   // authenticated seekers — an employer viewing their own listing or a
@@ -73,7 +72,9 @@ export function JobDetails() {
 
   if (isError || !job) return <NotFound />;
 
-  const hasApplied = myApplications.some((app) => String(app.jobId) === String(job.id));
+  const hasApplied = myApplications.some(
+    (app) => String(app.jobId) === String(job.id),
+  );
 
   const isSaved = savedJobs.some((saved) => saved.id === job.id);
   const isSaving = save.isPending || unsave.isPending;
@@ -138,7 +139,6 @@ export function JobDetails() {
                 </div>
               </div>
               <div className="flex flex-col items-start gap-2 sm:items-end">
-                <CurrencyToggle value={currency} onChange={setCurrency} />
                 <span className="text-sm font-semibold text-text">
                   {formatSalaryRange(salaryMin, salaryMax, currency)}
                 </span>

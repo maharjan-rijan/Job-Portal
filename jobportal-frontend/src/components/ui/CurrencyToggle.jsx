@@ -1,8 +1,11 @@
 import { cn } from "@/utils/cn";
 
-const CURRENCIES = ["USD", "NPR"];
+const CURRENCIES = [
+  { code: "USD", flag: "🇺🇸", label: "US Dollar" },
+  { code: "NPR", flag: "🇳🇵", label: "Nepali Rupee" },
+];
 
-/** Segmented USD/NPR toggle. Controlled — pass `value` + `onChange`. */
+/** Segmented USD/NPR toggle, shown as flags. Controlled — pass `value` + `onChange`. */
 export function CurrencyToggle({ value, onChange, className }) {
   return (
     <div
@@ -13,20 +16,22 @@ export function CurrencyToggle({ value, onChange, className }) {
         className,
       )}
     >
-      {CURRENCIES.map((currency) => (
+      {CURRENCIES.map(({ code, flag, label }) => (
         <button
-          key={currency}
+          key={code}
           type="button"
-          aria-pressed={value === currency}
-          onClick={() => onChange(currency)}
+          aria-pressed={value === code}
+          aria-label={label}
+          title={label}
+          onClick={() => onChange(code)}
           className={cn(
-            "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-            value === currency
-              ? "bg-secondary text-white"
-              : "text-accent hover:text-text",
+            "rounded-md px-2.5 py-1.5 text-lg leading-none transition-colors",
+            value === code
+              ? "bg-secondary/10 ring-1 ring-secondary"
+              : "opacity-60 hover:opacity-100",
           )}
         >
-          {currency}
+          <span aria-hidden="true">{flag}</span>
         </button>
       ))}
     </div>

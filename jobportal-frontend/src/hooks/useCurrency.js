@@ -1,24 +1,10 @@
-import { useCallback, useState } from "react";
+import { useContext } from "react";
+import { CurrencyContext } from "@/context/CurrencyContext";
 
-const STORAGE_KEY = "jobportal:currency";
-
-function readStored() {
-  if (typeof window === "undefined") return "USD";
-  return localStorage.getItem(STORAGE_KEY) ?? "USD";
-}
-
-/**
- * Currency preference for displaying job salaries (USD/NPR), shared across
- * every job-listing page via localStorage — toggle it once on any page and
- * it stays set when you navigate to another.
- */
 export function useCurrency() {
-  const [currency, setCurrencyState] = useState(readStored);
-
-  const setCurrency = useCallback((value) => {
-    setCurrencyState(value);
-    localStorage.setItem(STORAGE_KEY, value);
-  }, []);
-
-  return [currency, setCurrency];
+  const context = useContext(CurrencyContext);
+  if (!context) {
+    throw new Error("useCurrency must be used within a <CurrencyProvider>");
+  }
+  return context;
 }

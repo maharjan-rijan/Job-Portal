@@ -31,6 +31,16 @@
     body.template-modern .header .role { margin: 2px 0 6px; font-size: 13px; color: {{ $resume->color }}; font-weight: bold; }
     body.template-modern .header .contact { font-size: 11px; color: #555; }
     body.template-modern h2 { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #ffffff; background: {{ $resume->color }}; padding: 3px 10px; border-radius: 10px; margin: 16px 0 8px; }
+    /* dompdf doesn't reliably support flexbox, so the avatar + name are
+       laid out as inline-blocks with vertical-align instead — this is
+       the one part of "modern" that needs its own markup below, since
+       classic/minimal don't have an avatar at all. */
+    body.template-modern .avatar {
+      display: inline-block; vertical-align: middle; width: 52px; height: 52px; line-height: 52px;
+      text-align: center; border-radius: 50%; background: {{ $resume->color }}; color: #ffffff;
+      font-size: 17px; font-weight: bold; margin-right: 14px;
+    }
+    body.template-modern .header-text { display: inline-block; vertical-align: middle; }
 
     /* Minimal — plain, no rules or pills, just a colored left border per section */
     body.template-minimal .header { margin-bottom: 14px; }
@@ -42,7 +52,19 @@
 </head>
 <body class="template-{{ $resume->template ?? 'classic' }}">
 
+  @php
+    $initials = collect(explode(' ', $resume->name ?? ''))
+        ->filter()
+        ->map(fn ($word) => mb_strtoupper(mb_substr($word, 0, 1)))
+        ->take(2)
+        ->implode('');
+  @endphp
+
   <div class="header">
+    @if(($resume->template ?? 'classic') === 'modern')
+      <span class="avatar">{{ $initials }}</span>
+    @endif
+    <div class="header-text">
     <h1>{{ $resume->name }}</h1>
     @if($resume->title)<p class="role">{{ $resume->title }}</p>@endif
     <p class="contact">
@@ -58,6 +80,7 @@
         @endforeach
       </p>
     @endif
+    </div>
   </div>
 
   @if(($resume->template ?? 'classic') === 'classic')

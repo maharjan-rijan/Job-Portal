@@ -18,7 +18,9 @@ import {
   Sun,
   UserCircle,
 } from "lucide-react";
+import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 import { useAuth } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/utils/cn";
 
@@ -39,6 +41,7 @@ export function DashboardTopbar({
 }) {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const [currency, setCurrency] = useCurrency();
 
   return (
     <header className="flex h-20 items-center justify-between gap-4 border-b border-primary/10 bg-surface px-4 sm:px-6">
@@ -62,6 +65,8 @@ export function DashboardTopbar({
       <h1 className="text-lg font-semibold text-text sm:hidden">{title}</h1>
 
       <div className="flex items-center gap-3">
+        <CurrencyToggle value={currency} onChange={setCurrency} className="hidden sm:inline-flex" />
+
         <button
           onClick={toggleTheme}
           className="flex h-10 w-10 items-center justify-center rounded-full text-accent hover:bg-primary/5"

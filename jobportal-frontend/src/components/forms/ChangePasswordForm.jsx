@@ -2,21 +2,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { TextInput } from "@/components/ui/TextInput";
+import { PasswordInput } from "@/components/ui/PasswordInput";
+import { PasswordStrengthIndicator } from "@/components/ui/PasswordStrengthIndicator";
+import { PasswordMatchIndicator } from "@/components/ui/PasswordMatchIndicator";
 import { Button } from "@/components/ui/Button";
 import { changePasswordSchema } from "@/lib/validation/changePasswordSchema";
 import { authService } from "@/services/authService";
-import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
 
 export function ChangePasswordForm() {
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmedNewPassword, setShowConfirmedNewPassword] =
-    useState(false);
   const {
     register,
     handleSubmit,
+    watch,
     reset,
     formState: { errors },
   } = useForm({
@@ -27,6 +24,9 @@ export function ChangePasswordForm() {
       confirmNewPassword: "",
     },
   });
+
+  const newPassword = watch("newPassword");
+  const confirmNewPassword = watch("confirmNewPassword");
 
   const { mutate, isPending } = useMutation({
     mutationFn: authService.changePassword,
@@ -41,76 +41,32 @@ export function ChangePasswordForm() {
 
   return (
     <form onSubmit={handleSubmit(mutate)} className="flex flex-col gap-4">
-      <div className="relative">
-        <TextInput
-          label="Current password"
-          type={showCurrentPassword ? "text" : "password"}
-          placeholder="••••••••"
-          error={errors.currentPassword?.message}
-          {...register("currentPassword")}
-        />
-        <button
-          type="button"
-          onClick={() => setShowCurrentPassword((prev) => !prev)}
-          className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
-          aria-label={showCurrentPassword ? "Hide password" : "Show password"}
-        >
-          {showCurrentPassword ? (
-            <EyeOff className="h-5 w-5" />
-          ) : (
-            <Eye className="h-5 w-5" />
-          )}
-        </button>
-      </div>
+      <PasswordInput
+        label="Current password"
+        placeholder="••••••••"
+        error={errors.currentPassword?.message}
+        {...register("currentPassword")}
+      />
 
-      <div className="relative">
-        <TextInput
-          label="New password"
-          type={showNewPassword ? "text" : "password"}
-          placeholder="••••••••"
-          error={errors.newPassword?.message}
-          {...register("newPassword")}
-        />
-        <button
-          type="button"
-          onClick={() => setShowNewPassword((prev) => !prev)}
-          className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
-          aria-label={showNewPassword ? "Hide password" : "Show password"}
-        >
-          {showNewPassword ? (
-            <EyeOff className="h-5 w-5" />
-          ) : (
-            <Eye className="h-5 w-5" />
-          )}
-        </button>
-      </div>
+      <PasswordInput
+        label="New password"
+        placeholder="••••••••"
+        error={errors.newPassword?.message}
+        {...register("newPassword")}
+      />
+      <PasswordStrengthIndicator password={newPassword} />
 
-      <div className="relative">
-        <TextInput
-          label="Confirm new password"
-          type={showConfirmedNewPassword ? "text" : "password"}
-          placeholder="••••••••"
-          error={errors.confirmNewPassword?.message}
-          {...register("confirmNewPassword")}
-        />
-        <button
-          type="button"
-          onClick={() => setShowConfirmedNewPassword((prev) => !prev)}
-          className="absolute right-3 top-[34px] text-accent hover:text-primary focus:outline-none"
-          aria-label={
-            showConfirmedNewPassword ? "Hide password" : "Show password"
-          }
-        >
-          {showConfirmedNewPassword ? (
-            <EyeOff className="h-5 w-5" />
-          ) : (
-            <Eye className="h-5 w-5" />
-          )}
-        </button>
-      </div>
+      <PasswordInput
+        label="Confirm new password"
+        placeholder="••••••••"
+        error={errors.confirmNewPassword?.message}
+        {...register("confirmNewPassword")}
+      />
+      <PasswordMatchIndicator password={newPassword} confirmPassword={confirmNewPassword} />
+
       <Button type="submit" isLoading={isPending} className="mt-2 w-full">
         Update password
       </Button>
     </form>
-  ); 
+  );
 }

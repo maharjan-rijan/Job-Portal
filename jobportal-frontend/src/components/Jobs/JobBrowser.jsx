@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { JobCard } from "@/components/ui/JobCard";
 import { QueryState } from "@/components/ui/QueryState";
-import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 import { useJobs } from "@/hooks/useJobs";
 import { useCurrency } from "@/hooks/useCurrency";
 
@@ -12,11 +11,11 @@ export function JobBrowser({
   subtitleSuffix = "",
   initialKeyword = "",
   searchClassName = "mt-6",
-  emptyLabel = (keyword) => `No jobs match "${keyword}".`,
+  emptyLabel = (keyword) => `No jobs match ${keyword}.`,
 }) {
   const [keyword, setKeyword] = useState(initialKeyword);
   const [debouncedKeyword, setDebouncedKeyword] = useState(initialKeyword);
-  const [currency, setCurrency] = useCurrency();
+  const [currency] = useCurrency();
 
   // Avoid firing a request on every keystroke.
   useEffect(() => {
@@ -38,7 +37,6 @@ export function JobBrowser({
             {isLoading ? "Loading…" : `${jobs.length} open role${jobs.length === 1 ? "" : "s"}${subtitleSuffix}`}
           </p>
         </div>
-        <CurrencyToggle value={currency} onChange={setCurrency} />
       </div>
 
       <SearchBar

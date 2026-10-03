@@ -16,7 +16,9 @@ import {
 } from "@headlessui/react";
 import { Fragment } from "react";
 import { Button } from "@/components/ui/Button";
+import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 import { useAuth } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { getDashboardNav } from "@/config/dashboardNav";
 import { cn } from "@/utils/cn";
 import logo from "@/assets/images/logo/logo.svg";
@@ -41,6 +43,7 @@ function initials(name = "") {
 export function PublicHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const [currency, setCurrency] = useCurrency();
   const { dashboardPath } = getDashboardNav(user?.role);
 
   return (
@@ -67,6 +70,7 @@ export function PublicHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <CurrencyToggle value={currency} onChange={setCurrency} />
           {isAuthenticated ? (
             <Menu as="div" className="relative">
               <MenuButton className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-primary/5">
@@ -170,6 +174,13 @@ export function PublicHeader() {
             </NavLink>
           ))}
 
+          <div className="mt-2 flex items-center justify-between border-t border-primary/10 px-2 pt-3">
+            <span className="text-xs font-medium uppercase tracking-wide text-accent">
+              Currency
+            </span>
+            <CurrencyToggle value={currency} onChange={setCurrency} />
+          </div>
+
           {isAuthenticated ? (
             <>
               <div className="mt-2 flex items-center gap-2 border-t border-primary/10 px-2 pt-3">
@@ -178,7 +189,7 @@ export function PublicHeader() {
                 </span>
                 <span className="text-sm font-medium text-primary">
                   {user?.name ?? "Guest"}
-                </span>A
+                </span>
               </div>
               {dashboardPath && (
                 <Link

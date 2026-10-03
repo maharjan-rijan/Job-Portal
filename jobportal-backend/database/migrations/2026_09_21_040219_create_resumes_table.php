@@ -22,6 +22,8 @@ return new class extends Migration
             $table->json('experience')->nullable();
             $table->json('social_links')->nullable();
             $table->json('achievements')->nullable();
+            $table->string('template')->default('classic');
+            $table->string('color', 7)->default('#0f172a');
             $table->timestamps();
         });
     }
