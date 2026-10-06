@@ -31,8 +31,8 @@ class AdminController extends Controller
         $startOfThisMonth = Carbon::now()->startOfMonth();
         $startOfLastMonth = Carbon::now()->subMonthNoOverflow()->startOfMonth();
 
-        $countSince = fn ($query, $since) => (clone $query)->where('created_at', '>=', $since)->count();
-        $countBetween = fn ($query, $from, $to) => (clone $query)->whereBetween('created_at', [$from, $to])->count();
+        $countSince = fn($query, $since) => (clone $query)->where('created_at', '>=', $since)->count();
+        $countBetween = fn($query, $from, $to) => (clone $query)->whereBetween('created_at', [$from, $to])->count();
 
         // direction is only ever "up"/"down" — that's all StatCard renders.
         $trend = function (int $thisMonth, int $lastMonth): array {
@@ -92,18 +92,18 @@ class AdminController extends Controller
     private function monthlyGrowth(): array
     {
         $months = collect(range(11, 0))
-            ->map(fn ($i) => Carbon::now()->subMonthsNoOverflow($i)->startOfMonth());
+            ->map(fn($i) => Carbon::now()->subMonthsNoOverflow($i)->startOfMonth());
         $windowStart = $months->first();
 
         $bucket = function ($createdAtValues) use ($months) {
-            $counts = array_fill_keys($months->map(fn ($m) => $m->format('Y-m'))->all(), 0);
+            $counts = array_fill_keys($months->map(fn($m) => $m->format('Y-m'))->all(), 0);
             foreach ($createdAtValues as $createdAt) {
                 $key = Carbon::parse($createdAt)->format('Y-m');
                 if (array_key_exists($key, $counts)) {
                     $counts[$key]++;
                 }
             }
-            return $months->map(fn ($m) => [
+            return $months->map(fn($m) => [
                 'month' => $m->format('M'),
                 'value' => $counts[$m->format('Y-m')],
             ])->values();
@@ -139,7 +139,7 @@ class AdminController extends Controller
     private function recentActivity(): array
     {
         $employers = User::where('role', 'employer')->latest()->take(5)->get()
-            ->map(fn ($user) => [
+            ->map(fn($user) => [
                 'id' => "employer-{$user->id}",
                 'type' => 'employer_signup',
                 'label' => 'New employer signed up',
@@ -148,7 +148,7 @@ class AdminController extends Controller
             ]);
 
         $seekers = User::where('role', 'seeker')->latest()->take(5)->get()
-            ->map(fn ($user) => [
+            ->map(fn($user) => [
                 'id' => "seeker-{$user->id}",
                 'type' => 'seeker_signup',
                 'label' => 'New seeker signed up',
@@ -157,7 +157,7 @@ class AdminController extends Controller
             ]);
 
         $jobs = JobPost::with('employer')->latest()->take(5)->get()
-            ->map(fn ($job) => [
+            ->map(fn($job) => [
                 'id' => "job-{$job->id}",
                 'type' => 'job_posted',
                 'label' => 'New job posted',
@@ -166,7 +166,7 @@ class AdminController extends Controller
             ]);
 
         $applications = JobApplication::with('job')->latest()->take(5)->get()
-            ->map(fn ($application) => [
+            ->map(fn($application) => [
                 'id' => "application-{$application->id}",
                 'type' => 'application_submitted',
                 'label' => 'New application submitted',
@@ -179,5 +179,59 @@ class AdminController extends Controller
             ->take(6)
             ->values()
             ->all();
+    }
+    public function users(Request $request)
+    {
+        $users = User::query()
+            ->with('company') // skip this ->with() if company isn't a real relation on your User model
+            ->whereIn('role', ['seeker', 'employer']) // admins never show up in this list
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $term = '%' . $request->input('search') . '%';
+                $query->where(function ($q) use ($term) {
+                    $q->where('name', 'like', $term)
+                        ->orWhere('email', 'like', $term);
+                });
+            })
+            ->when($request->filled('role'), function ($query) use ($request) {
+                $query->where('role', $request->input('role'));
+            })
+            ->latest()
+            ->get();
+
+        return response()->json($users);
+    }
+
+    /** PATCH /admin/users/{user}/toggle-block */
+    public function toggleUserBlock(User $user)
+    {
+        $user->forceFill(['is_blocked' => ! $user->is_blocked])->save();
+
+        return response()->json($user->fresh());
+    }
+
+    public function jobs(Request $request)
+    {
+        $jobs = JobPost::query()
+            ->with('employer.company')
+            ->withCount('applications')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $term = '%' . $request->input('search') . '%';
+                $query->where(function ($q) use ($term) {
+                    $q->where('title', 'like', $term)
+                        ->orWhereHas('employer.company', fn($c) => $c->where('name', 'like', $term));
+                });
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->input('status'));
+            })
+            ->latest()
+            ->get()
+            ->map(function ($job) {
+
+                $job->applicants_count = $job->applications_count;
+                return $job;
+            });
+
+        return response()->json($jobs);
     }
 }

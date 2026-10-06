@@ -52,6 +52,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+        Route::get('/admin/users', [AdminController::class, 'users']);
+        Route::patch('/admin/users/{user}/toggle-block', [AdminController::class, 'toggleUserBlock']);
+        Route::get('/admin/jobs', [AdminController::class, 'jobs']);
     });
 });
 

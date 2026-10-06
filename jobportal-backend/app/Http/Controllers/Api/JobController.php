@@ -63,8 +63,6 @@ class JobController extends Controller
 
     public function store(StoreJobRequest $request)
     {
-        // Unset fields default to an empty array on create, matching the
-        // column defaults (JSON columns) rather than being left out.
         $data = $this->mapJobData($request->validated()) + [
             'responsibilities' => [],
             'requirements' => [],
@@ -80,9 +78,6 @@ class JobController extends Controller
     {
         $this->authorize('update', $job);
 
-        // Only the keys actually present in the (sometimes-validated) input
-        // are included here, so omitted fields keep their existing value —
-        // no manual "$request->x ?? $job->x" fallback needed per field.
         $job->update($this->mapJobData($request->validated()));
 
         return response()->json($job);

@@ -10,11 +10,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 
-/**
- * Demo data: 3 seekers (each with a resume), 3 employers (each with a
- * company profile and 5 job posts — 15 jobs total). All passwords:
- * "password". Called from DatabaseSeeder::run().
- */
 class AdminSeeder extends Seeder
 {
     public function run(): void

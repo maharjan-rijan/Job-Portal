@@ -35,13 +35,21 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Invalid email or password'], 401);
         }
 
+        // >>> ADD THIS — stops a blocked user's login before a token is ever issued.
+        if ($user->is_blocked) {
+            return response()->json(['message' => 'Your account has been blocked. Contact support for help.'], 403);
+        }
+        // <<< end addition
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
         return response()->json([
-            'token' => $user->createToken('auth_token')->plainTextToken,
-            'user' => $user->load('company'),
+            'token' => $token,
+            'user' => $user,
         ]);
     }
 

@@ -33,6 +33,14 @@ export const queryKeys = {
 
   admin: {
     dashboard: ["admin", "dashboard"],
+    users: {
+      all: ["admin", "users"],
+      list: (filters) => ["admin", "users", "list", filters ?? {}],
+    },
+    jobs: {
+      all: ["admin", "jobs"],
+      list: (filters) => ["admin", "jobs", "list", filters ?? {}],
+    },
   },
   auth: {
     me: ["auth", "me"],

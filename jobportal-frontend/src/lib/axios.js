@@ -22,12 +22,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Normalize error shape so callers can rely on `error.message` and
-// `error.status` (the raw axios error's `.response.status` is lost once
-// we reject with a plain Error, so we re-attach it here for anyone
-// downstream who needs to branch on the status code, e.g. treating a
-// 404 on a "my resource" endpoint as "doesn't exist yet" rather than
-// a real error).
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
