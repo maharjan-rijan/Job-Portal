@@ -22,6 +22,10 @@ class JobController extends Controller
     {
         $query = JobPost::query()->with('employer.company')->where('status', 'Open')->latest();
 
+        if ($request->boolean('featured')) {
+            $query->where('is_featured', true);
+        }
+
         if ($request->filled('q')) {
             $keyword = $request->q;
             $query->where(function ($q) use ($keyword) {
@@ -39,7 +43,7 @@ class JobController extends Controller
             $query->where('type', $request->type);
         }
 
-        return response()->json($query->paginate(10));
+        return response()->json($query->paginate(12));
     }
 
     public function show(JobPost $job)

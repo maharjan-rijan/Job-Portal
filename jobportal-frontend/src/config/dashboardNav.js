@@ -11,6 +11,7 @@ import {
   Users,
   FileBarChart,
   Heart,
+  Newspaper,
 } from "lucide-react";
 import { USER_ROLES } from "@/utils/constants";
 
@@ -60,6 +61,7 @@ export const DASHBOARD_NAV = {
       { label: "Dashboard", to: "/admin/dashboard", icon: LayoutDashboard },
       { label: "Users", to: "/admin/users", icon: Users },
       { label: "Jobs", to: "/admin/jobs", icon: Briefcase },
+      { label: "Blog", to: "/admin/blog", icon: Newspaper },
       { label: "Reports", to: "/admin/reports", icon: FileBarChart },
     ],
   },

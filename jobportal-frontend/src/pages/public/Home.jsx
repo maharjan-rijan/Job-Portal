@@ -10,12 +10,21 @@ export function Home() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
-  // Currency is global now (set from the navbar's CurrencyToggle via
-  // CurrencyContext) — this page only ever reads it to format job
-  // cards, never changes it, so there's no setter to destructure here.
   const [currency] = useCurrency();
   const { data, isLoading, isError, error } = useJobs();
-  const featuredJobs = (data?.data ?? []).slice(0, 4);
+
+  const jobs = data?.data ?? [];
+
+  const featuredJobs = jobs
+    .filter((job) => job.isFeatured === true)
+    .slice(0, 4);
+  const latestJobs = [...jobs]
+    .sort((a, b) => {
+      const dateA = new Date(a.postedAt ?? a.createdAt ?? 0).getTime();
+      const dateB = new Date(b.postedAt ?? b.createdAt ?? 0).getTime();
+      return dateB - dateA;
+    })
+    .slice(0, 4);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -76,9 +85,7 @@ export function Home() {
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
-          <h2 className="text-2xl font-semibold text-text">
-            Featured jobs
-          </h2>
+          <h2 className="text-2xl font-semibold text-text">Featured jobs</h2>
           <div className="flex items-center gap-4">
             <Link
               to="/jobs"
@@ -89,12 +96,48 @@ export function Home() {
           </div>
         </div>
 
-        <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load featured jobs">
+        <QueryState
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          errorLabel="Could not load featured jobs"
+        >
           <div className="grid gap-4 sm:grid-cols-2">
             {featuredJobs.map((job) => (
               <JobCard key={job.id} job={job} currency={currency} />
             ))}
             {featuredJobs.length === 0 && (
+              <p className="col-span-full py-12 text-center text-sm text-accent">
+                No jobs posted yet — check back soon.
+              </p>
+            )}
+          </div>
+        </QueryState>
+      </section>
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-8 flex items-end justify-between">
+          <h2 className="text-2xl font-semibold text-text">Latest jobs</h2>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/jobs"
+              className="flex items-center gap-1 text-sm font-medium text-secondary hover:text-secondary"
+            >
+              View all jobs <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+
+        <QueryState
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          errorLabel="Could not load latest jobs"
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            {latestJobs.map((job) => (
+              <JobCard key={job.id} job={job} currency={currency} />
+            ))}
+            {latestJobs.length === 0 && (
               <p className="col-span-full py-12 text-center text-sm text-accent">
                 No jobs posted yet — check back soon.
               </p>

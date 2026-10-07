@@ -234,4 +234,11 @@ class AdminController extends Controller
 
         return response()->json($jobs);
     }
+
+
+    public function toggleFeaturedJob(JobPost $job)
+    {
+        $job->update(['is_featured' => ! $job->is_featured]);
+        return response()->json($job->load('employer.company'));
+    }
 }

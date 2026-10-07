@@ -2,7 +2,13 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import { Bold, Italic, List, ListOrdered, Link as LinkIcon } from "lucide-react";
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Link as LinkIcon,
+} from "lucide-react";
 import { cn } from "@/utils/cn";
 
 function ToolbarButton({ onClick, active, disabled, children, label }) {
@@ -14,7 +20,7 @@ function ToolbarButton({ onClick, active, disabled, children, label }) {
       aria-label={label}
       className={cn(
         "flex h-8 w-8 items-center justify-center rounded-md text-accent hover:bg-background disabled:opacity-40",
-        active && "bg-secondary/10 text-secondary"
+        active && "bg-secondary/10 text-secondary",
       )}
     >
       {children}
@@ -28,10 +34,21 @@ function ToolbarButton({ onClick, active, disabled, children, label }) {
  * `value`/`onChange` carry HTML — wire it up via react-hook-form's
  * <Controller>, the same pattern PostJobForm already uses for Dropdown.
  */
-export function RichTextEditor({ label, error, value, onChange, placeholder, className }) {
+export function RichTextEditor({
+  label,
+  error,
+  value,
+  onChange,
+  placeholder,
+  className,
+}) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      // Newer StarterKit versions bundle their own Link extension, which
+      // collided with the standalone one below ("Duplicate extension
+      // names found: ['link']"). Turning it off here keeps only the one
+      // we configure ourselves.
+      StarterKit.configure({ link: false }),
       Link.configure({ openOnClick: false, autolink: true }),
       Placeholder.configure({ placeholder: placeholder ?? "Write something…" }),
     ],
@@ -39,7 +56,8 @@ export function RichTextEditor({ label, error, value, onChange, placeholder, cla
     onUpdate: ({ editor }) => onChange?.(editor.getHTML()),
     editorProps: {
       attributes: {
-        class: "prose prose-sm max-w-none focus:outline-none min-h-[120px] text-text",
+        class:
+          "prose prose-sm max-w-none focus:outline-none min-h-[120px] text-text",
       },
     },
   });
@@ -56,12 +74,14 @@ export function RichTextEditor({ label, error, value, onChange, placeholder, cla
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
-      {label && <label className="text-sm font-medium text-primary">{label}</label>}
+      {label && (
+        <label className="text-sm font-medium text-primary">{label}</label>
+      )}
 
       <div
         className={cn(
           "rounded-lg border border-primary/20 focus-within:border-brand-500",
-          error && "border-red-500"
+          error && "border-red-500",
         )}
       >
         <div className="flex items-center gap-1 border-b border-primary/10 px-2 py-1.5">

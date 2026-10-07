@@ -24,6 +24,7 @@ return new class extends Migration
             $table->json('requirements')->nullable();
             $table->json('benefits')->nullable();
             $table->enum('status', ['Open', 'Closed'])->default('Open');
+            $table->boolean('is_featured')->default(false);
             $table->timestamps();
         });
     }

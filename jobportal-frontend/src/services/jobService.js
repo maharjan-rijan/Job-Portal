@@ -24,6 +24,7 @@ export function normalizeJob(job) {
     requirements: job.requirements ?? [],
     benefits: job.benefits ?? [],
     status: job.status ?? "Open",
+    isFeatured: job.is_featured ?? false,
     postedAt: field(job, "created_at", "postedAt"),
     employerId: job.employer_id != null ? String(job.employer_id) : job.employer?.id != null ? String(job.employer.id) : null,
     company: job.employer?.company?.name ?? job.employer?.name ?? "—",

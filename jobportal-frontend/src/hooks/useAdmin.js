@@ -48,3 +48,23 @@ export function useAdminDeleteJob() {
     },
   });
 }
+
+export function useToggleJobStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => adminService.toggleJobStatus(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.jobs.all });
+    },
+  });
+}
+
+export function useToggleJobFeatured() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => adminService.toggleJobFeatured(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.jobs.all });
+    },
+  });
+}

@@ -29,7 +29,12 @@ import { BrowseResumes } from "@/pages/employer/Resume/BrowseResume";
 import { ResumeDetail } from "@/pages/employer/Resume/ResumeDetail";
 import { EditProfile as EmployerEditProfile } from "@/pages/employer/EditProfile";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
-import {  ManageUsers } from "@/pages/admin/ManageUser";
+import { ManageUsers } from "@/pages/admin/ManageUser";
+import { AdminJobs } from "@/pages/admin/ManageJob";
+import { ListBlog } from "@/pages/admin/blog/ListBlog";
+import { CreateBlog } from "@/pages/admin/blog/CreateBlog";
+import { EditBlog } from "@/pages/admin/blog/EditBlog";
+
 import { USER_ROLES } from "@/utils/constants";
 import { SavedJobs } from "@/pages/seeker/SavedJobs";
 import { MyApplications } from "@/pages/seeker/MyApplications";
@@ -102,7 +107,10 @@ export const router = createBrowserRouter([
         children: [
           { path: "/admin/dashboard", element: <AdminDashboard /> },
           { path: "/admin/users", element: <ManageUsers /> },
-          { path: "/admin/jobs", element: <ManageJobs /> },
+          { path: "/admin/jobs", element: <AdminJobs /> },
+          { path: "/admin/blog", element: <ListBlog /> },
+          { path: "/admin/blog/new", element: <CreateBlog /> },
+          { path: "/admin/blog/:postId/edit", element: <EditBlog /> },
         ],
       },
     ],

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\JobAlertController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
@@ -14,6 +15,10 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::get('/jobs', [JobController::class, 'index']);
+
+Route::get('/blog', [BlogController::class, 'index']);
+Route::get('/blog/categories', [BlogController::class, 'categories']);
+Route::get('/blog/{blogPost}', [BlogController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
@@ -55,6 +60,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'users']);
         Route::patch('/admin/users/{user}/toggle-block', [AdminController::class, 'toggleUserBlock']);
         Route::get('/admin/jobs', [AdminController::class, 'jobs']);
+
+        Route::patch('/admin/jobs/{job}/approve', [AdminController::class, 'approveJob']);
+        Route::patch('/admin/jobs/{job}/reject', [AdminController::class, 'rejectJob']);
+        Route::patch('/admin/jobs/{job}/toggle-featured', [AdminController::class, 'toggleFeaturedJob']);
+
+        Route::post('/blog', [BlogController::class, 'store']);
+        Route::put('/blog/{blogPost}', [BlogController::class, 'update']);
+        Route::delete('/blog/{blogPost}', [BlogController::class, 'destroy']);
     });
 });
 
