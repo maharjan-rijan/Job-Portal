@@ -15,6 +15,23 @@ function normalizeUser(user) {
   };
 }
 
+function normalizeReport(report) {
+  const r = report ?? {};
+  return {
+    summary: {
+      jobsPosted: r.summary?.jobs_posted ?? r.summary?.jobsPosted ?? 0,
+      applications: r.summary?.applications ?? 0,
+      newSeekers: r.summary?.new_seekers ?? r.summary?.newSeekers ?? 0,
+      newEmployers: r.summary?.new_employers ?? r.summary?.newEmployers ?? 0,
+    },
+    jobsByStatus: r.jobs_by_status ?? r.jobsByStatus ?? [],
+    jobsByApproval: r.jobs_by_approval ?? r.jobsByApproval ?? [],
+    applicationsByStatus:
+      r.applications_by_status ?? r.applicationsByStatus ?? [],
+    signupsByRole: r.signups_by_role ?? r.signupsByRole ?? [],
+  };
+}
+
 function normalizeAdminJob(job) {
   if (!job) return job;
 
@@ -49,6 +66,11 @@ export const adminService = {
   // ============================================================
 
   getDashboard: () => api.get("/admin/dashboard").then((r) => r.data),
+
+  getReports: (filters) =>
+    api
+      .get("/admin/reports", { params: filters })
+      .then((r) => normalizeReport(r.data)),
 
   // ============================================================
   // USERS

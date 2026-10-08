@@ -9,6 +9,13 @@ export function useAdminDashboard() {
   });
 }
 
+export function useAdminReports(filters) {
+  return useQuery({
+    queryKey: queryKeys.admin.reports.list(filters),
+    queryFn: () => adminService.getReports(filters),
+  });
+}
+
 /** filters: { search, role } — powers the Manage Users page. */
 export function useAdminUsers(filters) {
   return useQuery({

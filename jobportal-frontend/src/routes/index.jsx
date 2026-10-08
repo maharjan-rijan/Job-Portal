@@ -39,6 +39,7 @@ import { USER_ROLES } from "@/utils/constants";
 import { SavedJobs } from "@/pages/seeker/SavedJobs";
 import { MyApplications } from "@/pages/seeker/MyApplications";
 import { ResumePreview } from "@/pages/seeker/ResumePreview";
+import { Reports } from "@/pages/admin/Reports";
 
 export const router = createBrowserRouter([
   {
@@ -111,6 +112,7 @@ export const router = createBrowserRouter([
           { path: "/admin/blog", element: <ListBlog /> },
           { path: "/admin/blog/new", element: <CreateBlog /> },
           { path: "/admin/blog/:postId/edit", element: <EditBlog /> },
+          { path: "/admin/reports", element: <Reports /> },
         ],
       },
     ],

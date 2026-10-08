@@ -65,9 +65,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/admin/jobs/{job}/reject', [AdminController::class, 'rejectJob']);
         Route::patch('/admin/jobs/{job}/toggle-featured', [AdminController::class, 'toggleFeaturedJob']);
 
-        Route::post('/blog', [BlogController::class, 'store']);
-        Route::put('/blog/{blogPost}', [BlogController::class, 'update']);
-        Route::delete('/blog/{blogPost}', [BlogController::class, 'destroy']);
+        Route::get('/admin/reports', [AdminController::class, 'reports']);
+
+        Route::post('/admin/blog', [BlogController::class, 'store']);
+        Route::put('/admin/blog/{blogPost}', [BlogController::class, 'update']);
+        Route::delete('/admin/blog/{blogPost}', [BlogController::class, 'destroy']);
     });
 });
 

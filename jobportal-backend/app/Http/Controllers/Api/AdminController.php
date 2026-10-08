@@ -241,4 +241,56 @@ class AdminController extends Controller
         $job->update(['is_featured' => ! $job->is_featured]);
         return response()->json($job->load('employer.company'));
     }
+
+    public function reports(Request $request)
+    {
+        $from = $request->filled('from')
+            ? Carbon::parse($request->input('from'))->startOfDay()
+            : null;
+        $to = $request->filled('to')
+            ? Carbon::parse($request->input('to'))->endOfDay()
+            : Carbon::now()->endOfDay();
+
+        $jobsQuery = JobPost::query()
+            ->when($from, fn($q) => $q->where('created_at', '>=', $from))
+            ->where('created_at', '<=', $to);
+
+        $applicationsQuery = JobApplication::query()
+            ->when($from, fn($q) => $q->where('created_at', '>=', $from))
+            ->where('created_at', '<=', $to);
+
+        $usersQuery = User::query()
+            ->when($from, fn($q) => $q->where('created_at', '>=', $from))
+            ->where('created_at', '<=', $to);
+
+        return response()->json([
+            'summary' => [
+                'jobs_posted' => (clone $jobsQuery)->count(),
+                'applications' => (clone $applicationsQuery)->count(),
+                'new_seekers' => (clone $usersQuery)->where('role', 'seeker')->count(),
+                'new_employers' => (clone $usersQuery)->where('role', 'employer')->count(),
+            ],
+
+            'jobs_by_status' => (clone $jobsQuery)
+                ->selectRaw('status as name, count(*) as value')
+                ->groupBy('status')
+                ->get(),
+
+            'jobs_by_approval' => (clone $jobsQuery)
+                ->selectRaw('approval_status as name, count(*) as value')
+                ->groupBy('approval_status')
+                ->get(),
+
+            'applications_by_status' => (clone $applicationsQuery)
+                ->selectRaw('status as name, count(*) as value')
+                ->groupBy('status')
+                ->get(),
+
+            'signups_by_role' => (clone $usersQuery)
+                ->whereIn('role', ['seeker', 'employer'])
+                ->selectRaw('role as name, count(*) as value')
+                ->groupBy('role')
+                ->get(),
+        ]);
+    }
 }

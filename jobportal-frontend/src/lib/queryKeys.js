@@ -41,6 +41,10 @@ export const queryKeys = {
       all: ["admin", "jobs"],
       list: (filters) => ["admin", "jobs", "list", filters ?? {}],
     },
+    reports: {
+      all: ["admin", "reports"],
+      list: (filters) => ["admin", "reports", "list", filters ?? {}],
+    },
   },
   auth: {
     me: ["auth", "me"],

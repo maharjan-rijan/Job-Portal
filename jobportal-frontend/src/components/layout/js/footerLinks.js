@@ -2,53 +2,95 @@ import { USER_ROLES } from "@/utils/constants";
 
 const GUEST_GROUPS = [
   {
-    heading: "Candidates",
+    heading: "For Candidates",
     links: [
       { label: "Browse jobs", to: "/jobs" },
-      { label: "Create profile", to: "/register" },
+      { label: "Create an account", to: "/register" },
+      { label: "Job alerts", to: "/login" },
     ],
   },
   {
-    heading: "Employers",
+    heading: "For Employers",
     links: [
-      { label: "Post a job", to: "/employer/dashboard" },
-      { label: "Manage applications", to: "/employer/dashboard" },
+      { label: "Post a job", to: "/register" },
+      { label: "Browse resumes", to: "/login" },
+      { label: "Manage applications", to: "/login" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About us", to: "/about" },
+      { label: "Blog", to: "/blog" },
+      { label: "Contact", to: "/contact" },
     ],
   },
 ];
 
 export const LEGAL_LINKS = [
   { label: "Terms of use", to: "#" },
-  { label: "Privacy Policy", to: "#" },
-  { label: "Faq", to: "#" },
-  { label: "Contact", to: "/contact" },
+  { label: "Privacy policy", to: "#" },
+  { label: "FAQ", to: "#" },
+];
+
+export const SOCIAL_LINKS = [
+  { label: "Facebook", icon: "facebook", href: "#" },
+  { label: "X (Twitter)", icon: "twitter", href: "#" },
+  { label: "LinkedIn", icon: "linkedin", href: "#" },
+  { label: "Instagram", icon: "instagram", href: "#" },
 ];
 
 const FOOTER_LINK_GROUPS_BY_ROLE = {
   [USER_ROLES.SEEKER]: [
     {
-      heading: "Candidates",
+      heading: "For Candidates",
       links: [
         { label: "Browse jobs", to: "/seeker/browse-jobs" },
         { label: "My dashboard", to: "/seeker/dashboard" },
         { label: "My resume", to: "/seeker/resume" },
+        { label: "Saved jobs", to: "/seeker/saved-jobs" },
+        { label: "Job alerts", to: "/seeker/job-alerts" },
+      ],
+    },
+    {
+      heading: "Company",
+      links: [
+        { label: "About us", to: "/about" },
+        { label: "Blog", to: "/blog" },
+        { label: "Contact", to: "/contact" },
       ],
     },
   ],
   [USER_ROLES.EMPLOYER]: [
     {
-      heading: "Employers",
+      heading: "For Employers",
       links: [
         { label: "Post a job", to: "/employer/jobs/new" },
         { label: "Manage jobs", to: "/employer/jobs" },
+        { label: "Applications", to: "/employer/applications" },
+        { label: "Browse resumes", to: "/employer/resumes" },
         { label: "My dashboard", to: "/employer/dashboard" },
+      ],
+    },
+    {
+      heading: "Company",
+      links: [
+        { label: "About us", to: "/about" },
+        { label: "Blog", to: "/blog" },
+        { label: "Contact", to: "/contact" },
       ],
     },
   ],
   [USER_ROLES.ADMIN]: [
     {
       heading: "Admin",
-      links: [{ label: "Dashboard", to: "/admin/dashboard" }],
+      links: [
+        { label: "Dashboard", to: "/admin/dashboard" },
+        { label: "Users", to: "/admin/users" },
+        { label: "Jobs", to: "/admin/jobs" },
+        { label: "Blog", to: "/admin/blog" },
+        { label: "Reports", to: "/admin/reports" },
+      ],
     },
   ],
 };
