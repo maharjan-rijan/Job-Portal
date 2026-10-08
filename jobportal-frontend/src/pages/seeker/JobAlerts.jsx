@@ -7,13 +7,29 @@ import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { Modal } from "@/components/ui/Modal";
 import { QueryState } from "@/components/ui/QueryState";
 import { AlertForm } from "@/components/forms/AlertForm";
-import { useJobAlerts, useCreateJobAlert, useDeleteJobAlert } from "@/hooks/useJobAlerts";
+import {
+  useJobAlerts,
+  useCreateJobAlert,
+  useDeleteJobAlert,
+} from "@/hooks/useJobAlerts";
+import { Pagination } from "@/components/ui/Pagination";
+import { usePagination } from "@/hooks/usePagination";
 
 export function JobAlerts() {
   const [createOpen, setCreateOpen] = useState(false);
   const { data: alerts = [], isLoading, isError, error } = useJobAlerts();
   const { mutate: createAlert, isPending: isCreating } = useCreateJobAlert();
   const { mutate: deleteAlert } = useDeleteJobAlert();
+
+  const {
+    pageItems: pagedAlerts,
+    page,
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(alerts, { pageSize: 10 });
 
   const handleCreate = (values) => {
     createAlert(values, {
@@ -30,7 +46,8 @@ export function JobAlerts() {
 
     deleteAlert(id, {
       onSuccess: () => toast.success("Alert removed"),
-      onError: (err) => toast.error(err.message ?? "Could not remove this alert"),
+      onError: (err) =>
+        toast.error(err.message ?? "Could not remove this alert"),
     });
   };
 
@@ -50,7 +67,12 @@ export function JobAlerts() {
       </div>
 
       <Card className="mt-6 p-0">
-        <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load your alerts">
+        <QueryState
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          errorLabel="Could not load your alerts"
+        >
           <div className="hidden grid-cols-[2fr_2fr_1.5fr_1fr_auto] gap-4 border-b border-primary/10 px-5 py-3 text-xs font-medium uppercase text-accent sm:grid">
             <span>Name</span>
             <span>Keywords</span>
@@ -59,7 +81,7 @@ export function JobAlerts() {
             <span />
           </div>
 
-          {alerts.map((alert) => (
+          {pagedAlerts.map((alert) => (
             <div
               key={alert.id}
               className="grid grid-cols-2 gap-3 border-b border-primary/10 px-5 py-4 text-sm last:border-0 sm:grid-cols-[2fr_2fr_1.5fr_1fr_auto] sm:items-center"
@@ -85,6 +107,15 @@ export function JobAlerts() {
               No alerts yet — create one to get notified about new roles.
             </p>
           )}
+
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            from={from}
+            to={to}
+            totalItems={totalItems}
+          />
         </QueryState>
       </Card>
 

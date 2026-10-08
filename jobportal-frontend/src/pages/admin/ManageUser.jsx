@@ -7,6 +7,8 @@ import { SearchBar } from "@/components/ui/SearchBar";
 import { Dropdown } from "@/components/ui/Dropdown";
 import { QueryState } from "@/components/ui/QueryState";
 import { useAdminUsers, useToggleUserBlock } from "@/hooks/useAdmin";
+import { Pagination } from "@/components/ui/Pagination";
+import { usePagination } from "@/hooks/usePagination";
 import { formatDate } from "@/utils/formatters";
 import { USER_ROLES } from "@/utils/constants";
 
@@ -35,6 +37,16 @@ export function ManageUsers() {
     error,
   } = useAdminUsers(filters);
   const { mutate: toggleBlock, isPending: isToggling } = useToggleUserBlock();
+
+  const {
+    pageItems: pagedUsers,
+    page,
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(users, { pageSize: 10, resetKey: JSON.stringify(filters) });
 
   const handleToggleBlock = (user) => {
     toggleBlock(user.id, {
@@ -104,7 +116,7 @@ export function ManageUsers() {
               </tr>
             </thead>
             <tbody className="divide-y divide-primary/10">
-              {users.map((user) => (
+              {pagedUsers.map((user) => (
                 <tr
                   key={user.id}
                   className="transition-colors hover:bg-primary/5"
@@ -156,6 +168,15 @@ export function ManageUsers() {
               No users match your filters.
             </div>
           )}
+
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            from={from}
+            to={to}
+            totalItems={totalItems}
+          />
         </Card>
       </QueryState>
     </div>

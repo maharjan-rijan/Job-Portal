@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/Badge";
 import { QueryState } from "@/components/ui/QueryState";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { formatDate } from "@/utils/formatters";
+import { Pagination } from "@/components/ui/Pagination";
+import { usePagination } from "@/hooks/usePagination";
 
 import { useMyJobs, useSaveJob, useDeleteJob } from "@/hooks/useJobs";
 import { useApplications } from "@/hooks/useApplications";
@@ -59,6 +61,16 @@ export function ManageJobs() {
     };
   });
 
+  const {
+    pageItems: pagedJobs,
+    page,
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(jobsWithApplicants, { pageSize: 10 });
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -109,8 +121,11 @@ export function ManageJobs() {
               </tr>
             </thead>
             <tbody className="divide-y divide-primary/10">
-              {jobsWithApplicants.map((job) => (
-                <tr key={job.id} className="hover:bg-primary/5 transition-colors">
+              {pagedJobs.map((job) => (
+                <tr
+                  key={job.id}
+                  className="hover:bg-primary/5 transition-colors"
+                >
                   <td className="px-5 py-4 whitespace-nowrap">
                     <p className="font-medium text-text">{job.title}</p>
                     <p className="text-xs text-accent">
@@ -180,6 +195,14 @@ export function ManageJobs() {
             </p>
           )}
         </Card>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          from={from}
+          to={to}
+          totalItems={totalItems}
+        />
       </QueryState>
     </div>
   );

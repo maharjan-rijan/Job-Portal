@@ -6,6 +6,8 @@ import { QueryState } from "@/components/ui/QueryState";
 import { useMyApplications } from "@/hooks/useApplications";
 import { formatDate } from "@/utils/formatters";
 import { APPLICATION_STATUS_TONE } from "@/utils/constants";
+import { Pagination } from "@/components/ui/Pagination";
+import { usePagination } from "@/hooks/usePagination";
 
 export function MyApplications() {
   const {
@@ -15,6 +17,15 @@ export function MyApplications() {
     error,
   } = useMyApplications();
 
+  const {
+    pageItems: pagedApplications,
+    page,
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(applications, { pageSize: 10 });
   return (
     <div>
       <h1 className="text-xl font-semibold text-text">My applications</h1>
@@ -38,7 +49,7 @@ export function MyApplications() {
             <span>Status</span>
           </div>
 
-          {applications.map((app) => (
+          {pagedApplications.map((app) => (
             <div
               key={app.id}
               className="grid grid-cols-2 gap-3 border-b border-primary/10 px-5 py-4 text-sm last:border-0 sm:grid-cols-[2fr_1.5fr_1fr_1fr] sm:items-center"
@@ -66,6 +77,15 @@ export function MyApplications() {
               You haven't applied to any jobs yet.
             </p>
           )}
+
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            from={from}
+            to={to}
+            totalItems={totalItems}
+          />
         </Card>
       </QueryState>
     </div>

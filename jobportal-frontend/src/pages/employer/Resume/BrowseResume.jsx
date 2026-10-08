@@ -4,6 +4,9 @@ import { ResumeCard } from "@/components/ui/ResumeCard";
 import { QueryState } from "@/components/ui/QueryState";
 import { useResumes } from "@/hooks/useResume";
 
+import { Pagination } from "@/components/ui/Pagination";
+import { usePagination } from "@/hooks/usePagination";
+
 export function BrowseResumes() {
   const [keyword, setKeyword] = useState("");
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
@@ -20,6 +23,15 @@ export function BrowseResumes() {
     error,
   } = useResumes(debouncedKeyword ? { q: debouncedKeyword } : undefined);
 
+  const {
+    pageItems: pagedResumes,
+    page,
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(resumes, { pageSize: 10, resetKey: debouncedKeyword });
   return (
     <div>
       <div>
@@ -45,7 +57,7 @@ export function BrowseResumes() {
         errorLabel="Could not load resumes"
       >
         <div className="mt-6 flex flex-col gap-4">
-          {resumes.map((resume) => (
+          {pagedResumes.map((resume) => (
             <ResumeCard key={resume.id} resume={resume} />
           ))}
           {resumes.length === 0 && (
@@ -54,6 +66,15 @@ export function BrowseResumes() {
             </p>
           )}
         </div>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          from={from}
+          to={to}
+          totalItems={totalItems}
+          className="mt-4"
+        />
       </QueryState>
     </div>
   );

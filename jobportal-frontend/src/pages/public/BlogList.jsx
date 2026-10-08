@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { BlogCard } from "@/components/ui/BlogCard";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { QueryState } from "@/components/ui/QueryState";
+import { usePagination } from "@/hooks/usePagination";
+import { Pagination } from "@/components/ui/Pagination";
 import { useBlogPosts, useBlogCategories } from "@/hooks/useBlog";
 
 export function BlogList() {
@@ -20,7 +22,23 @@ export function BlogList() {
     isLoading,
     isError,
     error,
-  } = useBlogPosts({ q: debouncedKeyword || undefined, category: category || undefined });
+  } = useBlogPosts({
+    q: debouncedKeyword || undefined,
+    category: category || undefined,
+  });
+
+  const {
+    pageItems: pagedPosts,
+    page,
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(posts, {
+    pageSize: 10,
+    resetKey: `${debouncedKeyword}:${category}`,
+  });
 
   return (
     <>
@@ -47,7 +65,9 @@ export function BlogList() {
             <button
               onClick={() => setCategory("")}
               className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-                category === "" ? "bg-secondary text-white" : "bg-background text-accent hover:text-text"
+                category === ""
+                  ? "bg-secondary text-white"
+                  : "bg-background text-accent hover:text-text"
               }`}
             >
               All
@@ -57,7 +77,9 @@ export function BlogList() {
                 key={item}
                 onClick={() => setCategory(item)}
                 className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-                  category === item ? "bg-secondary text-white" : "bg-background text-accent hover:text-text"
+                  category === item
+                    ? "bg-secondary text-white"
+                    : "bg-background text-accent hover:text-text"
                 }`}
               >
                 {item}
@@ -67,9 +89,14 @@ export function BlogList() {
         </div>
 
         <div className="mt-8">
-          <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load articles">
+          <QueryState
+            isLoading={isLoading}
+            isError={isError}
+            error={error}
+            errorLabel="Could not load articles"
+          >
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {posts.map((post) => (
+              {pagedPosts.map((post) => (
                 <BlogCard key={post.id} post={post} />
               ))}
               {posts.length === 0 && (
@@ -78,6 +105,15 @@ export function BlogList() {
                 </p>
               )}
             </div>
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              from={from}
+              to={to}
+              totalItems={totalItems}
+              className="mt-4"
+            />
           </QueryState>
         </div>
       </section>

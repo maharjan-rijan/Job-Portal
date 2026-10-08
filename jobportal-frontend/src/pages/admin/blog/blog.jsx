@@ -8,6 +8,8 @@ import { SearchBar } from "@/components/ui/SearchBar";
 import { QueryState } from "@/components/ui/QueryState";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { useBlogPosts, useDeleteBlogPost } from "@/hooks/useBlog";
+import { Pagination } from "@/components/ui/Pagination";
+import { usePagination } from "@/hooks/usePagination";
 import { formatDate } from "@/utils/formatters";
 
 export function Blog() {
@@ -18,6 +20,16 @@ export function Blog() {
   const filters = { q: search || undefined };
   const { data: posts = [], isLoading, isError, error } = useBlogPosts(filters);
   const { mutate: deletePost, isPending: isDeleting } = useDeleteBlogPost();
+
+  const {
+    pageItems: pagedPosts,
+    page,
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(posts, { pageSize: 10, resetKey: search });
 
   const handleDelete = (post) => {
     if (!window.confirm(`Delete "${post.title}"? This can't be undone.`))
@@ -83,7 +95,7 @@ export function Blog() {
               </tr>
             </thead>
             <tbody className="divide-y divide-primary/10">
-              {posts.map((post) => (
+              {pagedPosts.map((post) => (
                 <tr
                   key={post.id}
                   className="transition-colors hover:bg-primary/5"
@@ -133,6 +145,14 @@ export function Blog() {
               No posts match your search.
             </div>
           )}
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            from={from}
+            to={to}
+            totalItems={totalItems}
+          />
         </Card>
       </QueryState>
     </div>

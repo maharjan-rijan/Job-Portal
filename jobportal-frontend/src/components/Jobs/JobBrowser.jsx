@@ -4,6 +4,8 @@ import { JobCard } from "@/components/ui/JobCard";
 import { QueryState } from "@/components/ui/QueryState";
 import { useJobs } from "@/hooks/useJobs";
 import { useCurrency } from "@/hooks/useCurrency";
+import { usePagination } from "@/hooks/usePagination";
+import { Pagination } from "@/components/ui/Pagination";
 
 export function JobBrowser({
   title,
@@ -27,6 +29,15 @@ export function JobBrowser({
     debouncedKeyword ? { q: debouncedKeyword } : undefined
   );
   const jobs = data?.data ?? [];
+  const {
+    pageItems : pagedJobs,
+    page, 
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(jobs, {pageSize: 10, resetKey: debouncedKeyword });
 
   return (
     <div>
@@ -48,7 +59,7 @@ export function JobBrowser({
 
       <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load jobs">
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {jobs.map((job) => (
+          {pagedJobs.map((job) => (
             <JobCard key={job.id} job={job} currency={currency} />
           ))}
           {jobs.length === 0 && (
@@ -57,6 +68,16 @@ export function JobBrowser({
             </p>
           )}
         </div>
+        
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          from={from}
+          to={to}
+          totalItems={totalItems}
+          className="mt-4"
+        />
       </QueryState>
     </div>
   );

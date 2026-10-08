@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/Badge";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { Dropdown } from "@/components/ui/Dropdown";
 import { QueryState } from "@/components/ui/QueryState";
+import { usePagination } from "@/hooks/usePagination";
+import { Pagination } from "@/components/ui/Pagination";
 
 import {
   useAdminJobs,
@@ -38,6 +40,16 @@ export function AdminJobs() {
 
   const { mutate: toggleFeatured, isPending: isTogglingFeatured } =
     useToggleJobFeatured();
+
+  const {
+    pageItems: pagedJobs,
+    page,
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(jobs, { pageSize: 10, resetKey: JSON.stringify(filters) });
 
   const handleToggleStatus = (job) => {
     toggleStatus(job.id, {
@@ -140,7 +152,7 @@ export function AdminJobs() {
             </thead>
 
             <tbody className="divide-y divide-primary/10">
-              {jobs.map((job) => (
+              {pagedJobs.map((job) => (
                 <tr
                   key={job.id}
                   className="transition-colors hover:bg-primary/5"
@@ -224,6 +236,14 @@ export function AdminJobs() {
               No jobs match your filters.
             </div>
           )}
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            from={from}
+            to={to}
+            totalItems={totalItems}
+          />
         </Card>
       </QueryState>
     </div>

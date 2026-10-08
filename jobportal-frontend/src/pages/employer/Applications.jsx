@@ -3,8 +3,14 @@ import { ExternalLink, Mail } from "lucide-react";
 import toast from "react-hot-toast";
 import { Card } from "@/components/ui/Card";
 import { Dropdown } from "@/components/ui/Dropdown";
+import { Pagination } from "@/components/ui/Pagination";
+import { usePagination } from "@/hooks/usePagination";
+
 import { QueryState } from "@/components/ui/QueryState";
-import { useApplications, useUpdateApplicationStatus } from "@/hooks/useApplications";
+import {
+  useApplications,
+  useUpdateApplicationStatus,
+} from "@/hooks/useApplications";
 import { useMyJobs } from "@/hooks/useJobs";
 import { formatDate } from "@/utils/formatters";
 import { APPLICATION_STATUS_OPTIONS } from "@/utils/constants";
@@ -24,27 +30,48 @@ export function Applications() {
 
   const { data: myJobs = [] } = useMyJobs();
   const jobOptions = useMemo(
-    () => [{ label: "All jobs", value: "" }, ...myJobs.map((job) => ({ label: job.title, value: job.id }))],
-    [myJobs]
+    () => [
+      { label: "All jobs", value: "" },
+      ...myJobs.map((job) => ({ label: job.title, value: job.id })),
+    ],
+    [myJobs],
   );
   const statusOptions = useMemo(
     () => [{ label: "All statuses", value: "" }, ...APPLICATION_STATUS_OPTIONS],
-    []
+    [],
   );
 
-  const { data: applications = [], isLoading, isError, error } = useApplications({
+  const {
+    data: applications = [],
+    isLoading,
+    isError,
+    error,
+  } = useApplications({
     jobId: jobId || undefined,
     status: status || undefined,
   });
   const { mutate: updateStatus } = useUpdateApplicationStatus();
 
+  const {
+    pageItems: pagedApplications,
+    page,
+    setPage,
+    totalPages,
+    from,
+    to,
+    totalItems,
+  } = usePagination(applications, {
+    pageSize: 10,
+    resetKey: `${jobId}:${status}`,
+  });
   const handleStatusChange = (application, newStatus) => {
     updateStatus(
       { id: application.id, status: newStatus },
       {
-        onSuccess: () => toast.success(`Marked ${application.name} as ${newStatus}`),
+        onSuccess: () =>
+          toast.success(`Marked ${application.name} as ${newStatus}`),
         onError: (err) => toast.error(err.message ?? "Could not update status"),
-      }
+      },
     );
   };
 
@@ -53,7 +80,9 @@ export function Applications() {
       <div>
         <h1 className="text-xl font-semibold text-text">Applications</h1>
         <p className="mt-1 text-sm text-accent">
-          {isLoading ? "Loading…" : `${applications.length} applicant${applications.length === 1 ? "" : "s"}`}
+          {isLoading
+            ? "Loading…"
+            : `${applications.length} applicant${applications.length === 1 ? "" : "s"}`}
         </p>
       </div>
 
@@ -72,7 +101,12 @@ export function Applications() {
         />
       </div>
 
-      <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load applicants">
+      <QueryState
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        errorLabel="Could not load applicants"
+      >
         <Card className="mt-6 p-0">
           <div className="hidden grid-cols-[2fr_2fr_1fr_1fr_1.3fr] gap-4 border-b border-primary/10 px-5 py-3 text-xs font-medium uppercase text-accent sm:grid">
             <span>Applicant</span>
@@ -82,7 +116,7 @@ export function Applications() {
             <span>Status</span>
           </div>
 
-          {applications.map((app) => (
+          {pagedApplications.map((app) => (
             <div
               key={app.id}
               className="grid grid-cols-2 gap-3 border-b border-primary/10 px-5 py-4 text-sm last:border-0 sm:grid-cols-[2fr_2fr_1fr_1fr_1.3fr] sm:items-center"
@@ -131,6 +165,15 @@ export function Applications() {
               No applicants match these filters yet.
             </p>
           )}
+
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            from={from}
+            to={to}
+            totalItems={totalItems}
+          />
         </Card>
       </QueryState>
     </div>
