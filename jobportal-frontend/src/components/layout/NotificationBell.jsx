@@ -7,35 +7,73 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { Bell, Briefcase, CheckCheck } from "lucide-react";
+import {
+  Bell,
+  Briefcase,
+  CheckCheck,
+  UserCheck,
+  UserX,
+  CalendarClock,
+} from "lucide-react";
 import {
   useNotifications,
   useUnreadNotificationCount,
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
 } from "@/hooks/useNotifications";
-import { formatRelative } from "@/utils/formatters";
+import { formatRelative, formatDateTime } from "@/utils/formatters";
 import { cn } from "@/utils/cn";
 
-// Only "job_application" exists for now (fired when a seeker applies —
-// see JobApplicationController_store_snippet.php), but this is shaped
-// so a new notification `type` just needs an entry here, not a rewrite.
+// Two notification types exist: "job_application" (employer side — fired
+// when a seeker applies, see JobApplicationController_store_snippet.php)
+// and "application_status_changed" (seeker side — fired when an employer
+// moves an application to interview/hired/rejected, see
+// JobApplicationController_updateStatus_snippet.php). Shaped so a new
+// type just needs an entry here, not a rewrite.
+const STATUS_META = {
+  interview: { icon: CalendarClock, verb: "invited you to interview for" },
+  hired: { icon: UserCheck, verb: "hired you for" },
+  rejected: {
+    icon: UserX,
+    verb: "didn't move forward with your application for",
+  },
+};
+
 const NOTIFICATION_META = {
   job_application: {
-    icon: Briefcase,
+    // icon is ALWAYS a function of `data`, even when it doesn't need
+    // data, so NotificationRow never has to guess whether to call it
+    // or use it directly — that guessing is what caused the
+    // "Objects are not valid as a React child" crash before.
+    icon: () => Briefcase,
     label: (data) =>
       `${data.applicant_name ?? "Someone"} applied to ${data.job_title ?? "your job"}`,
     to: () => "/employer/applications",
+  },
+  application_status_changed: {
+    icon: (data) => STATUS_META[data.status]?.icon ?? Briefcase,
+    label: (data) => {
+      const base = `${data.company ?? "The employer"} ${STATUS_META[data.status]?.verb ?? "updated your application for"} ${data.job_title ?? "a job"}`;
+      // Interview notifications carry a scheduled_at — append it so
+      // the seeker sees the date/time right in the dropdown, not just
+      // after clicking through to My Applications.
+      return data.status === "interview" && data.scheduled_at
+        ? `${base} — ${formatDateTime(data.scheduled_at)}`
+        : base;
+    },
+    to: () => "/seeker/applied-jobs",
   },
 };
 
 function NotificationRow({ notification, onRead }) {
   const meta = NOTIFICATION_META[notification.type] ?? {
-    icon: Bell,
+    icon: () => Bell,
     label: () => "New notification",
     to: () => "#",
   };
-  const Icon = meta.icon;
+  // meta.icon is always a function of `data` — call it to get the
+  // actual component, then render THAT. Never render meta.icon itself.
+  const Icon = meta.icon(notification.data);
   const isUnread = !notification.readAt;
 
   return (
@@ -82,6 +120,14 @@ function NotificationRow({ notification, onRead }) {
   );
 }
 
+/**
+ * Replaces the old static bell (always-on dot, no data) in
+ * DashboardTopbar. Works for any role — it just shows whatever
+ * notifications belong to the logged-in user. Employers get
+ * "job_application" (someone applied to your job); seekers get
+ * "application_status_changed" (an employer moved your application
+ * to interview/hired/rejected).
+ */
 export function NotificationBell() {
   const { data: notifications = [] } = useNotifications();
   const { data: unreadCount = 0 } = useUnreadNotificationCount();

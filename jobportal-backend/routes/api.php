@@ -26,6 +26,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
 
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+
     // Role-gated example routes, matching the React app's role checks:
     Route::middleware('role:seeker')->group(function () {
         Route::post('/jobs/{job}/applications', [JobApplicationController::class, 'store']);
@@ -36,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/resumes/me', [ResumeController::class, 'show']);
         Route::put('/resumes/me', [ResumeController::class, 'update']);
         Route::get('/resumes/me/pdf', [ResumeController::class, 'downloadMyPdf']);
+
 
         Route::get('/job-alerts', [JobAlertController::class, 'index']);
         Route::post('/job-alerts', [JobAlertController::class, 'store']);
@@ -52,10 +58,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/resumes/{resume}', [ResumeController::class, 'showById']);
         Route::get('/resumes/{resume}/pdf', [ResumeController::class, 'downloadPdf']);
 
-        Route::get('/notifications', [NotificationController::class, 'index']);
-        Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
-        Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
-        Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
 
         Route::put('/profile', [ProfileController::class, 'update']);
     });

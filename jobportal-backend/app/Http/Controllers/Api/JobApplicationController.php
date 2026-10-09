@@ -82,10 +82,49 @@ class JobApplicationController extends Controller
     /** PATCH /applications/{application}/status — employer-only, must own the job. */
     public function updateStatus(UpdateJobApplicationStatusRequest $request, JobApplication $application)
     {
-        $this->authorize('updateStatus', $application);
+        $validated = $request->validate([
+            'status' => 'required|in:applied,shortlisted,interview,rejected,hired',
+            'scheduled_at' => 'required_if:status,interview|nullable|date'
+        ]);
 
-        $application->update(['status' => $request->status]);
 
-        return response()->json($application->load('job'));
+        abort_if(
+            $request->user()->id !== $application->job->employer_id
+                && $request->user()->role !== 'admin',
+            403
+        );
+
+        $application->update([
+            'status' => $validated['status'],
+
+            'scheduled_at' => $validated['status'] === 'interview'
+                ? $validated['scheduled_at']
+                : $application->scheduled_at,
+        ]);
+
+
+
+        if (in_array($validated['status'], ['shortlisted', 'interview', 'rejected', 'hired'])) {
+            Notification::create([
+                'user_id' => $application->seeker_id,
+                'type' => 'application_status_changed',
+                'data' => [
+                    'application_id' => $application->id,
+                    'job_id' => $application->job->id,
+                    'job_title' => $application->job->title,
+
+                    'company' => $application->job->employer?->company_name
+                        ?? $application->job->employer?->name
+                        ?? null,
+                    'status' => $validated['status'],
+
+                    'scheduled_at' => $validated['status'] === 'interview'
+                        ? $validated['scheduled_at']
+                        : null,
+                ],
+            ]);
+        }
+
+        return response()->json($application->fresh());
     }
 }

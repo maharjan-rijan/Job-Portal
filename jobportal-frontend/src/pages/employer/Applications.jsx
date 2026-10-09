@@ -14,6 +14,7 @@ import {
 import { useMyJobs } from "@/hooks/useJobs";
 import { formatDate } from "@/utils/formatters";
 import { APPLICATION_STATUS_OPTIONS } from "@/utils/constants";
+import { InterviewScheduleModal } from "@/components/ui/InterviewScheduleModal";
 
 function initials(name = "") {
   return name
@@ -50,7 +51,9 @@ export function Applications() {
     jobId: jobId || undefined,
     status: status || undefined,
   });
-  const { mutate: updateStatus } = useUpdateApplicationStatus();
+  const { mutate: updateStatus, isPending: isUpdatingStatus } =
+    useUpdateApplicationStatus();
+  const [schedulingApp, setSchedulingApp] = useState(null);
 
   const {
     pageItems: pagedApplications,
@@ -65,12 +68,31 @@ export function Applications() {
     resetKey: `${jobId}:${status}`,
   });
   const handleStatusChange = (application, newStatus) => {
+    if (newStatus === "interview") {
+      setSchedulingApp(application);
+      return;
+    }
     updateStatus(
       { id: application.id, status: newStatus },
       {
         onSuccess: () =>
           toast.success(`Marked ${application.name} as ${newStatus}`),
         onError: (err) => toast.error(err.message ?? "Could not update status"),
+      },
+    );
+  };
+
+  const handleConfirmSchedule = (scheduledAt) => {
+    if (!schedulingApp) return;
+    updateStatus(
+      { id: schedulingApp.id, status: "interview", scheduledAt },
+      {
+        onSuccess: () => {
+          toast.success(`Interview scheduled with ${schedulingApp.name}`);
+          setSchedulingApp(null);
+        },
+        onError: (err) =>
+          toast.error(err.message ?? "Could not schedule the interview"),
       },
     );
   };
@@ -176,6 +198,13 @@ export function Applications() {
           />
         </Card>
       </QueryState>
+      <InterviewScheduleModal
+        open={!!schedulingApp}
+        applicantName={schedulingApp?.name}
+        onClose={() => setSchedulingApp(null)}
+        onConfirm={handleConfirmSchedule}
+        isSubmitting={isUpdatingStatus}
+      />
     </div>
   );
 }

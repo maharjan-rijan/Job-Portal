@@ -8,7 +8,6 @@ import {
   Transition,
 } from "@headlessui/react";
 import {
-  Bell,
   ChevronDown,
   LogOut,
   Menu as MenuIcon,
@@ -19,11 +18,11 @@ import {
   UserCircle,
 } from "lucide-react";
 import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/utils/cn";
-import { NotificationBell } from "./NotificationBell";
 
 function initials(name = "") {
   return name

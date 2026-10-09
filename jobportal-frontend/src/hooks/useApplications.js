@@ -24,7 +24,8 @@ export function useApplyToJob() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ jobId, payload }) => applicationService.applyToJob(jobId, payload),
+    mutationFn: ({ jobId, payload }) =>
+      applicationService.applyToJob(jobId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.applications.mine });
     },
@@ -36,7 +37,8 @@ export function useUpdateApplicationStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, status }) => applicationService.updateStatus(id, status),
+    mutationFn: ({ id, status, scheduledAt }) =>
+      applicationService.updateStatus(id, status, scheduledAt),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.applications.all });
     },

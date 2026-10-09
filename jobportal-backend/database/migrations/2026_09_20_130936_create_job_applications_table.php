@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('job_post_id')->constrained('job_posts')->cascadeOnDelete();
             $table->foreignId('seeker_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->unique(['seeker_id','job_post_id']);
+            $table->unique(['seeker_id', 'job_post_id']);
             $table->string('full_name');
             $table->string('email');
             $table->string('resume_url');
             $table->text('cover_note')->nullable();
             $table->enum('status', ['applied', 'shortlisted', 'interview', 'rejected', 'hired'])
                 ->default('applied');
+            $table->timestamp('scheduled_at')->nullable();
             $table->timestamps();
         });
     }

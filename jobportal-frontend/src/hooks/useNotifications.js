@@ -29,7 +29,9 @@ export function useMarkNotificationRead() {
     mutationFn: notificationService.markRead,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.unreadCount });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.unreadCount,
+      });
     },
   });
 }
@@ -41,7 +43,9 @@ export function useMarkAllNotificationsRead() {
     mutationFn: notificationService.markAllRead,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.unreadCount });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.unreadCount,
+      });
     },
   });
 }

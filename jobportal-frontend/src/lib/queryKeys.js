@@ -46,7 +46,6 @@ export const queryKeys = {
       list: (filters) => ["admin", "reports", "list", filters ?? {}],
     },
   },
-
   notifications: {
     all: ["notifications"],
     unreadCount: ["notifications", "unreadCount"],

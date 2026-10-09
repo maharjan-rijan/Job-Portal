@@ -7,7 +7,8 @@ function normalizeApplication(app) {
     id: String(app.id),
     jobId: app.job?.id ?? field(app, "job_id", "jobId"),
     jobTitle: app.job?.title ?? app.jobTitle ?? "—",
-    company: app.job?.employer?.company?.name ?? app.job?.employer?.name ?? null,
+    company:
+      app.job?.employer?.company?.name ?? app.job?.employer?.name ?? null,
     name: field(app, "full_name", "name", "—"),
     email: app.email ?? "—",
     resumeUrl: field(app, "resume_url", "resumeUrl"),
@@ -20,22 +21,17 @@ function normalizeApplication(app) {
 export const applicationService = {
   list: (params) =>
     api.get("/applications", { params }).then((r) => {
-      const raw = Array.isArray(r.data) ? r.data : r.data.data ?? [];
+      const raw = Array.isArray(r.data) ? r.data : (r.data.data ?? []);
       return raw.map(normalizeApplication);
     }),
 
   /** Seeker-only: the applications the current user has submitted. */
   mine: () =>
     api.get("/applications/mine").then((r) => {
-      const raw = Array.isArray(r.data) ? r.data : r.data.data ?? [];
+      const raw = Array.isArray(r.data) ? r.data : (r.data.data ?? []);
       return raw.map(normalizeApplication);
     }),
 
-  // `payload.resumeFile` is a raw browser File (see ApplyForm) — when
-  // present this has to go as multipart/form-data, not JSON, so the
-  // request body is built differently for that case. The `api` instance
-  // defaults to "Content-Type: application/json", so that header is
-  // explicitly overridden here rather than left to axios to guess.
   applyToJob: (jobId, payload) => {
     if (payload.resumeFile instanceof File) {
       const formData = new FormData();
@@ -55,8 +51,11 @@ export const applicationService = {
     return api.post(`/jobs/${jobId}/applications`, payload).then((r) => r.data);
   },
 
-  updateStatus: (applicationId, status) =>
+  updateStatus: (applicationId, status, scheduledAt) =>
     api
-      .patch(`/applications/${applicationId}/status`, { status })
+      .patch(`/applications/${applicationId}/status`, {
+        status,
+        ...(scheduledAt ? { scheduled_at: scheduledAt } : {}),
+      })
       .then((r) => normalizeApplication(r.data)),
 };

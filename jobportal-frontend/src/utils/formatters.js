@@ -11,6 +11,11 @@ export function formatDate(value, pattern = "MMM d, yyyy") {
   return date ? format(date, pattern) : "—";
 }
 
+export function formatDateTime(value, pattern = "MMM d, yyyy 'at' h:mm a") {
+  const date = toDate(value);
+  return date ? format(date, pattern) : "—";
+}
+
 /** "3 days ago" — used on job cards and application timelines. */
 export function formatRelative(value) {
   const date = toDate(value);
@@ -33,4 +38,5 @@ export function formatSalaryRange(min, max, currency = "USD") {
 const USD_TO_NPR_RATE = 133;
 
 export function convertUsdToNPR(amount) {
-  return amount == null ? amount : Math.round(amount * USD_TO_NPR_RATE);}
+  return amount == null ? amount : Math.round(amount * USD_TO_NPR_RATE);
+}

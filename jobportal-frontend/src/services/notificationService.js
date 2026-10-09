@@ -12,12 +12,18 @@ function normalizeNotification(n) {
 }
 
 export const notificationService = {
-  list: () => api.get("/notifications").then((r) => (r.data ?? []).map(normalizeNotification)),
+  list: () =>
+    api
+      .get("/notifications")
+      .then((r) => (r.data ?? []).map(normalizeNotification)),
 
-  unreadCount: () => api.get("/notifications/unread-count").then((r) => r.data?.count ?? 0),
+  unreadCount: () =>
+    api.get("/notifications/unread-count").then((r) => r.data?.count ?? 0),
 
   markRead: (id) =>
-    api.patch(`/notifications/${id}/read`).then((r) => normalizeNotification(r.data)),
+    api
+      .patch(`/notifications/${id}/read`)
+      .then((r) => normalizeNotification(r.data)),
 
   markAllRead: () => api.patch("/notifications/read-all").then((r) => r.data),
 };

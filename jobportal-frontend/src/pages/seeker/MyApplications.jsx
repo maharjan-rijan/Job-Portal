@@ -63,12 +63,19 @@ export function MyApplications() {
               </Link>
               <span className="text-accent">{app.company ?? "—"}</span>
               <span className="text-accent">{formatDate(app.appliedAt)}</span>
-              <Badge
-                tone={APPLICATION_STATUS_TONE[app.status] ?? "neutral"}
-                className="w-fit capitalize"
-              >
-                {app.status}
-              </Badge>
+              <div>
+                <Badge
+                  tone={APPLICATION_STATUS_TONE[app.status] ?? "neutral"}
+                  className="w-fit capitalize"
+                >
+                  {app.status}
+                </Badge>
+                {app.status === "interview" && app.scheduledAt && (
+                  <p className="mt-1 text-xs text-accent">
+                    {formatDateTime(app.scheduledAt)}
+                  </p>
+                )}
+              </div>
             </div>
           ))}
 
