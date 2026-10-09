@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\JobAlertController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ResumeController;
 use App\Http\Controllers\Api\SavedJobController;
@@ -51,6 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/resumes/{resume}', [ResumeController::class, 'showById']);
         Route::get('/resumes/{resume}/pdf', [ResumeController::class, 'downloadPdf']);
 
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
+        Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
 
         Route::put('/profile', [ProfileController::class, 'update']);
     });

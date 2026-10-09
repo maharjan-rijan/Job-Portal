@@ -1,14 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/*
-  Semantic color system — light values on :root, dark overrides under
-  [data-theme="dark"] (set by src/hooks/useTheme.js) or the OS-level
-  prefers-color-scheme when the user hasn't explicitly chosen a theme.
-  Tailwind v4 reads these as CSS variables via @theme below, so classes
-  like bg-primary / text-accent / bg-surface stay reactive to the
-  current theme without any component changing its className.
-*/
 :root {
   --color-primary: #334155;
   --color-secondary: #10b981;
@@ -54,16 +46,72 @@
 @layer base {
   html {
     font-family: var(--font-sans);
+
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
     color: var(--color-text);
     background-color: var(--color-background);
+
+    overflow-x: hidden;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  @supports (padding: max(0px)) {
+    body {
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+  }
+
+  /* Fluid headings — scales smoothly between phone and desktop instead
+     of jumping at each Tailwind breakpoint. Tailwind's text-4xl/text-5xl
+     etc. are still fine for most headings; this only kicks in for the
+     hero-sized ones (Home.jsx's h1, section titles with these classes). */
+  h1 {
+    font-size: clamp(1.75rem, 1.2rem + 2.5vw, 3rem);
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    button,
+    a[role="button"],
+    [role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
   }
 
   :focus-visible {
     outline: 2px solid var(--color-secondary);
     outline-offset: 2px;
+  }
+
+  .overflow-x-auto {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent) transparent;
+  }
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+  }
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background-color: var(--color-accent);
+    border-radius: 9999px;
+  }
+}
+
+@media (max-width: 400px) {
+  [class*="w-72"],
+  [class*="w-80"] {
+    max-width: calc(100vw - 2rem);
   }
 }
 

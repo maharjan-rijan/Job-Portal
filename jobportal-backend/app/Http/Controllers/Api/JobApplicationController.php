@@ -8,6 +8,7 @@ use App\Http\Requests\JobApplication\UpdateJobApplicationStatusRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Models\JobApplication;
 use App\Models\JobPost;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class JobApplicationController extends Controller
@@ -20,8 +21,6 @@ class JobApplicationController extends Controller
         $resumeUrl = $request->resumeUrl;
 
         if ($request->hasFile('resumeFile')) {
-            // Stored under storage/app/public/resumes, reachable at
-            // /storage/resumes/<generated-name> once storage:link has run.
             $path = $request->file('resumeFile')->store('resumes', 'public');
             $resumeUrl = Storage::url($path);
         }
@@ -33,6 +32,17 @@ class JobApplicationController extends Controller
             'resume_url' => $resumeUrl,
             'cover_note' => $request->coverNote,
             'status' => 'applied',
+        ]);
+
+        Notification::create([
+            'user_id' => $jobPost->employer_id,
+            'type' => 'job_application',
+            'data' => [
+                'job_id' => $jobPost->id,
+                'job_title' => $jobPost->title,
+                'applicant_name' => $request->fullName,
+                'application_id' => $application->id,
+            ],
         ]);
 
         return response()->json($application->fresh());

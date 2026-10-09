@@ -23,6 +23,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/utils/cn";
+import { NotificationBell } from "./NotificationBell";
 
 function initials(name = "") {
   return name
@@ -65,7 +66,11 @@ export function DashboardTopbar({
       <h1 className="text-lg font-semibold text-text sm:hidden">{title}</h1>
 
       <div className="flex items-center gap-3">
-        <CurrencyToggle value={currency} onChange={setCurrency} className="hidden sm:inline-flex" />
+        <CurrencyToggle
+          value={currency}
+          onChange={setCurrency}
+          className="hidden sm:inline-flex"
+        />
 
         <button
           onClick={toggleTheme}
@@ -79,13 +84,7 @@ export function DashboardTopbar({
           )}
         </button>
 
-        <button
-          className="relative flex h-10 w-10 items-center justify-center rounded-full text-accent hover:bg-primary/5"
-          aria-label="Notifications"
-        >
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-amber-500" />
-        </button>
+        <NotificationBell />
 
         <Menu as="div" className="relative">
           <MenuButton className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-primary/5">
