@@ -37,16 +37,19 @@ const ROLE_CONFIG = {
       { key: "completeness", label: "Profile completeness", suffix: "%" },
     ],
     details: [
-      { icon: Mail, label: "Email", value: (user) => user?.email ?? "—" },
+      { icon: Mail, label: "Email", value: ({ user }) => user?.email ?? "—" },
       {
         icon: MapPin,
         label: "Location",
-        value: (user) => user?.location ?? "Not set",
+        // Location lives on the seeker's resume record, not on the auth
+        // user object — AccountOverview already fetches it separately
+        // via useResume() below, so that's what this reads from.
+        value: ({ resume }) => resume?.location || "Not set",
       },
       {
         icon: CalendarDays,
         label: "Member since",
-        value: (user) => formatDate(user?.created_at),
+        value: ({ user }) => formatDate(user?.created_at),
       },
     ],
   },
@@ -61,16 +64,16 @@ const ROLE_CONFIG = {
       { key: "completeness", label: "Company Profile", suffix: "%" },
     ],
     details: [
-      { icon: Mail, label: "Email", value: (user) => user?.email ?? "—" },
+      { icon: Mail, label: "Email", value: ({ user }) => user?.email ?? "—" },
       {
         icon: Globe,
         label: "Website",
-        value: (user) => user?.company?.website ?? "Not set",
+        value: ({ user }) => user?.company?.website ?? "Not set",
       },
       {
         icon: CalendarDays,
         label: "Member since",
-        value: (user) => formatDate(user?.created_at),
+        value: ({ user }) => formatDate(user?.created_at),
       },
     ],
   },
@@ -85,7 +88,9 @@ export function AccountOverview() {
   // pattern used in the Dashboard — the hook still runs for the other
   // role (Rules of Hooks), it just stays disabled and unused there.
   const { data: myJobs } = useMyJobs({ enabled: isEmployer });
-  const { data: employerApplications } = useApplications(undefined, { enabled: isEmployer });
+  const { data: employerApplications } = useApplications(undefined, {
+    enabled: isEmployer,
+  });
   const { data: myApplications } = useMyApplications({ enabled: !isEmployer });
   const { data: savedJobs } = useSavedJobs({ enabled: !isEmployer });
   const { data: resume } = useResume({ enabled: !isEmployer });
@@ -152,7 +157,9 @@ export function AccountOverview() {
             <div key={label} className="flex items-center gap-2">
               <Icon className="h-4 w-4 text-secondary" />
               <dt className="text-accent">{label}</dt>
-              <dd className="ml-auto font-medium text-text">{value(user)}</dd>
+              <dd className="ml-auto font-medium text-text">
+                {value({ user, resume })}
+              </dd>
             </div>
           ))}
         </dl>
