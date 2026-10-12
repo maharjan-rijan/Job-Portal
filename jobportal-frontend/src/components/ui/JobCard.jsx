@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Globe, MapPin, Banknote } from "lucide-react";
+import { Globe, MapPin, Banknote, Star, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { formatSalaryRange, formatRelative } from "@/utils/formatters";
@@ -18,6 +18,17 @@ export function JobCard({ job, currency="USD" }) {
             </Link>
           </h3>
           <Badge tone="brand">{job.type}</Badge>
+          {job.isFeatured && (
+            <Badge tone='brand-outline' className="flex items-center gap-1 align-middle">
+              Featured
+            </Badge>
+          )}
+          {job.matchScore != null && (
+            <Badge tone="success" className="flex items-center gap-1 align-middle">
+              <Sparkles className="h-3 w-3" />
+              {Math.round(job.matchScore * 100)}% match
+            </Badge>
+          )}
         </div>
         <p className="mt-2 line-clamp-2 text-sm text-accent">
           {job.description}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Heart, MapPin, Globe, CalendarDays } from "lucide-react";
+import { Heart, MapPin, Globe, CalendarDays, Star } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
 import { Badge } from "@/components/ui/Badge";
@@ -119,9 +119,17 @@ export function JobDetails() {
                   {initials(job.company)}
                 </div>
                 <div>
-                  <h1 className="text-xl font-semibold text-text">
-                    {job.title}
-                  </h1>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="text-xl font-semibold text-text">
+                      {job.title}
+                    </h1>
+                    {job.isFeatured && (
+                      <Badge tone="warning" className="flex items-center gap-1">
+                        <Star className="h-3 w-3 fill-current" />
+                        Featured
+                      </Badge>
+                    )}
+                  </div>
                   <p className="mt-1 text-sm text-accent">
                     <a
                       href={`https://${job.companyWebsite}`}

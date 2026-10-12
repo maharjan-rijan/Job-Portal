@@ -8,6 +8,10 @@ class ResumeUpdateRequest extends ApiFormRequest
     {
         return [
             'title' => 'nullable|string',
+            // Powers the ML job-matching algorithm (see JobMatchingService.php)
+            // — a flat array of skill strings, same shape TagInput.jsx sends.
+            'skills' => 'nullable|array',
+            'skills.*' => 'string|max:50',
             'location' => 'nullable|string',
             'website' => 'nullable|string',
             'expectedSalary' => 'nullable|string',

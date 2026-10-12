@@ -276,10 +276,6 @@ class AdminController extends Controller
                 ->groupBy('status')
                 ->get(),
 
-            'jobs_by_approval' => (clone $jobsQuery)
-                ->selectRaw('approval_status as name, count(*) as value')
-                ->groupBy('approval_status')
-                ->get(),
 
             'applications_by_status' => (clone $applicationsQuery)
                 ->selectRaw('status as name, count(*) as value')

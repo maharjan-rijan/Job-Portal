@@ -1,20 +1,7 @@
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Transition,
-} from "@headlessui/react";
-import {
-  Bell,
-  Briefcase,
-  CheckCheck,
-  UserCheck,
-  UserX,
-  CalendarClock,
-} from "lucide-react";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import { Bell, Briefcase, CheckCheck, UserCheck, UserX, CalendarClock, Sparkles } from "lucide-react";
 import {
   useNotifications,
   useUnreadNotificationCount,
@@ -24,19 +11,20 @@ import {
 import { formatRelative, formatDateTime } from "@/utils/formatters";
 import { cn } from "@/utils/cn";
 
-// Two notification types exist: "job_application" (employer side — fired
-// when a seeker applies, see JobApplicationController_store_snippet.php)
-// and "application_status_changed" (seeker side — fired when an employer
+// Three notification types exist: "job_application" (employer side —
+// fired when a seeker applies, see JobApplicationController_store_snippet.php),
+// "application_status_changed" (seeker side — fired when an employer
 // moves an application to interview/hired/rejected, see
-// JobApplicationController_updateStatus_snippet.php). Shaped so a new
-// type just needs an entry here, not a rewrite.
+// JobApplicationController_updateStatus_snippet.php), and "job_match"
+// (seeker side — fired by the ML job-matching feature, either instantly
+// when a matching job goes live, see NotifyMatchingSeekers.php, or in a
+// scheduled digest per the seeker's alert frequency, see
+// SendJobAlertDigests.php). Shaped so a new type just needs an entry
+// here, not a rewrite.
 const STATUS_META = {
   interview: { icon: CalendarClock, verb: "invited you to interview for" },
   hired: { icon: UserCheck, verb: "hired you for" },
-  rejected: {
-    icon: UserX,
-    verb: "didn't move forward with your application for",
-  },
+  rejected: { icon: UserX, verb: "didn't move forward with your application for" },
 };
 
 const NOTIFICATION_META = {
@@ -46,8 +34,7 @@ const NOTIFICATION_META = {
     // or use it directly — that guessing is what caused the
     // "Objects are not valid as a React child" crash before.
     icon: () => Briefcase,
-    label: (data) =>
-      `${data.applicant_name ?? "Someone"} applied to ${data.job_title ?? "your job"}`,
+    label: (data) => `${data.applicant_name ?? "Someone"} applied to ${data.job_title ?? "your job"}`,
     to: () => "/employer/applications",
   },
   application_status_changed: {
@@ -62,6 +49,17 @@ const NOTIFICATION_META = {
         : base;
     },
     to: () => "/seeker/applied-jobs",
+  },
+  job_match: {
+    icon: () => Sparkles,
+    label: (data) => {
+      const pct = data.score != null ? Math.round(data.score * 100) : null;
+      const matchPart = pct != null ? ` (${pct}% match)` : "";
+      return `New job match: ${data.job_title ?? "a job"}${matchPart}`;
+    },
+    // Straight to the job itself, not the browse list — this is a
+    // specific recommendation, not a generic "go look around" nudge.
+    to: (data) => (data.job_id ? `/jobs/${data.job_id}` : "/seeker/browse-jobs"),
   },
 };
 
@@ -91,49 +89,31 @@ function NotificationRow({ notification, onRead }) {
           <span
             className={cn(
               "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-              isUnread
-                ? "bg-secondary/15 text-secondary"
-                : "bg-background text-accent",
+              isUnread ? "bg-secondary/15 text-secondary" : "bg-background text-accent",
             )}
           >
             <Icon className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span
-              className={cn(
-                "block",
-                isUnread ? "font-medium text-text" : "text-primary",
-              )}
-            >
+            <span className={cn("block", isUnread ? "font-medium text-text" : "text-primary")}>
               {meta.label(notification.data)}
             </span>
             <span className="mt-0.5 block text-xs text-accent">
               {formatRelative(notification.createdAt)}
             </span>
           </span>
-          {isUnread && (
-            <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-secondary" />
-          )}
+          {isUnread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-secondary" />}
         </Link>
       )}
     </MenuItem>
   );
 }
 
-/**
- * Replaces the old static bell (always-on dot, no data) in
- * DashboardTopbar. Works for any role — it just shows whatever
- * notifications belong to the logged-in user. Employers get
- * "job_application" (someone applied to your job); seekers get
- * "application_status_changed" (an employer moved your application
- * to interview/hired/rejected).
- */
 export function NotificationBell() {
   const { data: notifications = [] } = useNotifications();
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
   const { mutate: markRead } = useMarkNotificationRead();
-  const { mutate: markAllRead, isPending: isMarkingAll } =
-    useMarkAllNotificationsRead();
+  const { mutate: markAllRead, isPending: isMarkingAll } = useMarkAllNotificationsRead();
 
   return (
     <Menu as="div" className="relative">
@@ -160,9 +140,7 @@ export function NotificationBell() {
       >
         <MenuItems className="absolute right-0 z-30 mt-2 w-80 overflow-hidden rounded-lg border border-primary/10 bg-surface shadow-lg focus:outline-none">
           <div className="flex items-center justify-between border-b border-primary/10 px-3.5 py-2.5">
-            <span className="text-sm font-semibold text-text">
-              Notifications
-            </span>
+            <span className="text-sm font-semibold text-text">Notifications</span>
             {unreadCount > 0 && (
               <button
                 onClick={() => markAllRead()}
@@ -182,11 +160,7 @@ export function NotificationBell() {
               </p>
             ) : (
               notifications.map((notification) => (
-                <NotificationRow
-                  key={notification.id}
-                  notification={notification}
-                  onRead={markRead}
-                />
+                <NotificationRow key={notification.id} notification={notification} onRead={markRead} />
               ))
             )}
           </div>

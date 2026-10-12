@@ -10,6 +10,7 @@ class Resume extends Model
     protected $fillable = [
         'user_id',
         'title',
+        'skills',
         'location',
         'website',
         'expected_salary',
@@ -24,6 +25,7 @@ class Resume extends Model
     protected function casts(): array
     {
         return [
+            'skills' => 'array',
             'education' => 'array',
             'experience' => 'array',
             'social_links' => 'array',
@@ -32,6 +34,7 @@ class Resume extends Model
     }
 
     protected $attributes = [
+        'skills' => '[]',
         'education' => '[]',
         'experience' => '[]',
         'social_links' => '[]',

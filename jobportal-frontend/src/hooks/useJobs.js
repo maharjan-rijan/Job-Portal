@@ -41,6 +41,19 @@ export function useMyJobs(options = {}) {
   });
 }
 
+/**
+ * "Recommended for you" — ML-matched jobs for the logged-in seeker
+ * (see JobRecommendationController). Disabled by default so an
+ * employer/admin viewing a shared component never fires it.
+ */
+export function useRecommendedJobs(options = {}) {
+  return useQuery({
+    queryKey: queryKeys.jobs.recommended,
+    queryFn: jobService.recommended,
+    enabled: options.enabled ?? false,
+  });
+}
+
 /** Used by Manage Jobs' delete action. */
 export function useDeleteJob() {
   const queryClient = useQueryClient();

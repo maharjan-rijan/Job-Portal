@@ -32,11 +32,11 @@ function downloadCsv(report, range) {
     ["Jobs by status"],
     ...report.jobsByStatus.map((row) => [row.name ?? row.label, row.value]),
     [],
-    ["Jobs by approval"],
-    ...report.jobsByApproval.map((row) => [row.name ?? row.label, row.value]),
-    [],
     ["Applications by status"],
-    ...report.applicationsByStatus.map((row) => [row.name ?? row.label, row.value]),
+    ...report.applicationsByStatus.map((row) => [
+      row.name ?? row.label,
+      row.value,
+    ]),
     [],
     ["Signups by role"],
     ...report.signupsByRole.map((row) => [row.name ?? row.label, row.value]),
@@ -90,7 +90,8 @@ export function Reports() {
         <div>
           <h1 className="text-xl font-semibold text-text">Reports</h1>
           <p className="mt-1 text-sm text-accent">
-            Platform activity for the selected period — jobs posted, applications, and signups.
+            Platform activity for the selected period — jobs posted,
+            applications, and signups.
           </p>
         </div>
 
@@ -121,20 +122,43 @@ export function Reports() {
         ))}
       </div>
 
-      <QueryState isLoading={isLoading} isError={isError} error={error} errorLabel="Could not load the report">
+      <QueryState
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        errorLabel="Could not load the report"
+      >
         {report && (
           <div className="mt-6 flex flex-col gap-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard icon={Briefcase} label="Jobs posted" value={report.summary.jobsPosted.toLocaleString()} />
-              <StatCard icon={FileCheck} label="Applications" value={report.summary.applications.toLocaleString()} />
-              <StatCard icon={Users} label="New seekers" value={report.summary.newSeekers.toLocaleString()} />
-              <StatCard icon={Building2} label="New employers" value={report.summary.newEmployers.toLocaleString()} />
+              <StatCard
+                icon={Briefcase}
+                label="Jobs posted"
+                value={report.summary.jobsPosted.toLocaleString()}
+              />
+              <StatCard
+                icon={FileCheck}
+                label="Applications"
+                value={report.summary.applications.toLocaleString()}
+              />
+              <StatCard
+                icon={Users}
+                label="New seekers"
+                value={report.summary.newSeekers.toLocaleString()}
+              />
+              <StatCard
+                icon={Building2}
+                label="New employers"
+                value={report.summary.newEmployers.toLocaleString()}
+              />
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
               <Breakdown title="Jobs by status" data={report.jobsByStatus} />
-              <Breakdown title="Jobs by approval" data={report.jobsByApproval} />
-              <Breakdown title="Applications by status" data={report.applicationsByStatus} />
+              <Breakdown
+                title="Applications by status"
+                data={report.applicationsByStatus}
+              />
               <Breakdown title="Signups by role" data={report.signupsByRole} />
             </div>
           </div>

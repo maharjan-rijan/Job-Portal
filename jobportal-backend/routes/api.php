@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\JobAlertController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\JobRecommendationController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ResumeController;
@@ -46,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/job-alerts', [JobAlertController::class, 'index']);
         Route::post('/job-alerts', [JobAlertController::class, 'store']);
         Route::delete('/job-alerts/{jobAlert}', [JobAlertController::class, 'destroy']);
+
+        Route::get('/jobs/recommended', [JobRecommendationController::class, 'index']);
     });
     Route::middleware('role:employer')->group(function () {
         Route::get('/jobs/mine', [JobController::class, 'mine']);

@@ -47,6 +47,11 @@ class ResumeController extends Controller
             ['user_id' => $request->user()->id],
             [
                 'title' => $request->title,
+                // Was missing before — the resume form has always sent
+                // `skills`, but nothing here persisted it, so every
+                // seeker's skills list silently vanished on save. This
+                // is also the field the ML matcher depends on most.
+                'skills' => $request->skills ?? $existing?->skills ?? [],
                 'location' => $request->location,
                 'website' => $request->website,
                 'expected_salary' => $request->expectedSalary,

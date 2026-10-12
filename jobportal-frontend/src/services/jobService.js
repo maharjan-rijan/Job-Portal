@@ -1,12 +1,6 @@
 import api from "@/lib/axios";
 import { field } from "@/utils/normalize";
 
-/**
- * The backend returns snake_case DB columns and nests company info under
- * employer.company; this adapts that shape into what the UI already
- * expects (camelCase, flat company/companyWebsite). Keeping the mapping
- * here means components never need to know the wire format changed.
- */
 export function normalizeJob(job) {
   if (!job) return job;
   return {
@@ -18,7 +12,11 @@ export function normalizeJob(job) {
     salaryMax: field(job, "salary_max", "salaryMax"),
     vacancies: job.vacancies,
     experienceLevel: field(job, "experience_level", "experienceLevel"),
-    applicationDeadline: field(job, "application_deadline", "applicationDeadline"),
+    applicationDeadline: field(
+      job,
+      "application_deadline",
+      "applicationDeadline",
+    ),
     description: job.description,
     responsibilities: job.responsibilities ?? [],
     requirements: job.requirements ?? [],
@@ -26,7 +24,12 @@ export function normalizeJob(job) {
     status: job.status ?? "Open",
     isFeatured: job.is_featured ?? false,
     postedAt: field(job, "created_at", "postedAt"),
-    employerId: job.employer_id != null ? String(job.employer_id) : job.employer?.id != null ? String(job.employer.id) : null,
+    employerId:
+      job.employer_id != null
+        ? String(job.employer_id)
+        : job.employer?.id != null
+          ? String(job.employer.id)
+          : null,
     company: job.employer?.company?.name ?? job.employer?.name ?? "—",
     companyWebsite: job.employer?.company?.website ?? "",
     applicantsCount: job.applicants_count ?? 0,
@@ -44,7 +47,8 @@ export const jobService = {
 
   mine: () => api.get("/jobs/mine").then((r) => r.data.map(normalizeJob)),
 
-  create: (payload) => api.post("/jobs", payload).then((r) => normalizeJob(r.data)),
+  create: (payload) =>
+    api.post("/jobs", payload).then((r) => normalizeJob(r.data)),
 
   update: (id, payload) =>
     api.put(`/jobs/${id}`, payload).then((r) => normalizeJob(r.data)),
@@ -52,4 +56,12 @@ export const jobService = {
   remove: (id) => api.delete(`/jobs/${id}`).then((r) => r.data),
 
   categories: () => api.get("/jobs/categories").then((r) => r.data),
+
+  recommended: () =>
+    api.get("/jobs/recommended").then((r) =>
+      (r.data ?? []).map((job) => ({
+        ...normalizeJob(job),
+        matchScore: job.match_score ?? null,
+      })),
+    ),
 };

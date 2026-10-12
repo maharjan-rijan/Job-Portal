@@ -4,6 +4,7 @@ export const queryKeys = {
     list: (filters) => ["jobs", "list", filters ?? {}],
     detail: (id) => ["jobs", "detail", id],
     mine: ["jobs", "mine"],
+    recommended: ["jobs", "recommended"],
   },
   categories: {
     all: ["categories"],

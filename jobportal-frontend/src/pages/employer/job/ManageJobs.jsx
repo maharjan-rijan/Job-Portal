@@ -1,17 +1,17 @@
 import { Link } from "react-router-dom";
-import { Pencil, Plus, Trash2, Users } from "lucide-react";
+import { Pencil, Plus, Trash2, Users, Star } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { QueryState } from "@/components/ui/QueryState";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
-import { formatDate } from "@/utils/formatters";
 import { Pagination } from "@/components/ui/Pagination";
-import { usePagination } from "@/hooks/usePagination";
+import { formatDate } from "@/utils/formatters";
 
 import { useMyJobs, useSaveJob, useDeleteJob } from "@/hooks/useJobs";
 import { useApplications } from "@/hooks/useApplications";
+import { usePagination } from "@/hooks/usePagination";
 
 export function ManageJobs() {
   const { data: jobs = [], isLoading, isError, error } = useMyJobs();
@@ -122,12 +122,17 @@ export function ManageJobs() {
             </thead>
             <tbody className="divide-y divide-primary/10">
               {pagedJobs.map((job) => (
-                <tr
-                  key={job.id}
-                  className="hover:bg-primary/5 transition-colors"
-                >
+                <tr key={job.id} className="hover:bg-primary/5 transition-colors">
                   <td className="px-5 py-4 whitespace-nowrap">
-                    <p className="font-medium text-text">{job.title}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-medium text-text">{job.title}</p>
+                      {job.isFeatured && (
+                        <Badge tone="warning" className="flex items-center gap-1 shrink-0">
+                          <Star className="h-3 w-3 fill-current" />
+                          Featured
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-xs text-accent">
                       Posted {formatDate(job.postedAt)}
                     </p>
@@ -194,15 +199,16 @@ export function ManageJobs() {
               You haven't posted any jobs yet.
             </p>
           )}
+
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            from={from}
+            to={to}
+            totalItems={totalItems}
+          />
         </Card>
-        <Pagination
-          page={page}
-          totalPages={totalPages}
-          onPageChange={setPage}
-          from={from}
-          to={to}
-          totalItems={totalItems}
-        />
       </QueryState>
     </div>
   );

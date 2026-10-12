@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\JobPosted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Job\StoreJobRequest;
 use App\Http\Requests\Job\UpdateJobRequest;
@@ -74,6 +75,13 @@ class JobController extends Controller
         ];
 
         $job = $request->user()->jobPosts()->create($data);
+
+        // Jobs go live immediately (no approval step in this schema),
+        // so this is the right place to kick off ML matching — any
+        // seeker whose resume scores above threshold against this job
+        // gets notified. Runs via a queued listener/job, so this
+        // doesn't slow down the response.
+        event(new JobPosted($job));
 
         return response()->json($job, 201);
     }
