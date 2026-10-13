@@ -59,9 +59,13 @@ const ROLE_CONFIG = {
   [USER_ROLES.SEEKER]: {
     // value is filled in below from real query data — see STAT_VALUES.
     statDefs: [
-      { key: "applications", icon: FileText, label: "Applications sent" },
-      { key: "saved", icon: Heart, label: "Saved jobs" },
-      { key: "interviews", icon: CalendarCheck, label: "Interviews scheduled" },
+      { statKey: "applications", icon: FileText, label: "Applications sent" },
+      { statKey: "saved", icon: Heart, label: "Saved jobs" },
+      {
+        statKey: "interviews",
+        icon: CalendarCheck,
+        label: "Interviews scheduled",
+      },
     ],
     statsGridCols: "sm:grid-cols-3",
     radial: null,
@@ -80,8 +84,8 @@ const ROLE_CONFIG = {
   },
   [USER_ROLES.EMPLOYER]: {
     statDefs: [
-      { key: "openJobs", icon: Briefcase, label: "Open jobs" },
-      { key: "totalApplicants", icon: Users2, label: "Total applicants" },
+      { statKey: "openJobs", icon: Briefcase, label: "Open jobs" },
+      { statKey: "totalApplicants", icon: Users2, label: "Total applicants" },
     ],
     statsGridCols: "sm:grid-cols-2",
     radial: {
@@ -177,7 +181,7 @@ export function Dashboard() {
 
   const stats = config.statDefs.map((def) => ({
     ...def,
-    value: STAT_VALUES[def.key],
+    value: STAT_VALUES[def.statKey],
   }));
 
   return (

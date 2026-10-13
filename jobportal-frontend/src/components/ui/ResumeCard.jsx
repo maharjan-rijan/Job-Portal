@@ -1,16 +1,8 @@
 import { Link } from "react-router-dom";
 import { MapPin, Briefcase, GraduationCap } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { Avatar } from "@/components/ui/Avatar";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
-
-function initials(name = "") {
-  return name
-    .split(" ")
-    .map((word) => word[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
 
 export function ResumeCard({ resume }) {
   const latestExperience = resume.experience?.[0];
@@ -19,9 +11,12 @@ export function ResumeCard({ resume }) {
   return (
     <Card className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-sm font-semibold text-secondary">
-          {initials(resume.name)}
-        </span>
+        <Avatar
+          src={resume.avatarUrl}
+          name={resume.name}
+          size={48}
+          className="text-sm"
+        />
         <div>
           <h3 className="text-base font-semibold text-text">{resume.name}</h3>
           <p className="text-sm text-secondary">{resume.title}</p>
@@ -45,7 +40,11 @@ export function ResumeCard({ resume }) {
           </ul>
         </div>
       </div>
-      <SecondaryButton as={Link} to={`/employer/resumes/${resume.id}`} className="shrink-0">
+      <SecondaryButton
+        as={Link}
+        to={`/employer/resumes/${resume.id}`}
+        className="shrink-0"
+      >
         View resume
       </SecondaryButton>
     </Card>

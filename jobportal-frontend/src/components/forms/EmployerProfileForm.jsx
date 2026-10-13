@@ -14,12 +14,8 @@ import { useAuth } from "@/hooks/useAuth";
 
 export function EmployerProfileForm({ onSuccess }) {
   const { user, updateUser } = useAuth();
-
-  // Logo is handled outside RHF's register() since it's a File, not text —
-  // `undefined` means "leave the existing logo untouched", `null` means
-  // "the user removed it", and a File means "upload this new one".
   const [logoFile, setLogoFile] = useState(undefined);
-
+  const [avatarFile, setAvatarFile] = useState(undefined);
   const {
     register,
     handleSubmit,
@@ -41,15 +37,21 @@ export function EmployerProfileForm({ onSuccess }) {
     mutationFn: async (values) => {
       let logoUrl;
       if (logoFile === null) {
-        logoUrl = null; // explicitly removed
+        logoUrl = null;
       } else if (logoFile instanceof File) {
-        logoUrl = await fileToDataUrl(logoFile); // newly picked
+        logoUrl = await fileToDataUrl(logoFile);
       }
       // else: undefined — key omitted below, backend keeps the existing logo
-
+      let avatarUrl;
+      if (avatarFile === null) {
+        avatarUrl = null;
+      } else if (avatarFile instanceof File) {
+        avatarUrl = await fileToDataUrl(avatarFile);
+      }
       return profileService.update({
         name: values.name,
         email: values.email,
+        ...(avatarUrl !== undefined ? { avatar_url: avatarUrl } : {}),
         company: {
           name: values.companyName,
           website: values.website || null,
@@ -77,20 +79,28 @@ export function EmployerProfileForm({ onSuccess }) {
         <p className="mt-1 text-sm text-accent">
           The contact person on this account.
         </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <TextInput
-            label="Full name"
-            placeholder="Jane Doe"
-            error={errors.name?.message}
-            {...register("name")}
+        <div className="mt-4 flex flex-col gap-4">
+          <FileUpload
+            label="Your photo"
+            previewUrl={user?.avatar_url}
+            onChange={setAvatarFile}
+            helperText="PNG or JPG, up to 2MB — shown in the topbar and to candidates"
           />
-          <TextInput
-            label="Email"
-            type="email"
-            placeholder="you@example.com"
-            error={errors.email?.message}
-            {...register("email")}
-          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextInput
+              label="Full name"
+              placeholder="Jane Doe"
+              error={errors.name?.message}
+              {...register("name")}
+            />
+            <TextInput
+              label="Email"
+              type="email"
+              placeholder="you@example.com"
+              error={errors.email?.message}
+              {...register("email")}
+            />
+          </div>
         </div>
       </section>
 

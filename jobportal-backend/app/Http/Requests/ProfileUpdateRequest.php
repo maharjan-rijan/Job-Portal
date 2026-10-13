@@ -18,13 +18,14 @@ class ProfileUpdateRequest extends ApiFormRequest
                 'email',
                 Rule::unique('users', 'email')->ignore($this->user()->id),
             ],
+            'avatar_url' => 'nullable|string',
             'company' => 'sometimes|array',
             'company.name' => 'required_with:company|string|min:2',
             'company.website' => 'nullable|string',
             'company.industry' => 'nullable|string',
             'company.location' => 'nullable|string',
             'company.description' => 'nullable|string|max:1000',
-           
+
             'company.logo_url' => 'nullable|string|max:5000000',
         ];
     }

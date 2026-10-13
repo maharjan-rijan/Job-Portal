@@ -5,8 +5,9 @@ import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { NotFound } from "@/pages/public/NotFound";
+import { Avatar } from "@/components/ui/Avatar";
 import { useResumeDetail, useDownloadResumePdf } from "@/hooks/useResume";
-import { ResumeTemplate, initials } from "@/components/resume/ResumeTemplate";
+import { ResumeTemplate } from "@/components/resume/ResumeTemplate";
 
 export function ResumeDetail() {
   const { resumeId } = useParams();
@@ -52,12 +53,13 @@ export function ResumeDetail() {
 
       <div className="mt-10 w-full shrink-0 print:hidden lg:sticky lg:top-6 lg:w-80">
         <Card className="text-center">
-          <span
-            className="mx-auto flex h-20 w-20 items-center justify-center rounded-full text-2xl font-semibold text-white"
+          <Avatar
+            src={resume.avatarUrl}
+            name={resume.name}
+            size={80}
+            className="mx-auto text-2xl font-semibold text-white"
             style={{ backgroundColor: resume.color || "#0f172a" }}
-          >
-            {initials(resume.name)}
-          </span>
+          />
           <h2 className="mt-3 text-base font-semibold text-text">{resume.name}</h2>
           <p className="text-sm text-secondary">{resume.title}</p>
           <p className="mt-1 text-xs text-accent">{resume.location}</p>

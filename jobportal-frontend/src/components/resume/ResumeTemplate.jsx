@@ -1,5 +1,6 @@
 import { Mail, MapPin, Globe, DollarSign, Award } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { Avatar } from "@/components/ui/Avatar";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
 
 export function initials(name = "") {
@@ -19,9 +20,11 @@ const VARIANTS = {
     header: "text-center",
     name: "text-2xl font-bold tracking-tight text-gray-900",
     role: "mt-1 text-sm font-bold uppercase tracking-wide",
-    contact: "mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-gray-600",
+    contact:
+      "mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-gray-600",
     divider: "my-5 h-0.5 w-full",
-    sectionHeader: "mt-6 mb-3 border-b pb-1.5 text-xs font-bold uppercase tracking-wide",
+    sectionHeader:
+      "mt-6 mb-3 border-b pb-1.5 text-xs font-bold uppercase tracking-wide",
     card: false,
   },
   modern: {
@@ -40,7 +43,8 @@ const VARIANTS = {
     role: "mt-0.5 text-sm text-gray-600",
     contact: "mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500",
     divider: "hidden",
-    sectionHeader: "mt-6 mb-3 border-l-4 pl-2.5 text-xs font-semibold uppercase tracking-widest",
+    sectionHeader:
+      "mt-6 mb-3 border-l-4 pl-2.5 text-xs font-semibold uppercase tracking-widest",
     card: false,
   },
 };
@@ -55,7 +59,11 @@ function Section({ variant, color, title, children }) {
     ) : (
       <h2
         className={styles.sectionHeader}
-        style={variant === "classic" ? { borderColor: color, color } : { borderColor: color, color: "#111827" }}
+        style={
+          variant === "classic"
+            ? { borderColor: color, color }
+            : { borderColor: color, color: "#111827" }
+        }
       >
         {title}
       </h2>
@@ -111,12 +119,13 @@ export function ResumeTemplate({ resume }) {
     <div>
       <div className={styles.header}>
         {variant === "modern" && (
-          <span
-            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-lg font-semibold text-white"
+          <Avatar
+            src={resume.avatarUrl}
+            name={resume.name}
+            size={64}
+            className="text-lg font-semibold text-white"
             style={{ backgroundColor: color }}
-          >
-            {initials(resume.name)}
-          </span>
+          />
         )}
         <div>
           <h1 className={styles.name}>{resume.name}</h1>
@@ -126,7 +135,10 @@ export function ResumeTemplate({ resume }) {
             </p>
           )}
           <div className={styles.contact}>
-            <a href={`mailto:${resume.email}`} className="flex items-center gap-1.5 hover:underline">
+            <a
+              href={`mailto:${resume.email}`}
+              className="flex items-center gap-1.5 hover:underline"
+            >
               <Mail className="h-3.5 w-3.5" />
               {resume.email}
             </a>
@@ -203,9 +215,16 @@ export function ResumeTemplate({ resume }) {
       )}
 
       {resume.achievements?.length > 0 && (
-        <Section variant={variant} color={color} title="Achievements & Certificates">
+        <Section
+          variant={variant}
+          color={color}
+          title="Achievements & Certificates"
+        >
           {resume.achievements.map((entry, i) => (
-            <div key={i} className="flex items-start gap-3 border-t border-primary/10 pt-4 first:border-0 first:pt-0">
+            <div
+              key={i}
+              className="flex items-start gap-3 border-t border-primary/10 pt-4 first:border-0 first:pt-0"
+            >
               <Award className="mt-0.5 h-4 w-4 shrink-0" style={{ color }} />
               <div>
                 <p className="font-medium text-gray-900">{entry.title}</p>
@@ -214,7 +233,11 @@ export function ResumeTemplate({ resume }) {
                     {[entry.issuer, entry.date].filter(Boolean).join(" · ")}
                   </p>
                 )}
-                {entry.description && <p className="mt-2 text-sm text-gray-600">{entry.description}</p>}
+                {entry.description && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    {entry.description}
+                  </p>
+                )}
               </div>
             </div>
           ))}

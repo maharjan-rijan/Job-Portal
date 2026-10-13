@@ -58,6 +58,7 @@ class Resume extends Model
         $data = parent::toArray();
         $data['name'] = $this->user?->name;
         $data['email'] = $this->user?->email;
+        $data['avatar_url'] = $this->user?->avatar_url;
         unset($data['user']);
         return $data;
     }

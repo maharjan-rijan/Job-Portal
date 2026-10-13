@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Mail, Globe, MapPin, CalendarDays, Pencil } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Avatar } from "@/components/ui/Avatar";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyJobs } from "@/hooks/useJobs";
@@ -15,20 +16,11 @@ import {
   getSeekerProfileCompleteness,
 } from "@/utils/profileCompleteness";
 
-function initials(name = "") {
-  return name
-    .split(" ")
-    .map((word) => word[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
 const ROLE_CONFIG = {
   [USER_ROLES.SEEKER]: {
     badgeLabel: "Job Seeker",
     displayName: (user) => user?.name ?? "Your account",
-    editPath: "/seeker/resume",
+    editPath: "/seeker/profile/edit",
     secondaryAction: null,
     // values are filled in below from real query data — see STAT_VALUES.
     statDefs: [
@@ -114,9 +106,12 @@ export function AccountOverview() {
     <div className="flex flex-col gap-6">
       <Card className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary/10 text-lg font-semibold text-secondary">
-            {initials(user?.name || config.badgeLabel)}
-          </div>
+          <Avatar
+            src={user?.avatar_url}
+            name={user?.name || config.badgeLabel}
+            size={64}
+          />
+
           <div>
             <h1 className="text-lg font-semibold text-text">
               {config.displayName(user)}

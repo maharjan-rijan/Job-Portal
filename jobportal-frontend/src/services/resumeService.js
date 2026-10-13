@@ -47,8 +47,14 @@ function normalizeResume(resume) {
     expectedSalary: field(resume, "expected_salary", "expectedSalary", ""),
     education: (resume.education ?? []).map(normalizeEducationEntry),
     experience: (resume.experience ?? []).map(normalizeExperienceEntry),
-    socialLinks: (resume.social_links ?? resume.socialLinks ?? []).map(normalizeSocialLinkEntry),
+    socialLinks: (resume.social_links ?? resume.socialLinks ?? []).map(
+      normalizeSocialLinkEntry,
+    ),
     achievements: (resume.achievements ?? []).map(normalizeAchievementEntry),
+    // Injected server-side by Resume::toArray() from the owning user's
+    // account avatar (see ProfileController / SeekerProfileForm) — not
+    // a resumes-table column of its own.
+    avatarUrl: field(resume, "avatar_url", "avatarUrl", ""),
     template: resume.template ?? "classic",
     color: resume.color ?? "#0f172a",
     updatedAt: field(resume, "updated_at", "updatedAt"),
@@ -68,16 +74,18 @@ export const resumeService = {
         throw error;
       }),
 
-  save: (payload) => api.put("/resumes/me", payload).then((r) => normalizeResume(r.data)),
+  save: (payload) =>
+    api.put("/resumes/me", payload).then((r) => normalizeResume(r.data)),
 
   // Employer-only: browse candidate resumes.
   list: (params) =>
     api.get("/resumes", { params }).then((r) => {
-      const raw = Array.isArray(r.data) ? r.data : r.data.data ?? [];
+      const raw = Array.isArray(r.data) ? r.data : (r.data.data ?? []);
       return raw.map(normalizeResume);
     }),
 
-  getById: (id) => api.get(`/resumes/${id}`).then((r) => normalizeResume(r.data)),
+  getById: (id) =>
+    api.get(`/resumes/${id}`).then((r) => normalizeResume(r.data)),
 
   // Employer-only: download a candidate's resume as a PDF (same blob
   // pattern as downloadMyPdf below).

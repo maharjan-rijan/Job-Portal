@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
-
+    Route::put('/profile', [ProfileController::class, 'update']);
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
@@ -60,9 +60,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/resumes', [ResumeController::class, 'index']);
         Route::get('/resumes/{resume}', [ResumeController::class, 'showById']);
         Route::get('/resumes/{resume}/pdf', [ResumeController::class, 'downloadPdf']);
-
-
-        Route::put('/profile', [ProfileController::class, 'update']);
     });
 
     Route::middleware('role:admin')->group(function () {

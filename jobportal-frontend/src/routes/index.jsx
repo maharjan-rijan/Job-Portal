@@ -18,6 +18,7 @@ import { Register } from "@/pages/auth/Register";
 import { Dashboard } from "@/pages/auth/Dashboard";
 import { BrowseJobs } from "@/pages/seeker/BrowseJobs";
 import { Resume } from "@/pages/seeker/Resume";
+import { EditProfile as SeekerEditProfile } from "@/pages/seeker/EditProfile";
 import { JobAlerts } from "@/pages/seeker/JobAlerts";
 import { AccountOverview } from "@/pages/account/AccountOverview";
 import { ChangePassword } from "@/pages/auth/ChangePassword";
@@ -75,6 +76,7 @@ export const router = createBrowserRouter([
           { path: "/seeker/resume/preview", element: <ResumePreview /> },
           { path: "/seeker/job-alerts", element: <JobAlerts /> },
           { path: "/seeker/account", element: <AccountOverview /> },
+          { path: "/seeker/profile/edit", element: <SeekerEditProfile /> },
           { path: "/seeker/change-password", element: <ChangePassword /> },
         ],
       },

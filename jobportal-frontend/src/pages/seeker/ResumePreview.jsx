@@ -5,28 +5,30 @@ import { Card } from "@/components/ui/Card";
 import { SecondaryButton } from "@/components/ui/SecondaryButton";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { QueryState } from "@/components/ui/QueryState";
-import { ResumeTemplate, initials } from "@/components/resume/ResumeTemplate";
+import { ResumeTemplate } from "@/components/resume/ResumeTemplate";
+import { Avatar } from "@/components/ui/Avatar";
 import { TemplatePicker } from "@/components/resume/TemplatePicker";
-import { useResume, useSaveResume, useDownloadMyResumePdf } from "@/hooks/useResume";
+import {
+  useResume,
+  useSaveResume,
+  useDownloadMyResumePdf,
+} from "@/hooks/useResume";
 import { useAuth } from "@/hooks/useAuth";
 
-/** How employers and everyone else will see this resume — read-only,
- * with the seeker's own Print/Download/Edit actions and template/color
- * picker instead of the employer view's Print/Download-only sidebar. */
 export function ResumePreview() {
   const { user } = useAuth();
   const { data: resume, isLoading, isError } = useResume();
   const { mutate: saveResume, isPending: isSaving } = useSaveResume();
-  const { mutate: downloadPdf, isPending: isDownloading } = useDownloadMyResumePdf();
+  const { mutate: downloadPdf, isPending: isDownloading } =
+    useDownloadMyResumePdf();
 
   const handleTemplateChange = ({ template, color }) => {
-    // The save endpoint takes the full resume payload, so this sends
-    // everything currently loaded back with just template/color swapped
-    // — useSaveResume writes the response straight into the resume
-    // query cache, so the page re-renders with the new look immediately.
     saveResume(
       { ...resume, template, color },
-      { onError: (error) => toast.error(error.message ?? "Could not save your selection") }
+      {
+        onError: (error) =>
+          toast.error(error.message ?? "Could not save your selection"),
+      },
     );
   };
 
@@ -83,7 +85,8 @@ export function ResumePreview() {
                 Template &amp; color
               </div>
               <p className="mt-1 text-xs text-accent">
-                This is what employers see when they view your resume — changes save automatically.
+                This is what employers see when they view your resume — changes
+                save automatically.
               </p>
               <div className="mt-4">
                 <TemplatePicker
@@ -96,18 +99,25 @@ export function ResumePreview() {
             </Card>
 
             <div className="mt-6 rounded-xl border border-primary/10 bg-white p-8 shadow-sm">
-              <ResumeTemplate resume={{ ...resume, name: resume.name ?? user?.name }} />
+              <ResumeTemplate
+                resume={{
+                  ...resume,
+                  name: resume.name ?? user?.name,
+                  avatarUrl: resume.avatarUrl ?? user?.avatar_url,
+                }}
+              />
             </div>
           </div>
 
           <div className="mt-10 w-full shrink-0 print:hidden lg:sticky lg:top-6 lg:w-80">
             <Card className="text-center">
-              <span
-                className="mx-auto flex h-20 w-20 items-center justify-center rounded-full text-2xl font-semibold text-white"
+              <Avatar
+                src={resume.avatarUrl ?? user?.avatar_url}
+                name={resume.name ?? user?.name}
+                size={80}
+                className="mx-auto text-2xl font-semibold text-white"
                 style={{ backgroundColor: resume.color || "#0f172a" }}
-              >
-                {initials(resume.name ?? user?.name)}
-              </span>
+              />
               <h2 className="mt-3 text-base font-semibold text-text">
                 {resume.name ?? user?.name}
               </h2>
@@ -115,11 +125,18 @@ export function ResumePreview() {
               <p className="mt-1 text-xs text-accent">{resume.location}</p>
 
               <div className="mt-5 flex flex-col gap-2 border-t border-primary/10 pt-5">
-                <PrimaryButton as={Link} to="/seeker/resume" className="w-full justify-center">
+                <PrimaryButton
+                  as={Link}
+                  to="/seeker/resume"
+                  className="w-full justify-center"
+                >
                   <Pencil className="h-4 w-4" />
                   Edit resume
                 </PrimaryButton>
-                <SecondaryButton onClick={() => window.print()} className="w-full justify-center">
+                <SecondaryButton
+                  onClick={() => window.print()}
+                  className="w-full justify-center"
+                >
                   <Printer className="h-4 w-4" />
                   Print
                 </SecondaryButton>

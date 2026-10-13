@@ -1,11 +1,5 @@
 import axios from "axios";
 
-/**
- * Single axios instance for the whole app.
- * Every service module (src/services/*) should import this instead of
- * calling axios directly, so base URL, auth headers and error handling
- * stay in one place.
- */
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? "/api",
   headers: {
@@ -22,7 +16,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -30,13 +23,20 @@ api.interceptors.response.use(
       localStorage.removeItem("accessToken");
     }
 
+    const errors = error.response?.data?.errors ?? null;
+    const firstFieldError = errors ? Object.values(errors)[0]?.[0] : null;
+
     const message =
-      error.response?.data?.message ?? error.message ?? "Something went wrong";
+      firstFieldError ??
+      error.response?.data?.message ??
+      error.message ??
+      "Something went wrong";
 
     const normalized = new Error(message);
     normalized.status = error.response?.status ?? null;
+    normalized.errors = errors;
     return Promise.reject(normalized);
-  }
+  },
 );
 
 export default api;
