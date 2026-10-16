@@ -111,7 +111,7 @@ export function ResumeForm({ resume }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <Card>
-        <h2 className="text-base font-semibold text-text">Basic information</h2>
+        <h2 className="text-base font-semibold text-text">Basic Information</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <TextInput
             label="Name"
@@ -125,7 +125,7 @@ export function ResumeForm({ resume }) {
             {...register("email")}
           />
           <TextInput
-            label="Professional title"
+            label="Professional Title"
             placeholder="e.g. Front-end Developer"
             error={errors.title?.message}
             {...register("title")}
@@ -143,7 +143,7 @@ export function ResumeForm({ resume }) {
             {...register("website")}
           />
           <TextInput
-            label="Expected salary"
+            label="Expected Salary"
             placeholder="e.g. $60,000/yr"
             error={errors.expectedSalary?.message}
             {...register("expectedSalary")}
@@ -155,7 +155,7 @@ export function ResumeForm({ resume }) {
       <Card>
         <SectionHeader
           title="Education"
-          addLabel="Add education"
+          addLabel="Add Education"
           onAdd={() => education.append(BLANK_EDUCATION_ENTRY)}
         />
         {errors.education?.root?.message && (
@@ -178,7 +178,7 @@ export function ResumeForm({ resume }) {
                     {...register(`education.${index}.degree`)}
                   />
                   <TextInput
-                    label="Field of study"
+                    label="Field of Study"
                     placeholder="e.g. Computer Science"
                     error={errors.education?.[index]?.fieldOfStudy?.message}
                     {...register(`education.${index}.fieldOfStudy`)}
@@ -215,7 +215,7 @@ export function ResumeForm({ resume }) {
                 name={`education.${index}.description`}
                 render={({ field: controllerField }) => (
                   <RichTextEditor
-                    label="Description (optional)"
+                    label="Description (Optional)"
                     error={errors.education?.[index]?.description?.message}
                     value={controllerField.value}
                     onChange={controllerField.onChange}
@@ -230,8 +230,8 @@ export function ResumeForm({ resume }) {
       {/* Work experience — optional, any number of entries */}
       <Card>
         <SectionHeader
-          title="Work experience"
-          addLabel="Add experience"
+          title="Work Experience"
+          addLabel="Add Experience"
           onAdd={() => experience.append(BLANK_EXPERIENCE_ENTRY)}
         />
         <div className="mt-4 flex flex-col gap-5">
@@ -246,12 +246,12 @@ export function ResumeForm({ resume }) {
               <div className="flex items-start justify-between gap-3">
                 <div className="grid flex-1 gap-4 sm:grid-cols-2">
                   <TextInput
-                    label="Company name"
+                    label="Company Name"
                     error={errors.experience?.[index]?.companyName?.message}
                     {...register(`experience.${index}.companyName`)}
                   />
                   <TextInput
-                    label="Job title"
+                    label="Job Title"
                     error={errors.experience?.[index]?.jobTitle?.message}
                     {...register(`experience.${index}.jobTitle`)}
                   />
@@ -280,7 +280,7 @@ export function ResumeForm({ resume }) {
                 name={`experience.${index}.description`}
                 render={({ field: controllerField }) => (
                   <RichTextEditor
-                    label="Description (optional)"
+                    label="Description (Optional)"
                     error={errors.experience?.[index]?.description?.message}
                     value={controllerField.value}
                     onChange={controllerField.onChange}
@@ -295,8 +295,8 @@ export function ResumeForm({ resume }) {
       {/* Social links — optional, any number of entries */}
       <Card>
         <SectionHeader
-          title="Social links"
-          addLabel="Add link"
+          title="Social Links"
+          addLabel="Add Link"
           onAdd={() => socialLinks.append(BLANK_SOCIAL_LINK_ENTRY)}
         />
         <div className="mt-4 flex flex-col gap-4">
@@ -344,7 +344,7 @@ export function ResumeForm({ resume }) {
       {/* Achievements / certificates — optional, any number of entries */}
       <Card>
         <SectionHeader
-          title="Achievements & certificates"
+          title="Achievements & Certificates"
           addLabel="Add achievement"
           onAdd={() => achievements.append(BLANK_ACHIEVEMENT_ENTRY)}
         />

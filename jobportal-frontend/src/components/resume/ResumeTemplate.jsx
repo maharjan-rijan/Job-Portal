@@ -1,6 +1,7 @@
-import { Mail, MapPin, Globe, DollarSign, Award } from "lucide-react";
+import { Mail, MapPin, Globe, Award } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
+import { SOCIAL_ICONS, DEFAULT_SOCIAL_ICON } from "@/components/ui/SocialIcons";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
 
 export function initials(name = "") {
@@ -159,27 +160,32 @@ export function ResumeTemplate({ resume }) {
                 {resume.website}
               </a>
             )}
-            {resume.expectedSalary && (
-              <span className="flex items-center gap-1.5">
-                <DollarSign className="h-3.5 w-3.5" />
-                {resume.expectedSalary}
-              </span>
-            )}
           </div>
           {resume.socialLinks?.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
-              {resume.socialLinks.map((link, i) => (
-                <a
-                  key={i}
-                  href={link.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:underline"
-                  style={{ color }}
-                >
-                  {link.platform}
-                </a>
-              ))}
+            <div className=" mt-2 flex flex-wrap gap-2">
+              {resume.socialLinks.map((link, i) => {
+                const Icon = SOCIAL_ICONS[link.platform] ?? DEFAULT_SOCIAL_ICON;
+                return (
+                  <a
+                    key={i}
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={link.platform}
+                    aria-label={link.platform}
+                    className="flex h-7 w-7 items-center justify-center rounded-full border transition-colors hover:text-white"
+                    style={{ borderColor: color, color }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = color)
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "transparent")
+                    }
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                  </a>
+                );
+              })}
             </div>
           )}
         </div>

@@ -18,11 +18,24 @@ abstract class ApiFormRequest extends FormRequest
     }
 
     #[Override]
-    protected function failedValidation(Validator $validator):void
+    protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(
-
-        response()->json(['message' => $validator->errors()->first()], 422)
+            response()->json([
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422)
         );
+    }
+
+    protected function prepareForValidation(): void
+    {
+        logger()->debug('Profile request diagnostic', [
+            'method' => $this->method(),
+            'content_type' => $this->header('Content-Type'),
+            'name_exists' => $this->exists('name'),
+            'name_filled' => $this->filled('name'),
+            'input_keys' => array_keys($this->all()),
+        ]);
     }
 }

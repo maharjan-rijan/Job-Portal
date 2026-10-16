@@ -40,6 +40,13 @@
       text-align: center; border-radius: 50%; background: {{ $resume->color }}; color: #ffffff;
       font-size: 17px; font-weight: bold; margin-right: 14px;
     }
+    /* Real photo instead of the initials circle — dompdf needs an
+       explicit object-fit-equivalent since it doesn't support that CSS
+       property, so this crops via a fixed box + border-radius only;
+       a non-square source photo may appear slightly stretched. */
+    body.template-modern .avatar-photo {
+      background: none; line-height: normal; padding: 0;
+    }
     body.template-modern .header-text { display: inline-block; vertical-align: middle; }
 
     /* Minimal — plain, no rules or pills, just a colored left border per section */
@@ -48,12 +55,35 @@
     body.template-minimal .header .role { margin: 2px 0 6px; font-size: 12px; color: #555; }
     body.template-minimal .header .contact { font-size: 11px; color: #777; }
     body.template-minimal h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #111827; border-left: 3px solid {{ $resume->color }}; padding-left: 8px; margin: 16px 0 8px; }
+
+    /* Social links — icon-only badges instead of printed platform
+       names, matching the web preview (ResumeTemplate.jsx). dompdf
+       can't reliably render icon fonts or arbitrary brand SVGs, so
+       each badge is a small colored circle with a 1-2 letter mark
+       instead — same idea as the initials avatar above, just smaller. */
+    .social-links { margin: 6px 0 0; }
+    .social-badge {
+      display: inline-block; width: 20px; height: 20px; line-height: 20px;
+      text-align: center; border-radius: 50%; border: 1px solid {{ $resume->color }};
+      color: {{ $resume->color }}; font-size: 9px; font-weight: bold;
+      text-decoration: none; margin-right: 6px;
+    }
   </style>
 </head>
 <body class="template-{{ $resume->template ?? 'classic' }}">
 
   @php
-    $initials = collect(explode(' ', $resume->name ?? ''))
+    // $resume->name / ->email only exist via Resume::toArray()'s custom
+    // injection (they aren't real columns on the resumes table) — that
+    // override never fires for plain property access like $resume->name,
+    // only when the model is actually array/json-converted. Reading
+    // $resume->user->name directly here is what actually works; the
+    // `user` relation is already eager-loaded by Resume's own
+    // `booted(): retrieved` hook, so this is free.
+    $resumeName = $resume->user?->name ?? '';
+    $resumeEmail = $resume->user?->email ?? '';
+
+    $initials = collect(explode(' ', $resumeName))
         ->filter()
         ->map(fn ($word) => mb_strtoupper(mb_substr($word, 0, 1)))
         ->take(2)
@@ -62,21 +92,52 @@
 
   <div class="header">
     @if(($resume->template ?? 'classic') === 'modern')
-      <span class="avatar">{{ $initials }}</span>
+      @if($resume->user?->avatar_url)
+        {{-- Real photo, same as the "modern" template shows on the web
+             preview (ResumeTemplate.jsx) — falls back to the initials
+             circle below only when the seeker hasn't set one. --}}
+        <img
+          src="{{ $resume->user->avatar_url }}"
+          class="avatar avatar-photo"
+          alt=""
+        />
+      @else
+        <span class="avatar">{{ $initials }}</span>
+      @endif
     @endif
     <div class="header-text">
-    <h1>{{ $resume->name }}</h1>
+    <h1>{{ $resumeName }}</h1>
     @if($resume->title)<p class="role">{{ $resume->title }}</p>@endif
     <p class="contact">
-      {{ $resume->email }}
+      {{ $resumeEmail }}
       @if($resume->location) &middot; {{ $resume->location }} @endif
       @if($resume->website) &middot; {{ $resume->website }} @endif
-      @if($resume->expected_salary) &middot; {{ $resume->expected_salary }} @endif
+      {{-- expected_salary intentionally not shown on the resume document
+           itself — it's a form field for the seeker's own reference /
+           future matching use, not something meant to print. --}}
     </p>
     @if(!empty($resume->social_links))
-      <p class="contact">
+      @php
+        // Same short-mark idea as SOCIAL_ICONS in ResumeTemplate.jsx —
+        // dompdf can't use that component's actual lucide icons, so
+        // this is the closest PDF-safe equivalent: a 1-2 letter badge
+        // instead of a brand logo, same platforms, same fallback.
+        $socialMarks = [
+            'LinkedIn' => 'in',
+            'GitHub' => 'gh',
+            'Twitter / X' => 'X',
+            'Portfolio' => 'P',
+            'Behance' => 'Be',
+            'Dribbble' => 'Dr',
+        ];
+      @endphp
+      <p class="social-links">
         @foreach($resume->social_links as $link)
-          <a href="{{ $link['url'] }}">{{ $link['platform'] }}</a>&nbsp;&nbsp;
+          <a
+            href="{{ $link['url'] }}"
+            class="social-badge"
+            title="{{ $link['platform'] }}"
+          >{{ $socialMarks[$link['platform'] ?? ''] ?? '•' }}</a>
         @endforeach
       </p>
     @endif
@@ -109,7 +170,13 @@
       <div class="entry">
         <div class="entry-title">{{ $entry['jobTitle'] ?? $entry['job_title'] ?? '' }} at {{ $entry['companyName'] ?? $entry['company_name'] ?? '' }}</div>
         <div class="entry-meta">{{ $entry['from'] }} &ndash; {{ $entry['to'] }}</div>
-        @if(!empty($entry['description']))<p class="entry-desc">{{ $entry['description'] }}</p>@endif
+        @if(!empty($entry['description']))
+          {{-- Same rich-text field as education — raw HTML from
+               ResumeForm's RichTextEditor, not plain text, so this must
+               use {!! !!} + strip_tags() the same way, not {{ }}, or
+               the tags print literally instead of being rendered. --}}
+          <div class="entry-desc">{!! strip_tags($entry['description'], '<p><br><strong><em><b><i><ul><ol><li><a>') !!}</div>
+        @endif
       </div>
     @endforeach
   @endif
@@ -122,7 +189,9 @@
         @if(!empty($entry['issuer']) || !empty($entry['date']))
           <div class="entry-meta">{{ implode(' · ', array_filter([$entry['issuer'] ?? null, $entry['date'] ?? null])) }}</div>
         @endif
-        @if(!empty($entry['description']))<p class="entry-desc">{{ $entry['description'] }}</p>@endif
+        @if(!empty($entry['description']))
+          <div class="entry-desc">{!! strip_tags($entry['description'], '<p><br><strong><em><b><i><ul><ol><li><a>') !!}</div>
+        @endif
       </div>
     @endforeach
   @endif

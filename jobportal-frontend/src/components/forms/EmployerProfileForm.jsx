@@ -68,7 +68,22 @@ export function EmployerProfileForm({ onSuccess }) {
       onSuccess?.(updated);
     },
     onError: (error) => {
-      toast.error(error.message ?? "Could not update your profile");
+      const errors = error.response?.data?.errors;
+
+      if (errors) {
+        const message = Object.entries(errors)
+          .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+          .join("\n");
+
+        toast.error(message, { duration: 6000 });
+        return;
+      }
+
+      toast.error(
+        error.response?.data?.message ??
+          error.message ??
+          "Could not update your profile",
+      );
     },
   });
 
