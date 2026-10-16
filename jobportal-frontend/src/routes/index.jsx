@@ -18,7 +18,6 @@ import { Register } from "@/pages/auth/Register";
 import { Dashboard } from "@/pages/auth/Dashboard";
 import { BrowseJobs } from "@/pages/seeker/BrowseJobs";
 import { Resume } from "@/pages/seeker/Resume";
-import { EditProfile as SeekerEditProfile } from "@/pages/seeker/EditProfile";
 import { JobAlerts } from "@/pages/seeker/JobAlerts";
 import { AccountOverview } from "@/pages/account/AccountOverview";
 import { ChangePassword } from "@/pages/auth/ChangePassword";
@@ -28,13 +27,16 @@ import { EditJob } from "@/pages/employer/job/EditJob";
 import { Applications } from "@/pages/employer/Applications";
 import { BrowseResumes } from "@/pages/employer/Resume/BrowseResume";
 import { ResumeDetail } from "@/pages/employer/Resume/ResumeDetail";
-import { EditProfile as EmployerEditProfile } from "@/pages/employer/EditProfile";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
 import { ManageUsers } from "@/pages/admin/ManageUser";
 import { AdminJobs } from "@/pages/admin/ManageJob";
 import { ListBlog } from "@/pages/admin/blog/ListBlog";
 import { CreateBlog } from "@/pages/admin/blog/CreateBlog";
 import { EditBlog } from "@/pages/admin/blog/EditBlog";
+import {
+  EmployerEditProfile,
+  SeekerEditProfile,
+} from "@/pages/auth/EditProfile";
 
 import { USER_ROLES } from "@/utils/constants";
 import { SavedJobs } from "@/pages/seeker/SavedJobs";

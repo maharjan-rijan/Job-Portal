@@ -17,7 +17,7 @@ class ProfileController extends Controller
             'avatar_url' => $request->has('avatar_url') ? $request->avatar_url : $user->avatar_url,
         ]);
 
-        if ($request->has('company')) {
+        if ($user->role === 'employer' && $request->has('company')) {
             $companyData = collect($request->input('company'))
                 ->only(['name', 'website', 'industry', 'location', 'description', 'logo_url'])
                 ->toArray();

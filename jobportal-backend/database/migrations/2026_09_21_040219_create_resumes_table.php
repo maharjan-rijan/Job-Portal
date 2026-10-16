@@ -18,8 +18,9 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('website')->nullable();
             $table->string('expected_salary')->nullable();
-             $table->json('education')->nullable();
+            $table->json('education')->nullable();
             $table->json('experience')->nullable();
+            $table->json('skills')->nullable();
             $table->json('social_links')->nullable();
             $table->json('achievements')->nullable();
             $table->string('template')->default('classic');
