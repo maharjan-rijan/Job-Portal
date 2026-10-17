@@ -29,7 +29,7 @@ export function MyApplications() {
   } = usePagination(applications, { pageSize: 10 });
   return (
     <div>
-      <h1 className="text-xl font-semibold text-text">My applications</h1>
+      <h1 className="text-xl font-semibold text-text">My Applications</h1>
       <p className="mt-1 text-sm text-accent">
         {isLoading
           ? "Loading…"

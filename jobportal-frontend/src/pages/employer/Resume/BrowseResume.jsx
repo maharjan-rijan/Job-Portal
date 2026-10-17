@@ -35,7 +35,7 @@ export function BrowseResumes() {
   return (
     <div>
       <div>
-        <h1 className="text-xl font-semibold text-text">Browse resumes</h1>
+        <h1 className="text-xl font-semibold text-text">Browse Resumes</h1>
         <p className="mt-1 text-sm text-accent">
           {isLoading
             ? "Loading…"

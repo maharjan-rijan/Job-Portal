@@ -49,18 +49,12 @@ const WEEKLY_APPLICATIONS = [
   { day: "Sun", value: 3 },
 ];
 
-/**
- * Everything that differs between the seeker and employer dashboards
- * lives here — the JSX below is shared, it just reads whichever config
- * matches the logged-in user's role. `radial: null` (seeker) means the
- * stat cards take the full row instead of sharing it with a gauge card.
- */
 const ROLE_CONFIG = {
   [USER_ROLES.SEEKER]: {
     // value is filled in below from real query data — see STAT_VALUES.
     statDefs: [
-      { statKey: "applications", icon: FileText, label: "Applications sent" },
-      { statKey: "saved", icon: Heart, label: "Saved jobs" },
+      { statKey: "applications", icon: FileText, label: "Applications Sent" },
+      { statKey: "saved", icon: Heart, label: "Saved Jobs" },
       {
         statKey: "interviews",
         icon: CalendarCheck,
@@ -77,29 +71,15 @@ const ROLE_CONFIG = {
       { label: "Interviews", multiplier: 0.4 },
       { label: "Offers", multiplier: 0.15 },
     ],
-    bottomTitle: "Recent applications",
+    bottomTitle: "Recent Applications",
     bottomIcon: CalendarCheck,
-    // items intentionally omitted — real data comes from useMyApplications()
-    // in the component, same as the employer branch's useMyJobs() below.
   },
   [USER_ROLES.EMPLOYER]: {
     statDefs: [
-      { statKey: "openJobs", icon: Briefcase, label: "Open jobs" },
-      { statKey: "totalApplicants", icon: Users2, label: "Total applicants" },
+      { statKey: "openJobs", icon: Briefcase, label: "Open Jobs" },
+      { statKey: "totalApplicants", icon: Users2, label: "Total Applicants" },
     ],
     statsGridCols: "sm:grid-cols-2",
-    radial: {
-      title: "Hiring target",
-      subtitle: "Positions filled this quarter",
-      percent: 55,
-      label: "+10%",
-      note: "You're on track to fill both roles by month end.",
-      footer: [
-        ["Target", "5"],
-        ["Filled", "3"],
-        ["This week", "1"],
-      ],
-    },
     chartTitle: "Statistics",
     chartSubtitle: "Applicant activity across your open roles",
     chartData: WEEKLY_APPLICATIONS,
@@ -108,7 +88,7 @@ const ROLE_CONFIG = {
       { label: "Interviews", multiplier: 0.35 },
       { label: "Hires", multiplier: 0.1 },
     ],
-    bottomTitle: "Your jobs",
+    bottomTitle: "Your Jobs",
     bottomIcon: CalendarCheck,
     // items/renderer intentionally omitted — the employer branch fetches
     // real data via useMyJobs() in the component instead (see below).
@@ -309,9 +289,7 @@ export function Dashboard() {
                         {job.applicantsCount} applicant
                         {job.applicantsCount === 1 ? "" : "s"}
                       </span>
-                      {/* If you renamed this to job.totalApplicants, that's why it showed
-                          nothing — normalizeJob() in jobService.js only ever outputs
-                          applicantsCount, not totalApplicants. */}
+
                       <Badge
                         tone={job.status === "Open" ? "success" : "neutral"}
                       >

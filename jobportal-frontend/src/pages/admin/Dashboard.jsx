@@ -29,7 +29,7 @@ export function AdminDashboard() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard
               icon={Users}
-              label="Job seekers"
+              label="Job Seekers"
               value={data.stats.seekers.value.toLocaleString()}
               trend={data.stats.seekers.trend}
             />
@@ -41,7 +41,7 @@ export function AdminDashboard() {
             />
             <StatCard
               icon={Briefcase}
-              label="Active jobs"
+              label="Active Jobs"
               value={data.stats.activeJobs.value.toLocaleString()}
               trend={data.stats.activeJobs.trend}
             />
@@ -56,11 +56,11 @@ export function AdminDashboard() {
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <StatisticsPanel
-                title="Platform growth"
+                title="Platform Growth"
                 subtitle="New activity across the platform, last 12 months"
                 tabs={[
                   { label: "Signups", panel: <MiniBarChart data={data.growth.signups} /> },
-                  { label: "Jobs posted", panel: <MiniBarChart data={data.growth.jobsPosted} /> },
+                  { label: "Jobs Posted", panel: <MiniBarChart data={data.growth.jobsPosted} /> },
                   { label: "Applications", panel: <MiniBarChart data={data.growth.applications} /> },
                 ]}
               />
@@ -69,7 +69,7 @@ export function AdminDashboard() {
             <Card className="flex flex-col items-center text-center">
               <div className="flex w-full items-center justify-between">
                 <h2 className="text-base font-semibold text-text">
-                  Monthly target
+                  Monthly Target
                 </h2>
               </div>
               <p className="mt-0.5 self-start text-sm text-accent">
@@ -94,7 +94,7 @@ export function AdminDashboard() {
           </div>
 
           <Card>
-            <h2 className="text-base font-semibold text-text">Recent activity</h2>
+            <h2 className="text-base font-semibold text-text">Recent Activity</h2>
             <div className="mt-4 divide-y divide-ink-100">
               {data.recentActivity.map((activity) => {
                 const meta = ACTIVITY_META[activity.type] ?? { badge: "Info", tone: "neutral" };

@@ -7,7 +7,7 @@ export function JobList() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <JobBrowser
-        title="Browse jobs"
+        title="Browse Jobs"
         headingClassName="text-2xl font-semibold text-text"
         initialKeyword={searchParams.get("q") ?? ""}
       />

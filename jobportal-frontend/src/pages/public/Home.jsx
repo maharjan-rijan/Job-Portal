@@ -83,40 +83,31 @@ export function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mb-8 flex items-end justify-between">
-          <h2 className="text-2xl font-semibold text-text">Featured jobs</h2>
-          <div className="flex items-center gap-4">
-            <Link
-              to="/jobs"
-              className="flex items-center gap-1 text-sm font-medium text-secondary hover:text-secondary"
-            >
-              View all jobs <ArrowRight className="h-4 w-4" />
-            </Link>
+     
+      {featuredJobs.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mb-8 flex items-end justify-between">
+            <h2 className="text-2xl font-semibold text-text">Featured Jobs</h2>
+            <div className="flex items-center gap-4">
+              <Link
+                to="/jobs"
+                className="flex items-center gap-1 text-sm font-medium text-secondary hover:text-secondary"
+              >
+                View all Jobs <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
-        </div>
 
-        <QueryState
-          isLoading={isLoading}
-          isError={isError}
-          error={error}
-          errorLabel="Could not load featured jobs"
-        >
           <div className="grid gap-4 sm:grid-cols-2">
             {featuredJobs.map((job) => (
               <JobCard key={job.id} job={job} currency={currency} />
             ))}
-            {featuredJobs.length === 0 && (
-              <p className="col-span-full py-12 text-center text-sm text-accent">
-                No jobs posted yet — check back soon.
-              </p>
-            )}
           </div>
-        </QueryState>
-      </section>
+        </section>
+      )}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
-          <h2 className="text-2xl font-semibold text-text">Latest jobs</h2>
+          <h2 className="text-2xl font-semibold text-text">Latest Jobs</h2>
           <div className="flex items-center gap-4">
             <Link
               to="/jobs"

@@ -21,7 +21,7 @@ export function EditProfile({ variant = "seeker" }) {
 
   return (
     <div className="max-w-8xl">
-      <h1 className="text-xl font-semibold text-text">Edit profile</h1>
+      <h1 className="text-xl font-semibold text-text">Edit Profile</h1>
       <p className="mt-1 text-sm text-accent">{subtitle}</p>
 
       <Card className="mt-6">

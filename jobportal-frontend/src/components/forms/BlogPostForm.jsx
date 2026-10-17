@@ -9,11 +9,6 @@ import { useSaveBlogPost } from "@/hooks/useBlog";
 import { blogSchema } from "@/lib/validation/blogSchema";
 import { useAuth } from "@/hooks/useAuth";
 
-/**
- * `post`: pass an existing post object to pre-fill and PUT on submit
- * (Edit post); omit it to POST a new one (Write a post). Same pattern
- * as PostJobForm's `job` prop.
- */
 export function BlogPostForm({ post, onSuccess }) {
   const { user } = useAuth();
   const isEditing = Boolean(post?.id);
@@ -102,7 +97,7 @@ export function BlogPostForm({ post, onSuccess }) {
         isLoading={isSubmitting || isPending}
         className="mt-2 w-fit"
       >
-        {isEditing ? "Save changes" : "Publish post"}
+        {isEditing ? "Save Changes" : "Publish Post"}
       </PrimaryButton>
     </form>
   );

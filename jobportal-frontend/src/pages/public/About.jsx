@@ -115,7 +115,7 @@ export function About() {
             to="/jobs"
             className="flex shrink-0 items-center gap-2 rounded-lg bg-secondary px-6 py-3 text-sm font-medium text-white hover:bg-brand-600"
           >
-            Browse jobs <ArrowRight className="h-4 w-4" />
+            Browse Jobs <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>

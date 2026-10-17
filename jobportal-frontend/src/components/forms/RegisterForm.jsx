@@ -74,7 +74,7 @@ export function RegisterForm({ onSuccess = () => {} }) {
         className="mt-6 flex flex-col gap-4"
       >
         <TextInput
-          label="Full name"
+          label="Full Name"
           placeholder="Jane Doe"
           error={errors.name?.message}
           {...register("name")}
@@ -82,7 +82,7 @@ export function RegisterForm({ onSuccess = () => {} }) {
 
         {isEmployer && (
           <TextInput
-            label="Company name"
+            label="Company Name"
             placeholder="Acme Corp"
             error={errors.companyName?.message}
             {...register("companyName")}
@@ -106,7 +106,7 @@ export function RegisterForm({ onSuccess = () => {} }) {
         <PasswordStrengthIndicator password={password} />
 
         <PasswordInput
-          label="Confirm password"
+          label="Confirm Password"
           placeholder="••••••••"
           error={errors.confirmPassword?.message}
           {...register("confirmPassword")}
@@ -114,7 +114,7 @@ export function RegisterForm({ onSuccess = () => {} }) {
         <PasswordMatchIndicator password={password} confirmPassword={confirmPassword} />
 
         <Button type="submit" isLoading={isSubmitting} className="mt-2 w-full">
-          Create account
+          Create Account
         </Button>
       </form>
 

@@ -76,7 +76,7 @@ export function ResumePreview() {
               className="flex items-center gap-1.5 text-sm font-medium text-accent hover:text-primary print:hidden"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to editing
+              Back to Editing
             </Link>
 
             <Card className="mt-6 print:hidden">

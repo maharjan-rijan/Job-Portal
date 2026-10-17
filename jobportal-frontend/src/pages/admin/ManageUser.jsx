@@ -63,7 +63,7 @@ export function ManageUsers() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-text">Manage users</h1>
+          <h1 className="text-xl font-semibold text-text">Manage Users</h1>
           <p className="mt-1 text-sm text-accent">
             {isLoading
               ? "Loading…"

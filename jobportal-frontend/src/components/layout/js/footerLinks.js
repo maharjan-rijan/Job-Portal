@@ -4,17 +4,17 @@ const GUEST_GROUPS = [
   {
     heading: "For Candidates",
     links: [
-      { label: "Browse jobs", to: "/jobs" },
-      { label: "Create an account", to: "/register" },
-      { label: "Job alerts", to: "/login" },
+      { label: "Browse Jobs", to: "/jobs" },
+      { label: "Create an Account", to: "/register" },
+      { label: "Job Alerts", to: "/login" },
     ],
   },
   {
     heading: "For Employers",
     links: [
-      { label: "Post a job", to: "/register" },
-      { label: "Browse resumes", to: "/login" },
-      { label: "Manage applications", to: "/login" },
+      { label: "Post a Job", to: "/register" },
+      { label: "Browse Resumes", to: "/login" },
+      { label: "Manage Applications", to: "/login" },
     ],
   },
   {
@@ -45,11 +45,11 @@ const FOOTER_LINK_GROUPS_BY_ROLE = {
     {
       heading: "For Candidates",
       links: [
-        { label: "Browse jobs", to: "/seeker/browse-jobs" },
-        { label: "My dashboard", to: "/seeker/dashboard" },
-        { label: "My resume", to: "/seeker/resume" },
-        { label: "Saved jobs", to: "/seeker/saved-jobs" },
-        { label: "Job alerts", to: "/seeker/job-alerts" },
+        { label: "Browse Jobs", to: "/seeker/browse-jobs" },
+        { label: "My Dashboard", to: "/seeker/dashboard" },
+        { label: "My Resume", to: "/seeker/resume" },
+        { label: "Saved Jobs", to: "/seeker/saved-jobs" },
+        { label: "Job Alerts", to: "/seeker/job-alerts" },
       ],
     },
     {
@@ -65,11 +65,11 @@ const FOOTER_LINK_GROUPS_BY_ROLE = {
     {
       heading: "For Employers",
       links: [
-        { label: "Post a job", to: "/employer/jobs/new" },
-        { label: "Manage jobs", to: "/employer/jobs" },
+        { label: "Post a Job", to: "/employer/jobs/new" },
+        { label: "Manage Jobs", to: "/employer/jobs" },
         { label: "Applications", to: "/employer/applications" },
-        { label: "Browse resumes", to: "/employer/resumes" },
-        { label: "My dashboard", to: "/employer/dashboard" },
+        { label: "Browse Resumes", to: "/employer/resumes" },
+        { label: "My Dashboard", to: "/employer/dashboard" },
       ],
     },
     {

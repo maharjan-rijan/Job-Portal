@@ -24,9 +24,9 @@ const ROLE_CONFIG = {
     secondaryAction: null,
     // values are filled in below from real query data — see STAT_VALUES.
     statDefs: [
-      { key: "applications", label: "Applications sent" },
-      { key: "saved", label: "Saved jobs" },
-      { key: "completeness", label: "Profile completeness", suffix: "%" },
+      { key: "applications", label: "Applications Sent" },
+      { key: "saved", label: "Saved Jobs" },
+      { key: "completeness", label: "Profile Completeness", suffix: "%" },
     ],
     details: [
       { icon: Mail, label: "Email", value: ({ user }) => user?.email ?? "—" },
@@ -124,7 +124,7 @@ export function AccountOverview() {
         <div className="flex gap-2">
           <SecondaryButton as={Link} to={config.editPath}>
             <Pencil className="h-4 w-4" />
-            Edit profile
+            Edit Profile
           </SecondaryButton>
           {config.secondaryAction && (
             <SecondaryButton as={Link} to={config.secondaryAction.to}>
@@ -146,7 +146,7 @@ export function AccountOverview() {
       </div>
 
       <Card>
-        <h2 className="text-base font-semibold text-text">Account details</h2>
+        <h2 className="text-base font-semibold text-text">Account Details</h2>
         <dl className="mt-4 flex flex-col gap-3 text-sm">
           {config.details.map(({ icon: Icon, label, value }) => (
             <div key={label} className="flex items-center gap-2">

@@ -75,7 +75,7 @@ export function ManageJobs() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-text">Manage jobs</h1>
+          <h1 className="text-xl font-semibold text-text">Manage Jobs</h1>
 
           <p className="mt-1 text-sm text-accent">
             {isLoading
@@ -86,7 +86,7 @@ export function ManageJobs() {
 
         <PrimaryButton as={Link} to="/employer/jobs/new">
           <Plus className="h-4 w-4" />
-          Post a job
+          Post a Job
         </PrimaryButton>
       </div>
 

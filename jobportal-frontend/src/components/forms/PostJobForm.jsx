@@ -80,7 +80,7 @@ export function PostJobForm({ job, onSuccess }) {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <TextInput
-          label="Job title"
+          label="Job Title"
           placeholder="e.g. Software Engineer"
           error={errors.title?.message}
           {...register("title")}
@@ -90,7 +90,7 @@ export function PostJobForm({ job, onSuccess }) {
           name="type"
           render={({ field }) => (
             <Dropdown
-              label="Job type"
+              label="Job Type"
               placeholder="Select a type"
               options={JOB_TYPES.map((type) => ({ label: type, value: type }))}
               value={field.value}
@@ -118,7 +118,7 @@ export function PostJobForm({ job, onSuccess }) {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <TextInput
-          label="Min salary"
+          label="Min Salary"
           type="number"
           placeholder="20000"
           error={errors.salaryMin?.message}
@@ -127,7 +127,7 @@ export function PostJobForm({ job, onSuccess }) {
           {...register("salaryMin", { deps: ["salaryMax"] })}
         />
         <TextInput
-          label="Max salary"
+          label="Max Salary"
           type="number"
           placeholder="25000"
           error={errors.salaryMax?.message}
@@ -143,7 +143,7 @@ export function PostJobForm({ job, onSuccess }) {
       </div>
 
       <TextInput
-        label="Application deadline"
+        label="Application Deadline"
         type="date"
         min={
           isEditing && originalDeadline && originalDeadline < todayISO()
@@ -159,7 +159,7 @@ export function PostJobForm({ job, onSuccess }) {
         control={control}
         render={({ field }) => (
           <RichTextEditor
-            label="Job description"
+            label="Job Description"
             placeholder="What will this person do day to day?"
             error={errors.description?.message}
             value={field.value}
@@ -217,7 +217,7 @@ export function PostJobForm({ job, onSuccess }) {
         isLoading={isSubmitting || isPending}
         className="mt-2 w-fit"
       >
-        {isEditing ? "Save changes" : "Post job"}
+        {isEditing ? "Save changes" : "Post Job"}
       </PrimaryButton>
     </form>
   );

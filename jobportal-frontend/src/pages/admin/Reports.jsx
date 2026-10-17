@@ -133,7 +133,7 @@ export function Reports() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 icon={Briefcase}
-                label="Jobs posted"
+                label="Jobs Posted"
                 value={report.summary.jobsPosted.toLocaleString()}
               />
               <StatCard
@@ -143,7 +143,7 @@ export function Reports() {
               />
               <StatCard
                 icon={Users}
-                label="New seekers"
+                label="New Seekers"
                 value={report.summary.newSeekers.toLocaleString()}
               />
               <StatCard
@@ -154,12 +154,12 @@ export function Reports() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
-              <Breakdown title="Jobs by status" data={report.jobsByStatus} />
+              <Breakdown title="Jobs by Status" data={report.jobsByStatus} />
               <Breakdown
-                title="Applications by status"
+                title="Applications by Status"
                 data={report.applicationsByStatus}
               />
-              <Breakdown title="Signups by role" data={report.signupsByRole} />
+              <Breakdown title="Signups by Role" data={report.signupsByRole} />
             </div>
           </div>
         )}

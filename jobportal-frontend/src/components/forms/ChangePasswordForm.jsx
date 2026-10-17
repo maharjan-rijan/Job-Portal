@@ -31,7 +31,7 @@ export function ChangePasswordForm() {
   const { mutate, isPending } = useMutation({
     mutationFn: authService.changePassword,
     onSuccess: () => {
-      toast.success("Password updated");
+      toast.success("Password Updated");
       reset();
     },
     onError: (error) => {
@@ -42,14 +42,14 @@ export function ChangePasswordForm() {
   return (
     <form onSubmit={handleSubmit(mutate)} className="flex flex-col gap-4">
       <PasswordInput
-        label="Current password"
+        label="Current Password"
         placeholder="••••••••"
         error={errors.currentPassword?.message}
         {...register("currentPassword")}
       />
 
       <PasswordInput
-        label="New password"
+        label="New Password"
         placeholder="••••••••"
         error={errors.newPassword?.message}
         {...register("newPassword")}
@@ -57,7 +57,7 @@ export function ChangePasswordForm() {
       <PasswordStrengthIndicator password={newPassword} />
 
       <PasswordInput
-        label="Confirm new password"
+        label="Confirm New Password"
         placeholder="••••••••"
         error={errors.confirmNewPassword?.message}
         {...register("confirmNewPassword")}
@@ -65,7 +65,7 @@ export function ChangePasswordForm() {
       <PasswordMatchIndicator password={newPassword} confirmPassword={confirmNewPassword} />
 
       <Button type="submit" isLoading={isPending} className="mt-2 w-full">
-        Update password
+        Update Password
       </Button>
     </form>
   );

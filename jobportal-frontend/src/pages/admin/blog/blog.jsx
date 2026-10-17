@@ -46,7 +46,7 @@ export function Blog() {
     <div>
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-text">Manage blog</h1>
+          <h1 className="text-xl font-semibold text-text">Manage Blog</h1>
           <p className="mt-1 text-sm text-accent">
             {isLoading
               ? "Loading…"

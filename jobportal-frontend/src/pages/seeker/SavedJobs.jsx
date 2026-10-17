@@ -19,7 +19,7 @@ export function SavedJobs() {
   } = usePagination(jobs, { pageSize: 10 });
   return (
     <div>
-      <h1 className="text-xl font-semibold text-text">Saved jobs</h1>
+      <h1 className="text-xl font-semibold text-text">Saved Jobs</h1>
       <p className="mt-1 text-sm text-accent">
         {isLoading
           ? "Loading…"
@@ -45,7 +45,7 @@ export function SavedJobs() {
                 to="/jobs"
                 className="font-medium text-secondary hover:underline"
               >
-                Browse jobs
+                Browse Jobs
               </Link>
             </div>
           )}

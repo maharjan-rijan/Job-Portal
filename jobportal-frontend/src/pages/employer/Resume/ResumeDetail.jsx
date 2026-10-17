@@ -44,7 +44,7 @@ export function ResumeDetail() {
           className="flex items-center gap-1.5 text-sm font-medium text-accent hover:text-primary print:hidden"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to resumes
+          Back to Resumes
         </Link>
         <div className="mt-6 rounded-xl border border-primary/10 bg-white p-8 shadow-sm">
           <ResumeTemplate resume={resume} />

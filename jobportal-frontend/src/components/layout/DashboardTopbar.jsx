@@ -133,7 +133,7 @@ export function DashboardTopbar({
                       )}
                     >
                       <Settings className="h-4 w-4" />
-                      Change password
+                      Change Password
                     </Link>
                   )}
                 </MenuItem>

@@ -7,7 +7,7 @@ export function PostJob() {
 
   return (
     <div className="max-w-8xl">
-      <h1 className="text-xl font-semibold text-text">Post a job</h1>
+      <h1 className="text-xl font-semibold text-text">Post a Job</h1>
       <p className="mt-1 text-sm text-accent">
         Fill in the details below — candidates will see this exactly as written.
       </p>

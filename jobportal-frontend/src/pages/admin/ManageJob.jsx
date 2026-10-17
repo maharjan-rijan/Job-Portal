@@ -19,7 +19,7 @@ import {
 import { formatDate } from "@/utils/formatters";
 
 const STATUS_FILTER_OPTIONS = [
-  { label: "All statuses", value: "" },
+  { label: "All Statuses", value: "" },
   { label: "Open", value: "Open" },
   { label: "Closed", value: "Closed" },
 ];
@@ -86,7 +86,7 @@ export function AdminJobs() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-text">Manage jobs</h1>
+          <h1 className="text-xl font-semibold text-text">Manage Jobs</h1>
 
           <p className="mt-1 text-sm text-accent">
             {isLoading

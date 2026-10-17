@@ -345,7 +345,7 @@ export function ResumeForm({ resume }) {
       <Card>
         <SectionHeader
           title="Achievements & Certificates"
-          addLabel="Add achievement"
+          addLabel="Add Achievement"
           onAdd={() => achievements.append(BLANK_ACHIEVEMENT_ENTRY)}
         />
         <div className="mt-4 flex flex-col gap-5">

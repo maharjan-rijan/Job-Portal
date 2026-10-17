@@ -65,7 +65,7 @@ export function ApplyForm({ jobId, onSuccess }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <TextInput
-        label="Full name"
+        label="Full Name"
         placeholder="Jane Doe"
         error={errors.fullName?.message}
         {...register("fullName")}
@@ -120,14 +120,14 @@ export function ApplyForm({ jobId, onSuccess }) {
       )}
 
       <TextArea
-        label="Cover note (optional)"
+        label="Cover Note (optional)"
         rows={4}
         placeholder="Tell the employer why you're a good fit"
         error={errors.coverNote?.message}
         {...register("coverNote")}
       />
       <Button type="submit" isLoading={isPending} className="mt-2 w-full">
-        Submit application
+        Submit Application
       </Button>
     </form>
   );

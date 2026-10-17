@@ -55,14 +55,14 @@ export function JobAlerts() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-text">Job alerts</h1>
+          <h1 className="text-xl font-semibold text-text">Job Alerts</h1>
           <p className="mt-1 text-sm text-accent">
             Get notified when new jobs match your saved searches.
           </p>
         </div>
         <PrimaryButton onClick={() => setCreateOpen(true)}>
           <Plus className="h-4 w-4" />
-          Create alert
+          Create Alert
         </PrimaryButton>
       </div>
 

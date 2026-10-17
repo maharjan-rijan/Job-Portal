@@ -27,7 +27,7 @@ export function BlogPost() {
         className="flex items-center gap-1.5 text-sm font-medium text-accent hover:text-text"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to blog
+        Back to Blog
       </Link>
 
       <Badge tone="brand" className="mt-6 w-fit">
