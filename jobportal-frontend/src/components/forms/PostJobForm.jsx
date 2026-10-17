@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
@@ -6,7 +7,7 @@ import { TextArea } from "@/components/ui/TextArea";
 import { Dropdown } from "@/components/ui/Dropdown";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { useSaveJob } from "@/hooks/useJobs";
-import { jobSchema } from "@/lib/validation/jobSchema";
+import { buildJobSchema, todayISO } from "@/lib/validation/jobSchema";
 import { JOB_TYPES } from "@/utils/constants";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
@@ -23,13 +24,18 @@ const textToList = (text) =>
  */
 export function PostJobForm({ job, onSuccess }) {
   const isEditing = Boolean(job?.id);
+  const originalDeadline = job?.applicationDeadline?.slice(0, 10) ?? undefined;
+  const schema = useMemo(
+    () => buildJobSchema({ originalDeadline }),
+    [originalDeadline],
+  );
   const {
     register,
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(jobSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       title: job?.title ?? "",
       type: job?.type ?? "",
@@ -116,14 +122,16 @@ export function PostJobForm({ job, onSuccess }) {
           type="number"
           placeholder="20000"
           error={errors.salaryMin?.message}
-          {...register("salaryMin")}
+          // Re-check Max whenever Min changes, so its "less than min" error
+          // appears/clears immediately instead of only when Max is edited.
+          {...register("salaryMin", { deps: ["salaryMax"] })}
         />
         <TextInput
           label="Max salary"
           type="number"
           placeholder="25000"
           error={errors.salaryMax?.message}
-          {...register("salaryMax")}
+          {...register("salaryMax", { deps: ["salaryMin"] })}
         />
         <TextInput
           label="Vacancies"
@@ -137,6 +145,11 @@ export function PostJobForm({ job, onSuccess }) {
       <TextInput
         label="Application deadline"
         type="date"
+        min={
+          isEditing && originalDeadline && originalDeadline < todayISO()
+            ? originalDeadline
+            : todayISO()
+        }
         error={errors.applicationDeadline?.message}
         {...register("applicationDeadline")}
       />
@@ -183,12 +196,20 @@ export function PostJobForm({ job, onSuccess }) {
         )}
       />
 
-      <TextArea
-        label="Benefits"
-        rows={4}
-        placeholder={"One per line, e.g.\nHealth insurance\nFlexible schedule"}
-        error={errors.benefits?.message}
-        {...register("benefits")}
+      <Controller
+        name="benefits"
+        control={control}
+        render={({ field }) => (
+          <RichTextEditor
+            label="Benefits"
+            placeholder={
+              "One per line, e.g.\nHealth insurance\nFlexible schedule"
+            }
+            error={errors.benefits?.message}
+            value={field.value}
+            onChange={field.onChange}
+          />
+        )}
       />
 
       <PrimaryButton

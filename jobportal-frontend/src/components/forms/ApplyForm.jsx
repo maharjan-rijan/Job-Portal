@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { ExternalLink } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { TextInput } from "@/components/ui/TextInput";
@@ -8,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { applySchema } from "@/lib/validation/applySchema";
 import { useApplyToJob } from "@/hooks/useApplications";
 import { useAuth } from "@/hooks/useAuth";
+import { isSafeUrl, previewLocalFile } from "@/utils/resumeLink";
 
 export function ApplyForm({ jobId, onSuccess }) {
   const { user } = useAuth();
@@ -15,6 +18,7 @@ export function ApplyForm({ jobId, onSuccess }) {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(applySchema),
@@ -29,11 +33,17 @@ export function ApplyForm({ jobId, onSuccess }) {
 
   const { mutate, isPending } = useApplyToJob();
 
+  const [pickedFile, setPickedFile] = useState(null);
+  const resumeLink = watch("resumeUrl");
+  const canPreviewFile = pickedFile?.type === "application/pdf";
+  const canOpenLink = Boolean(resumeLink) && isSafeUrl(resumeLink);
+
   // Not register()'d — FileUpload hands back a raw File, not an input
   // change event, so it's pushed into the form manually (same pattern as
-  // the logo file in EmployerProfileForm). shouldValidate re-runs the
+  // the logo file in ProfileForm). shouldValidate re-runs the
   // "file or link" refine as soon as a file is picked/removed.
   const handleResumeFileChange = (file) => {
+    setPickedFile(file ?? null);
     setValue("resumeFile", file ?? undefined, { shouldValidate: true });
   };
 
@@ -48,7 +58,7 @@ export function ApplyForm({ jobId, onSuccess }) {
         onError: (error) => {
           toast.error(error.message ?? "Could not submit your application");
         },
-      }
+      },
     );
   };
 
@@ -76,6 +86,15 @@ export function ApplyForm({ jobId, onSuccess }) {
         onChange={handleResumeFileChange}
         error={errors.resumeFile?.message}
       />
+      {canPreviewFile && (
+        <button
+          type="button"
+          onClick={() => previewLocalFile(pickedFile)}
+          className="-mt-2 flex w-fit items-center gap-1.5 text-sm font-medium text-secondary hover:underline"
+        >
+          Preview PDF in new tab <ExternalLink className="h-3.5 w-3.5" />
+        </button>
+      )}
 
       <div className="flex items-center gap-3 text-xs text-accent">
         <div className="h-px flex-1 bg-primary/10" />
@@ -89,6 +108,16 @@ export function ApplyForm({ jobId, onSuccess }) {
         error={errors.resumeUrl?.message}
         {...register("resumeUrl")}
       />
+      {canOpenLink && (
+        <a
+          href={resumeLink}
+          target="_blank"
+          rel="noreferrer"
+          className="-mt-2 flex w-fit items-center gap-1.5 text-sm font-medium text-secondary hover:underline"
+        >
+          Open link in new tab <ExternalLink className="h-3.5 w-3.5" />
+        </a>
+      )}
 
       <TextArea
         label="Cover note (optional)"

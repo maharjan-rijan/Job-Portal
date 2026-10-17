@@ -13,6 +13,7 @@ import {
 } from "@/hooks/useApplications";
 import { useMyJobs } from "@/hooks/useJobs";
 import { formatDate } from "@/utils/formatters";
+import { getResumeHref } from "@/utils/resumeLink";
 import { APPLICATION_STATUS_OPTIONS } from "@/utils/constants";
 import { InterviewScheduleModal } from "@/components/ui/InterviewScheduleModal";
 
@@ -161,9 +162,9 @@ export function Applications() {
               <span className="text-accent">{app.jobTitle}</span>
               <span className="text-accent">{formatDate(app.appliedAt)}</span>
               <span>
-                {app.resumeUrl ? (
+                {getResumeHref(app.resumeUrl) ? (
                   <a
-                    href={app.resumeUrl}
+                    href={getResumeHref(app.resumeUrl)}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1 text-secondary hover:underline"

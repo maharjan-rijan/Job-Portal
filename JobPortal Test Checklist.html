@@ -1,0 +1,482 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>JobPortal Test Checklist</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  /* Layout: one narrow reading column; a sticky summary bar on top, collapsible test sections below. */
+  :root {
+    --bg: #f4f7f8;
+    --surface: #ffffff;
+    --ink: #14202b;
+    --muted: #55656f;
+    --line: #d7dfe4;
+    --accent: #0b6e8a;
+    --pass: #1b7a4b;
+    --pass-bg: #e2f3ea;
+    --fail: #b3261e;
+    --fail-bg: #fbe6e4;
+    --todo: #c3ced5;
+    --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e161c;
+      --surface: #16202a;
+      --ink: #e5edf2;
+      --muted: #93a4b1;
+      --line: #28343f;
+      --accent: #52c3de;
+      --pass: #5fd391;
+      --pass-bg: #13301f;
+      --fail: #ff8d83;
+      --fail-bg: #3a1b19;
+      --todo: #3a4752;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e161c;
+    --surface: #16202a;
+    --ink: #e5edf2;
+    --muted: #93a4b1;
+    --line: #28343f;
+    --accent: #52c3de;
+    --pass: #5fd391;
+    --pass-bg: #13301f;
+    --fail: #ff8d83;
+    --fail-bg: #3a1b19;
+    --todo: #3a4752;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    padding-block: 28px 64px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+
+  header h1 { font-size: 24px; line-height: 1.2; margin: 0 0 6px; font-weight: 600; text-wrap: balance; }
+  header p { margin: 0; color: var(--muted); max-width: 62ch; }
+
+  .summary {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 5;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .counts { display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: baseline; }
+  .counts .big { font-family: var(--font-mono); font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .counts .tag { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .counts .tag b { font-weight: 600; color: var(--ink); }
+  .counts .tag.p b { color: var(--pass); }
+  .counts .tag.f b { color: var(--fail); }
+  .bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--todo); }
+  .bar i { display: block; height: 100%; transition: width .2s ease; }
+  .bar .bp { background: var(--pass); }
+  .bar .bf { background: var(--fail); }
+
+  .tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip, .link {
+    font: inherit; font-size: 13px; cursor: pointer;
+    border: 1px solid var(--line); background: transparent; color: var(--ink);
+    border-radius: 999px; padding: 4px 12px;
+  }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .link { border-radius: 6px; margin-left: auto; color: var(--muted); }
+  .link.danger { color: var(--fail); border-color: var(--fail); }
+  .chip:focus-visible, .link:focus-visible, .st:focus-visible, summary:focus-visible, .note:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .store { font-size: 12px; color: var(--muted); }
+
+  details.sec { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  details.sec > summary {
+    list-style: none; cursor: pointer; padding: 14px 16px;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  details.sec > summary::-webkit-details-marker { display: none; }
+  details.sec > summary::before {
+    content: ""; width: 7px; height: 7px; flex: none; align-self: center;
+    border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+    transform: rotate(-45deg); transition: transform .15s ease;
+  }
+  details.sec[open] > summary::before { transform: rotate(45deg); }
+  .sec-title { font-weight: 600; font-size: 16px; }
+  .sec-note { color: var(--muted); font-size: 13px; }
+  .sec-count { margin-left: auto; font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .sec-count.done { color: var(--pass); }
+
+  ul.items { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  li.item {
+    display: grid; grid-template-columns: auto 1fr; gap: 6px 12px;
+    padding: 12px 16px; border-bottom: 1px solid var(--line);
+  }
+  li.item:last-child { border-bottom: 0; }
+  li.item[data-status="pass"] { background: var(--pass-bg); }
+  li.item[data-status="fail"] { background: var(--fail-bg); }
+  .st-group { display: flex; gap: 4px; padding-top: 1px; }
+  .st {
+    font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    min-width: 44px; height: 28px; padding: 0 8px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+    border-radius: 6px;
+  }
+  .st[aria-pressed="true"].p { background: var(--pass); border-color: var(--pass); color: var(--bg); }
+  .st[aria-pressed="true"].f { background: var(--fail); border-color: var(--fail); color: var(--bg); }
+  .st:disabled { cursor: not-allowed; opacity: .55; }
+  .txt { min-width: 0; overflow-wrap: anywhere; }
+  .txt .id { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-right: 8px; }
+  .txt .exp { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .note {
+    grid-column: 2; width: 100%; font: inherit; font-size: 13px;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--fail); border-radius: 6px; padding: 6px 8px;
+  }
+  .note[hidden] { display: none; }
+  .empty { padding: 14px 16px; color: var(--muted); }
+
+  [data-filter="todo"] li.item:not([data-status="todo"]),
+  [data-filter="fail"] li.item:not([data-status="fail"]) { display: none; }
+  details.sec.none { display: none; }
+
+  @media (max-width: 520px) {
+    li.item { grid-template-columns: 1fr; }
+    .note { grid-column: 1; }
+    .link { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bar i, details.sec > summary::before { transition: none; }
+  }
+</style>
+
+<div class="wrap" id="app" data-filter="all">
+  <header>
+    <h1>JobPortal Test Checklist</h1>
+    <p>Work top to bottom with a seeded employer, a seeded seeker and one blocked user. Mark each check Pass or Fail; a failed check asks for a note so the bug can be reproduced later.</p>
+  </header>
+
+  <section class="summary" aria-label="Progress">
+    <div class="counts">
+      <span class="big" id="pct">0%</span>
+      <span class="tag p"><b id="cPass">0</b> passed</span>
+      <span class="tag f"><b id="cFail">0</b> failed</span>
+      <span class="tag"><b id="cTodo">0</b> to do</span>
+    </div>
+    <div class="bar" aria-hidden="true"><i class="bp" id="bP"></i><i class="bf" id="bF"></i></div>
+    <div class="tools">
+      <div class="chips" role="group" aria-label="Filter checks">
+        <button class="chip" type="button" data-f="all" aria-pressed="true">All</button>
+        <button class="chip" type="button" data-f="todo" aria-pressed="false">To do</button>
+        <button class="chip" type="button" data-f="fail" aria-pressed="false">Failed</button>
+      </div>
+      <button class="link" type="button" id="resetBtn">Reset all</button>
+    </div>
+    <div class="store" id="store" role="status"></div>
+  </section>
+
+  <div id="sections"></div>
+</div>
+
+<script>
+(function () {
+  // Each check has a stable id: progress is stored against it, so reordering or rewording the list is safe.
+  var SECTIONS = [
+    { id: "auth", title: "Accounts and login", note: "Register, login, logout, passwords", items: [
+      ["a01", "Register as a job seeker with valid details.", "Account is created, token is saved, you land in the seeker area."],
+      ["a02", "Register as an employer with a company name.", "A company record is created for the user and you land in the employer area."],
+      ["a03", "Register with an email that is already used.", "Clear \"email taken\" error and no duplicate user."],
+      ["a04", "Register with empty, short or mismatched fields.", "Inline validation messages and nothing is submitted."],
+      ["a05", "Log in with correct credentials as seeker, then as employer.", "Each role is redirected to its own dashboard."],
+      ["a06", "Log in as the seeded employer, then open Edit profile.", "Company name, website, industry, location and description are already filled in."],
+      ["a07", "Log in with a wrong password.", "\"Invalid email or password\" and no token is issued."],
+      ["a08", "Log in as a blocked user.", "\"Your account has been blocked\" message (403) and no token is issued."],
+      ["a09", "Refresh the page while logged in.", "Session is kept and the company data is still there."],
+      ["a10", "Log out, then press Back and try a protected page.", "Redirected to login; the old token now returns 401."],
+      ["a11", "Change password: wrong current, same as current, then a valid new one.", "Wrong and same-as-current are rejected; the new password works and the old one does not."],
+      ["a12", "As a seeker open an /employer URL, and as an employer open a /seeker URL.", "Blocked or redirected, never shows the other role's pages."]
+    ]},
+    { id: "profile", title: "Edit profile and photo cropping", note: "Both roles", items: [
+      ["p01", "Open Edit profile.", "Name and email are pre-filled with the current values."],
+      ["p02", "Change name and email, then Save.", "Success toast, redirect to the account page, topbar shows the new name."],
+      ["p03", "Use an email that belongs to another user.", "Field error; saving your own unchanged email is accepted."],
+      ["p04", "Choose a photo.", "Crop panel opens with a round frame; dragging and the zoom slider both work."],
+      ["p05", "Press Reset, then Cancel.", "Reset recentres the image; Cancel closes the panel and keeps the old photo."],
+      ["p06", "Press Apply adjustment.", "Preview shows the cropped photo. Save stays disabled while the crop panel is open."],
+      ["p07", "Pick a non-image file, then an image over 10 MB.", "Each is rejected with a message and no crop panel opens."],
+      ["p08", "Save with a cropped photo, then reload.", "The photo persists (no \"Data too long\" error from avatar_url)."],
+      ["p09", "Save without touching the photo.", "The existing photo is unchanged."]
+    ]},
+    { id: "employer", title: "Employer", note: "Company, jobs, applicants", items: [
+      ["e01", "Open Edit profile as the seeded employer.", "Company fields match the seeded record."],
+      ["e02", "Edit company name, website, industry, location and description, then Save and reload.", "All values persist."],
+      ["e03", "Clear the company name and Save.", "Validation error and nothing is saved."],
+      ["e04", "Type more than 1000 characters in the description.", "The textarea stops at 1000."],
+      ["e05", "Choose a logo, crop it, Apply and Save.", "Square crop; a transparent PNG keeps its transparency; no \"Data too long\" error."],
+      ["e06", "View the employer's job posts and company display.", "The cropped logo shows next to the company."],
+      ["e07", "Post a new job with all required fields.", "It appears in My jobs and in the public listing."],
+      ["e08", "Post a job with required fields missing.", "Per-field validation errors."],
+      ["e09", "Edit a job, then close or delete it.", "Edits show up; a closed or deleted job leaves the public listing."],
+      ["e10", "Log in as a second employer.", "Only that employer's own jobs and applicants are visible."],
+      ["e11", "Open the applicants of a job and view an applicant's resume.", "List and resume open correctly."],
+      ["e12", "Change an applicant's status (shortlist or reject).", "The seeker sees the new status."]
+    ]},
+    { id: "seeker", title: "Job seeker", note: "Search, apply, save, alerts, resume", items: [
+      ["s01", "Open the job list and page through it.", "Jobs load, pagination or scrolling works, nothing repeats."],
+      ["s02", "Search by keyword, then add location and type filters, then search for nonsense.", "Results narrow correctly; no-result state shown for nonsense."],
+      ["s03", "Open a job detail page.", "Company name and logo, description and Apply button are shown."],
+      ["s04", "Apply to a job, then try to apply again.", "First succeeds; the second is blocked with a message."],
+      ["s05", "Save a job, then unsave it.", "It appears in Saved jobs and disappears when unsaved."],
+      ["s06", "Create and edit a resume.", "Changes persist after reload; the profile photo shows."],
+      ["s07", "Create, edit and delete a job alert.", "Each action works and the list updates."],
+      ["s08", "Open My applications.", "Every application is listed with its current status."],
+      ["s09", "Open a job that the employer has closed or deleted.", "Cannot apply; a friendly message, not an error page."]
+    ]},
+    { id: "admin", title: "Admin and blocking", note: "Skip if the portal has no admin area", items: [
+      ["m01", "Block a user, then try to log in as them.", "Login is refused (see a08)."],
+      ["m02", "Unblock the same user.", "They can log in again."],
+      ["m03", "Admin lists users and jobs and removes a job.", "The job disappears from the public listing."],
+      ["m04", "Call an admin page or endpoint as a normal user.", "Refused (401 or 403)."]
+    ]},
+    { id: "api", title: "API and security", note: "Use the browser network tab or an API client", items: [
+      ["x01", "Call a protected endpoint with no token.", "401 Unauthenticated."],
+      ["x02", "Call an employer-only endpoint with a seeker token, and the reverse.", "403 for both."],
+      ["x03", "Submit invalid data to any form.", "422 with field messages, and the UI shows them next to the fields."],
+      ["x04", "Inspect the login and /me responses.", "No password or remember_token anywhere."],
+      ["x05", "Send a company object in the profile update as a seeker.", "No company is created for the seeker."],
+      ["x06", "Change an id in the URL to another user's job or application.", "403 or 404, never the other user's data."],
+      ["x07", "Save a roughly 1 MB logo or avatar.", "No 413 or empty request (post_max_size is big enough)."],
+      ["x08", "After seeding, check each seeded employer.", "Every employer has exactly one company row linked by user_id."]
+    ]},
+    { id: "ux", title: "Interface and browsers", note: "Look and behaviour", items: [
+      ["u01", "Check key pages at about 375 px wide and at desktop width.", "No horizontal scrolling; forms and crop panel stay usable."],
+      ["u02", "Switch between light and dark if the site supports it.", "Text stays readable on both."],
+      ["u03", "Look at loading, empty and error states on each list.", "Each has a clear message, not a blank screen."],
+      ["u04", "Trigger a success and a failure on any form.", "Toasts appear; no raw JSON or stack traces."],
+      ["u05", "Open an unknown URL.", "404 page with a way back."],
+      ["u06", "Repeat the main flows in Chrome, Firefox and Safari.", "Same behaviour, including the photo cropper."]
+    ]}
+  ];
+
+  var app = document.getElementById("app");
+  var host = document.getElementById("sections");
+  var state = {};          // id -> { status: "pass" | "fail", note: string }
+  var rows = {};           // id -> { li, pBtn, fBtn, note }
+  var secs = [];           // { el, countEl, ids }
+  var db = null;
+  var readOnly = false;
+  var queues = {};
+  var LS_KEY = "jobportal-checklist-v1";
+  var total = 0;
+
+  /* ---------- build the page once ---------- */
+  SECTIONS.forEach(function (s, si) {
+    var d = document.createElement("details");
+    d.className = "sec";
+    d.open = si < 2;
+    var sum = document.createElement("summary");
+    var t = document.createElement("span"); t.className = "sec-title"; t.textContent = s.title;
+    var n = document.createElement("span"); n.className = "sec-note"; n.textContent = s.note;
+    var c = document.createElement("span"); c.className = "sec-count";
+    sum.appendChild(t); sum.appendChild(n); sum.appendChild(c);
+    d.appendChild(sum);
+    var ul = document.createElement("ul"); ul.className = "items";
+    var ids = [];
+    s.items.forEach(function (it) {
+      var id = it[0];
+      ids.push(id); total++;
+      var li = document.createElement("li"); li.className = "item"; li.dataset.status = "todo";
+
+      var g = document.createElement("div"); g.className = "st-group";
+      var pb = btn("Pass", "p", id); var fb = btn("Fail", "f", id);
+      g.appendChild(pb); g.appendChild(fb);
+
+      var tx = document.createElement("div"); tx.className = "txt";
+      var idEl = document.createElement("span"); idEl.className = "id"; idEl.textContent = id.toUpperCase();
+      tx.appendChild(idEl);
+      tx.appendChild(document.createTextNode(it[1]));
+      var ex = document.createElement("span"); ex.className = "exp"; ex.textContent = "Expect: " + it[2];
+      tx.appendChild(ex);
+
+      var note = document.createElement("input");
+      note.className = "note"; note.type = "text"; note.hidden = true; note.id = "note-" + id;
+      note.placeholder = "What went wrong? Add the steps or the error text.";
+      note.setAttribute("aria-label", "Note for " + id.toUpperCase());
+      note.addEventListener("change", function () { write(id, { note: note.value }); });
+
+      li.appendChild(g); li.appendChild(tx); li.appendChild(note);
+      ul.appendChild(li);
+      rows[id] = { li: li, pBtn: pb, fBtn: fb, note: note };
+    });
+    d.appendChild(ul);
+    host.appendChild(d);
+    secs.push({ el: d, countEl: c, ids: ids });
+  });
+
+  function btn(label, cls, id) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "st " + cls; b.textContent = label;
+    b.setAttribute("aria-pressed", "false");
+    b.setAttribute("aria-label", label + " " + id.toUpperCase());
+    b.addEventListener("click", function () {
+      var want = cls === "p" ? "pass" : "fail";
+      var cur = state[id] && state[id].status;
+      write(id, { status: cur === want ? null : want });
+    });
+    return b;
+  }
+
+  /* ---------- paint from state (no rebuilds, so typing is never interrupted) ---------- */
+  function paint() {
+    var p = 0, f = 0;
+    Object.keys(rows).forEach(function (id) {
+      var r = rows[id], v = state[id];
+      var st = v && v.status ? v.status : "todo";
+      if (st === "pass") p++; else if (st === "fail") f++;
+      r.li.dataset.status = st;
+      r.pBtn.setAttribute("aria-pressed", String(st === "pass"));
+      r.fBtn.setAttribute("aria-pressed", String(st === "fail"));
+      r.pBtn.disabled = r.fBtn.disabled = readOnly;
+      r.note.hidden = st !== "fail";
+      r.note.disabled = readOnly;
+      var nv = v && v.note ? v.note : "";
+      if (document.activeElement !== r.note && r.note.value !== nv) r.note.value = nv;
+    });
+    var todo = total - p - f;
+    document.getElementById("cPass").textContent = p;
+    document.getElementById("cFail").textContent = f;
+    document.getElementById("cTodo").textContent = todo;
+    document.getElementById("pct").textContent = Math.round((p / total) * 100) + "%";
+    document.getElementById("bP").style.width = (p / total) * 100 + "%";
+    document.getElementById("bF").style.width = (f / total) * 100 + "%";
+
+    var filter = app.dataset.filter;
+    secs.forEach(function (s) {
+      var done = 0, visible = 0;
+      s.ids.forEach(function (id) {
+        var st = rows[id].li.dataset.status;
+        if (st !== "todo") done++;
+        if (filter === "all" || filter === st) visible++;
+      });
+      s.countEl.textContent = done + " / " + s.ids.length;
+      s.countEl.classList.toggle("done", done === s.ids.length);
+      s.el.classList.toggle("none", visible === 0);
+    });
+  }
+
+  /* ---------- state changes and storage ---------- */
+  function write(id, patch) {
+    if (readOnly) return;
+    var cur = state[id] || {};
+    var next = {
+      status: "status" in patch ? patch.status : cur.status || null,
+      note: "note" in patch ? patch.note : cur.note || ""
+    };
+    if (!next.status) { delete state[id]; }
+    else {
+      if (next.status === "pass") next.note = "";
+      next.at = Date.now();
+      state[id] = next;
+    }
+    paint();
+    persist(id);
+  }
+
+  function persist(id) {
+    queues[id] = (queues[id] || Promise.resolve()).then(function () {
+      var v = state[id];
+      if (db) {
+        var ref = db.collection("checks").doc(id);
+        return v ? ref.set(v) : ref.delete();
+      }
+      saveLocal();
+    }).catch(function (e) {
+      if (e && e.code === "invalid_argument") { readOnly = true; setStore("Read-only view: you can see progress but not change it."); paint(); }
+      else setStore("Could not save the last change. Check your connection and try again.");
+    });
+  }
+
+  function saveLocal() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function loadLocal() {
+    try { var raw = localStorage.getItem(LS_KEY); if (raw) state = JSON.parse(raw) || {}; } catch (e) { state = {}; }
+  }
+  function setStore(msg) { document.getElementById("store").textContent = msg; }
+
+  /* ---------- controls ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (c) {
+    c.addEventListener("click", function () {
+      app.dataset.filter = c.dataset.f;
+      Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (o) {
+        o.setAttribute("aria-pressed", String(o === c));
+      });
+      paint();
+    });
+  });
+
+  var resetBtn = document.getElementById("resetBtn");
+  var resetTimer = null;
+  resetBtn.addEventListener("click", function () {
+    if (readOnly) return;
+    if (!resetBtn.classList.contains("danger")) {
+      resetBtn.classList.add("danger");
+      resetBtn.textContent = "Click again to clear all results";
+      resetTimer = setTimeout(cancelReset, 4000);
+      return;
+    }
+    cancelReset();
+    Object.keys(state).forEach(function (id) { delete state[id]; persist(id); });
+    paint();
+  });
+  function cancelReset() {
+    clearTimeout(resetTimer);
+    resetBtn.classList.remove("danger");
+    resetBtn.textContent = "Reset all";
+  }
+
+  /* ---------- start: render at once, then connect shared storage if this view has it ---------- */
+  loadLocal();
+  setStore("Saved in this browser only.");
+  paint();
+
+  var useP = window.claude && typeof window.claude.use === "function" ? window.claude.use("db") : Promise.resolve(null);
+  useP.then(function (handle) {
+    if (!handle) return;
+    db = handle;
+    var first = true;
+    db.collection("checks").onSnapshot(function (snap) {
+      var next = {};
+      snap.docs.forEach(function (d) { var v = d.data(); if (v && v.status) next[d.id] = v; });
+      if (first && !snap.docs.length && Object.keys(state).length) {
+        // Nothing stored yet but this browser has results: keep them and upload them once.
+        Object.keys(state).forEach(persist);
+        first = false;
+      } else {
+        state = next; first = false;
+      }
+      setStore(readOnly ? "Read-only view: you can see progress but not change it." : "Saved to this page: progress is shared with everyone who opens it.");
+      paint();
+    }, function () {
+      db = null;
+      setStore("Saved in this browser only.");
+    });
+  }).catch(function () { db = null; });
+})();
+</script>
+
+</body></html>

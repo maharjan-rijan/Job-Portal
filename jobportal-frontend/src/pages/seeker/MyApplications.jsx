@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { QueryState } from "@/components/ui/QueryState";
 import { useMyApplications } from "@/hooks/useApplications";
-import { formatDate } from "@/utils/formatters";
+import { formatDate, formatDateTime } from "@/utils/formatters";
+import { getResumeHref } from "@/utils/resumeLink";
 import { APPLICATION_STATUS_TONE } from "@/utils/constants";
 import { Pagination } from "@/components/ui/Pagination";
 import { usePagination } from "@/hooks/usePagination";
@@ -42,17 +43,18 @@ export function MyApplications() {
         errorLabel="Could not load your applications"
       >
         <Card className="mt-6 p-0">
-          <div className="hidden grid-cols-[2fr_1.5fr_1fr_1fr] gap-4 border-b border-primary/10 px-5 py-3 text-xs font-medium uppercase text-accent sm:grid">
+          <div className="hidden grid-cols-[2fr_1.5fr_1fr_1fr_1fr] gap-4 border-b border-primary/10 px-5 py-3 text-xs font-medium uppercase text-accent sm:grid">
             <span>Job</span>
             <span>Company</span>
             <span>Applied</span>
+            <span>Resume</span>
             <span>Status</span>
           </div>
 
           {pagedApplications.map((app) => (
             <div
               key={app.id}
-              className="grid grid-cols-2 gap-3 border-b border-primary/10 px-5 py-4 text-sm last:border-0 sm:grid-cols-[2fr_1.5fr_1fr_1fr] sm:items-center"
+              className="grid grid-cols-2 gap-3 border-b border-primary/10 px-5 py-4 text-sm last:border-0 sm:grid-cols-[2fr_1.5fr_1fr_1fr_1fr] sm:items-center"
             >
               <Link
                 to={`/jobs/${app.jobId}`}
@@ -63,6 +65,20 @@ export function MyApplications() {
               </Link>
               <span className="text-accent">{app.company ?? "—"}</span>
               <span className="text-accent">{formatDate(app.appliedAt)}</span>
+              <span>
+                {getResumeHref(app.resumeUrl) ? (
+                  <a
+                    href={getResumeHref(app.resumeUrl)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1 text-secondary hover:underline"
+                  >
+                    View <ExternalLink className="h-3 w-3" />
+                  </a>
+                ) : (
+                  <span className="text-accent">—</span>
+                )}
+              </span>
               <div>
                 <Badge
                   tone={APPLICATION_STATUS_TONE[app.status] ?? "neutral"}

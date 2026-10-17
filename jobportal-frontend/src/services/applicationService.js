@@ -1,5 +1,6 @@
 import api from "@/lib/axios";
 import { field } from "@/utils/normalize";
+import { resolveResumeUrl } from "@/utils/resumeLink";
 
 function normalizeApplication(app) {
   if (!app) return app;
@@ -11,9 +12,10 @@ function normalizeApplication(app) {
       app.job?.employer?.company?.name ?? app.job?.employer?.name ?? null,
     name: field(app, "full_name", "name", "—"),
     email: app.email ?? "—",
-    resumeUrl: field(app, "resume_url", "resumeUrl"),
+    resumeUrl: resolveResumeUrl(field(app, "resume_url", "resumeUrl")),
     coverNote: field(app, "cover_note", "coverNote", ""),
     status: app.status ?? "applied",
+    scheduledAt: field(app, "scheduled_at", "scheduledAt"),
     appliedAt: field(app, "created_at", "appliedAt"),
   };
 }

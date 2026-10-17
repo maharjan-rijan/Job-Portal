@@ -13,11 +13,13 @@ import { Contact } from "@/pages/public/Contact";
 import { BlogList } from "@/pages/public/BlogList";
 import { BlogPost } from "@/pages/public/BlogPost";
 import { NotFound } from "@/pages/public/NotFound";
+import { ResumeViewer } from "@/pages/public/ResumeViewer";
 import { Login } from "@/pages/auth/Login";
 import { Register } from "@/pages/auth/Register";
 import { Dashboard } from "@/pages/auth/Dashboard";
 import { BrowseJobs } from "@/pages/seeker/BrowseJobs";
 import { Resume } from "@/pages/seeker/Resume";
+import { EditProfile } from "@/pages/account/EditProfile";
 import { JobAlerts } from "@/pages/seeker/JobAlerts";
 import { AccountOverview } from "@/pages/account/AccountOverview";
 import { ChangePassword } from "@/pages/auth/ChangePassword";
@@ -33,10 +35,6 @@ import { AdminJobs } from "@/pages/admin/ManageJob";
 import { ListBlog } from "@/pages/admin/blog/ListBlog";
 import { CreateBlog } from "@/pages/admin/blog/CreateBlog";
 import { EditBlog } from "@/pages/admin/blog/EditBlog";
-import {
-  EmployerEditProfile,
-  SeekerEditProfile,
-} from "@/pages/auth/EditProfile";
 
 import { USER_ROLES } from "@/utils/constants";
 import { SavedJobs } from "@/pages/seeker/SavedJobs";
@@ -57,6 +55,8 @@ export const router = createBrowserRouter([
       { path: "/blog/:postId", element: <BlogPost /> },
     ],
   },
+  // Standalone full-page PDF viewer (no site chrome), opened in a new tab.
+  { path: "/resume-viewer", element: <ResumeViewer /> },
   {
     element: <AuthLayout />,
     children: [
@@ -78,7 +78,10 @@ export const router = createBrowserRouter([
           { path: "/seeker/resume/preview", element: <ResumePreview /> },
           { path: "/seeker/job-alerts", element: <JobAlerts /> },
           { path: "/seeker/account", element: <AccountOverview /> },
-          { path: "/seeker/profile/edit", element: <SeekerEditProfile /> },
+          {
+            path: "/seeker/profile/edit",
+            element: <EditProfile variant="seeker" />,
+          },
           { path: "/seeker/change-password", element: <ChangePassword /> },
         ],
       },
@@ -98,7 +101,10 @@ export const router = createBrowserRouter([
           { path: "/employer/resumes", element: <BrowseResumes /> },
           { path: "/employer/resumes/:resumeId", element: <ResumeDetail /> },
           { path: "/employer/account", element: <AccountOverview /> },
-          { path: "/employer/profile/edit", element: <EmployerEditProfile /> },
+          {
+            path: "/employer/profile/edit",
+            element: <EditProfile variant="employer" />,
+          },
           { path: "/employer/change-password", element: <ChangePassword /> },
         ],
       },

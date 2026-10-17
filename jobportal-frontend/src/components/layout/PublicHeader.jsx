@@ -22,6 +22,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { getDashboardNav } from "@/config/dashboardNav";
 import { cn } from "@/utils/cn";
 import logo from "@/assets/images/logo/logo.svg";
+import { Avatar } from "../ui/Avatar";
 
 const NAV_LINKS = [
   { label: "Home", to: "/" },
@@ -74,9 +75,12 @@ export function PublicHeader() {
           {isAuthenticated ? (
             <Menu as="div" className="relative">
               <MenuButton className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-primary/5">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary/10 text-sm font-semibold text-secondary">
-                  {initials(user?.name || "Guest")}
-                </span>
+                <Avatar
+                  src={user?.avatar_url}
+                  name={user?.name || "Guest"}
+                  size={36}
+                  className="text-sm"
+                />
                 <span className="flex flex-col items-start">
                   <span className="text-sm font-medium text-primary">
                     {user?.name ?? "Guest"}
