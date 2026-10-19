@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,12 +8,14 @@ import { PasswordInput } from "@/components/ui/PasswordInput";
 import { PasswordStrengthIndicator } from "@/components/ui/PasswordStrengthIndicator";
 import { PasswordMatchIndicator } from "@/components/ui/PasswordMatchIndicator";
 import { Button } from "@/components/ui/Button";
-import { useAuth } from "@/hooks/useAuth";
+import { RegisterOtpModal } from "@/components/forms/RegisterOtpModal";
+import { authService } from "@/services/authService";
 import { registerSchema } from "@/lib/validation/authSchemas";
 import { USER_ROLES } from "@/utils/constants";
 
 export function RegisterForm({ onSuccess = () => {} }) {
-  const { register: registerUser } = useAuth();
+  // Email the user is verifying; the popup is open while this is set.
+  const [pendingEmail, setPendingEmail] = useState(null);
   const {
     register,
     handleSubmit,
@@ -36,20 +39,28 @@ export function RegisterForm({ onSuccess = () => {} }) {
   const password = watch("password");
   const confirmPassword = watch("confirmPassword");
 
+  // Step 1: send the code (no account is created yet), then open the popup.
   const onSubmit = async (values) => {
     try {
-      const user = await registerUser({
+      const { email } = await authService.register({
         name: values.name,
         email: values.email,
         password: values.password,
         role: values.role,
         company_name: values.companyName,
       });
-      toast.success("Account created");
-      onSuccess(user);
+      setPendingEmail(email ?? values.email);
+      toast.success("We sent a verification code to your email");
     } catch (error) {
       toast.error(error.message ?? "Could not create account");
     }
+  };
+
+  // Step 2: the popup verified the code and the backend created the account.
+  const handleVerified = () => {
+    setPendingEmail(null);
+    toast.success("Account registered successfully. Please log in.");
+    onSuccess();
   };
 
   return (
@@ -74,7 +85,7 @@ export function RegisterForm({ onSuccess = () => {} }) {
         className="mt-6 flex flex-col gap-4"
       >
         <TextInput
-          label="Full Name"
+          label="Full name"
           placeholder="Jane Doe"
           error={errors.name?.message}
           {...register("name")}
@@ -82,7 +93,7 @@ export function RegisterForm({ onSuccess = () => {} }) {
 
         {isEmployer && (
           <TextInput
-            label="Company Name"
+            label="Company name"
             placeholder="Acme Corp"
             error={errors.companyName?.message}
             {...register("companyName")}
@@ -106,15 +117,18 @@ export function RegisterForm({ onSuccess = () => {} }) {
         <PasswordStrengthIndicator password={password} />
 
         <PasswordInput
-          label="Confirm Password"
+          label="Confirm password"
           placeholder="••••••••"
           error={errors.confirmPassword?.message}
           {...register("confirmPassword")}
         />
-        <PasswordMatchIndicator password={password} confirmPassword={confirmPassword} />
+        <PasswordMatchIndicator
+          password={password}
+          confirmPassword={confirmPassword}
+        />
 
         <Button type="submit" isLoading={isSubmitting} className="mt-2 w-full">
-          Create Account
+          Create account
         </Button>
       </form>
 
@@ -124,6 +138,13 @@ export function RegisterForm({ onSuccess = () => {} }) {
           Log in
         </Link>
       </p>
+
+      <RegisterOtpModal
+        open={Boolean(pendingEmail)}
+        email={pendingEmail ?? ""}
+        onClose={() => setPendingEmail(null)}
+        onVerified={handleVerified}
+      />
     </div>
   );
 }

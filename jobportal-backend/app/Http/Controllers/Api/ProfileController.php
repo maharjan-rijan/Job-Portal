@@ -13,7 +13,6 @@ class ProfileController extends Controller
 
         $user->update([
             'name' => $request->name,
-            'email' => $request->email,
             'avatar_url' => $request->has('avatar_url') ? $request->avatar_url : $user->avatar_url,
         ]);
 

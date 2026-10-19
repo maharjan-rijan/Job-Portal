@@ -8,13 +8,23 @@ use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\JobRecommendationController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\RegistrationController;
 use App\Http\Controllers\Api\ResumeController;
 use App\Http\Controllers\Api\SavedJobController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/forgot-password', [PasswordResetController::class, 'forgot'])->middleware('throttle:5,1,pwd-forgot');
+Route::post('/auth/verify-otp', [PasswordResetController::class, 'verifyOtp'])->middleware('throttle:10,1,pwd-verify');
+Route::post('/auth/reset-password', [PasswordResetController::class, 'reset'])->middleware('throttle:10,1,pwd-reset');
+
+
+Route::post('/auth/register', [RegistrationController::class, 'start'])->middleware('throttle:10,1,reg-start');
+Route::post('/auth/register/verify', [RegistrationController::class, 'verify'])->middleware('throttle:10,1,reg-verify');
+Route::post('/auth/register/resend', [RegistrationController::class, 'resend'])->middleware('throttle:5,1,reg-resend');
 
 Route::get('/jobs', [JobController::class, 'index']);
 

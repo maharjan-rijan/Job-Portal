@@ -77,7 +77,6 @@ export function ProfileForm({ variant = "seeker", onSuccess }) {
       const avatarUrl = await resolveImage(avatarFile);
       const payload = {
         name: values.name,
-        email: values.email,
         ...(avatarUrl !== undefined ? { avatar_url: avatarUrl } : {}),
       };
 
@@ -110,7 +109,7 @@ export function ProfileForm({ variant = "seeker", onSuccess }) {
       <section>
         {isEmployer && (
           <>
-            <h2 className="text-base font-semibold text-text">Your Details</h2>
+            <h2 className="text-base font-semibold text-text">Your details</h2>
             <p className="mt-1 text-sm text-accent">
               The contact person on this account.
             </p>
@@ -122,7 +121,7 @@ export function ProfileForm({ variant = "seeker", onSuccess }) {
           }
         >
           <FileUpload
-            label="Your Photo"
+            label="Your photo"
             previewUrl={user?.avatar_url}
             onChange={setAvatarFile}
             crop
@@ -130,7 +129,7 @@ export function ProfileForm({ variant = "seeker", onSuccess }) {
           />
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInput
-              label="Full Name"
+              label="Full name"
               placeholder="Jane Doe"
               error={errors.name?.message}
               {...register("name")}
@@ -139,7 +138,10 @@ export function ProfileForm({ variant = "seeker", onSuccess }) {
               label="Email"
               type="email"
               placeholder="you@example.com"
-              error={errors.email?.message}
+              readOnly
+              aria-readonly="true"
+              title="Your email address cannot be changed"
+              className="cursor-not-allowed opacity-70"
               {...register("email")}
             />
           </div>
@@ -155,7 +157,7 @@ export function ProfileForm({ variant = "seeker", onSuccess }) {
           <div className="mt-4 flex flex-col gap-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <TextInput
-                label="Company Name"
+                label="Company name"
                 placeholder="Acme Inc."
                 error={errors.companyName?.message}
                 {...register("companyName")}
@@ -182,7 +184,7 @@ export function ProfileForm({ variant = "seeker", onSuccess }) {
               />
             </div>
             <FileUpload
-              label="Company Logo"
+              label="Company logo"
               previewUrl={user?.company?.logo_url}
               onChange={setLogoFile}
               crop
@@ -191,7 +193,7 @@ export function ProfileForm({ variant = "seeker", onSuccess }) {
               helperText="PNG or JPG — you can crop and zoom after choosing. Transparent backgrounds are kept"
             />
             <TextArea
-              label="Company Description"
+              label="Company description"
               rows={5}
               placeholder="What does your company do? What's it like to work there?"
               error={errors.description?.message}
@@ -206,7 +208,7 @@ export function ProfileForm({ variant = "seeker", onSuccess }) {
         isLoading={isSubmitting || isPending}
         className="w-fit"
       >
-        Save Changes
+        Save changes
       </PrimaryButton>
     </form>
   );

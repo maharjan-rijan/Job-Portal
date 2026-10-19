@@ -16,6 +16,8 @@ import { NotFound } from "@/pages/public/NotFound";
 import { ResumeViewer } from "@/pages/public/ResumeViewer";
 import { Login } from "@/pages/auth/Login";
 import { Register } from "@/pages/auth/Register";
+import { ForgotPassword } from "@/pages/auth/ForgotPassword";
+import { ResetPassword } from "@/pages/auth/ResetPassword";
 import { Dashboard } from "@/pages/auth/Dashboard";
 import { BrowseJobs } from "@/pages/seeker/BrowseJobs";
 import { Resume } from "@/pages/seeker/Resume";
@@ -53,6 +55,8 @@ export const router = createBrowserRouter([
       { path: "/contact", element: <Contact /> },
       { path: "/blog", element: <BlogList /> },
       { path: "/blog/:postId", element: <BlogPost /> },
+      { path: "/forgot-password", element: <ForgotPassword /> },
+      { path: "/reset-password", element: <ResetPassword /> },
     ],
   },
   // Standalone full-page PDF viewer (no site chrome), opened in a new tab.

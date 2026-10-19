@@ -13,11 +13,6 @@ class ProfileUpdateRequest extends ApiFormRequest
     {
         return [
             'name' => 'required|string|min:2',
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($this->user()->id),
-            ],
             'avatar_url' => 'nullable|string',
             'company' => 'sometimes|array',
             'company.name' => 'required_with:company|string|min:2',

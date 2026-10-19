@@ -1,17 +1,12 @@
 import { RegisterForm } from "@/components/forms/RegisterForm";
-import { USER_ROLES } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
 
 export function Register() {
   const navigate = useNavigate();
-  const handleSuccess = (user) => {
-    navigate(
-      user.role === USER_ROLES.EMPLOYER
-        ? "/employer/dashboard"
-        : "/seeker/dashboard",
-      { replace: true },
-    );
-  };
+
+  // The account only exists once the emailed code is verified; then go to login.
+  const handleSuccess = () => navigate("/login", { replace: true });
+
   return (
     <div className="mx-auto max-w-md px-4 py-12 sm:px-6">
       <h1 className="text-center text-xl font-semibold text-text">
