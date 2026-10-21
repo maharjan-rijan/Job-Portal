@@ -32,7 +32,7 @@ Route::get('/blog', [BlogController::class, 'index']);
 Route::get('/blog/categories', [BlogController::class, 'categories']);
 Route::get('/blog/{blogPost}', [BlogController::class, 'show']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'checkBlock'])->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/change-password', [AuthController::class, 'changePassword']);

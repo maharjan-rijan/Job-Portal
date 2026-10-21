@@ -3,6 +3,9 @@ import { authService } from "@/services/authService";
 
 export const AuthContext = createContext(null);
 
+// How often a logged-in user's account status is re-checked (ms).
+const SESSION_CHECK_MS = 15_000;
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -56,6 +59,29 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     bootstrap();
   }, [bootstrap]);
+
+  // While logged in, re-check the account every so often (and whenever the tab
+  // becomes visible again). A user who is just reading a page makes no API
+  // calls, so without this an admin's block wouldn't reach them until their
+  // next click. If the account is blocked, the 403 ACCOUNT_BLOCKED response is
+  // handled by the interceptor in lib/axios.js, which redirects to /login.
+  const isAuthenticated = Boolean(user);
+  useEffect(() => {
+    if (!isAuthenticated) return undefined;
+
+    const check = () => {
+      if (document.visibilityState === "visible") {
+        authService.me().catch(() => {});
+      }
+    };
+
+    const id = setInterval(check, SESSION_CHECK_MS);
+    document.addEventListener("visibilitychange", check);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", check);
+    };
+  }, [isAuthenticated]);
 
   const value = useMemo(
     () => ({

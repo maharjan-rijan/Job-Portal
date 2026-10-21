@@ -202,9 +202,19 @@ class AdminController extends Controller
     }
 
     /** PATCH /admin/users/{user}/toggle-block */
-    public function toggleUserBlock(User $user)
+    public function toggleUserBlock(Request $request, User $user)
     {
+        // Admins aren't listed in Manage Users; refuse here too so an admin
+        // can't lock themselves (or another admin) out via a direct API call.
+        if ($user->role === 'admin' || $user->is($request->user())) {
+            return response()->json(['message' => 'Admin accounts cannot be blocked.'], 422);
+        }
+
         $user->forceFill(['is_blocked' => ! $user->is_blocked])->save();
+
+        // Blocking takes effect on the user's next request: CheckUserBlockUnblock
+        // answers 403 ACCOUNT_BLOCKED and revokes their tokens, and the React
+        // app sends them to /login. Unblocking just lets them log in again.
 
         return response()->json($user->fresh());
     }

@@ -39,11 +39,15 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid email or password'], 401);
         }
 
-        // >>> ADD THIS — stops a blocked user's login before a token is ever issued.
+        // A blocked user can't log in until an admin unblocks the account.
+        // Checked after the password so account status isn't revealed to
+        // someone who doesn't know the password.
         if ($user->is_blocked) {
-            return response()->json(['message' => 'Your account has been blocked. Contact support for help.'], 403);
+            return response()->json([
+                'message' => 'Your account has been blocked. Contact support for help.',
+                'code' => 'ACCOUNT_BLOCKED',
+            ], 403);
         }
-        // <<< end addition
 
         $token = $user->createToken('api-token')->plainTextToken;
 
